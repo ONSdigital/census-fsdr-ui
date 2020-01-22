@@ -1,20 +1,13 @@
-import base64
 import types
 
-import aiohttp_jinja2
-from flask import jsonify, Flask
-
-import app as app
 import jinja2
-import aiohttp_session
+import aiohttp_jinja2
 from aiohttp import BasicAuth, ClientSession, ClientTimeout
 from aiohttp.client_exceptions import (ClientConnectionError,
                                        ClientConnectorError,
                                        ClientResponseError)
 from aiohttp.web import Application
-from aiohttp_session.cookie_storage import EncryptedCookieStorage
 from aiohttp_utils import negotiation, routing
-from cryptography import fernet
 from structlog import get_logger
 from app import i18n
 
@@ -22,7 +15,6 @@ from . import config
 from . import error_handlers
 from . import flash
 from . import domains
-# from . import jwt
 from . import routes
 from . import security
 from . import session
