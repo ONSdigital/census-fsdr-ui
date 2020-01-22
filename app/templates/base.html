@@ -1,0 +1,20 @@
+{% extends 'custom/base/_template.njk' %}
+{% from 'components/button/_macro.njk' import onsButton %}
+
+{% if page_title %}
+    {% set page_title_value = page_title %}
+{% else %}
+    {% set page_title_value = 'FSDR' %}
+{% endif %}
+
+{% set pageConfig = {
+    'title': page_title_value,
+    'theme': 'census',
+    'header': {
+        'logoHref': 'https://www.ons.gov.uk/',
+        'titleLogo': '/img/census-logo-en.svg',
+        'titleLogoAlt': 'Census 2021',
+        'titleLogoHref': domain_url + '/start/'
+    },
+
+} %}

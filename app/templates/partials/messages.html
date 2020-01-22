@@ -1,0 +1,45 @@
+{% for group, messages in messages_dict.items() %}
+
+{% from './components/panel/_macro.njk' import onsPanel %}
+{% from './components/lists/_macro.njk' import onsList %}
+
+
+{% set errorTitle = 'This page has an error' %}
+
+{% set itemsList = [] %}
+
+{% for message in messages %}
+
+{% if itemsList.append( {
+                'text': message.text,
+                'index': true,
+                'url': '#' + message.field,
+                'classes': 'js-inpagelink'
+            } )
+%} {% endif %}
+
+{% endfor %}
+
+
+{% if group=='ERROR' %}
+{% call
+    onsPanel({
+        'title': errorTitle,
+        'type': 'error'
+    })
+%}
+
+{% autoescape false %}
+    <p>{{ 'These %(startbold)smust be corrected%(endbold)s to continue.'|safe }}</p>
+{% endautoescape %}
+
+{{
+    onsList({
+        'classes': 'list--bare',
+        'itemsList': itemsList
+    })
+}}
+{% endcall %}
+{% endif %}
+
+{% endfor %}

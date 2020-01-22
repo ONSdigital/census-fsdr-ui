@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% from 'components/input/_macro.njk' import onsInput %}
+{% from 'components/lists/_macro.njk' import onsList %}
+{% from 'components/panel/_macro.njk' import onsPanel %}
+{% from 'components/password/_macro.njk' import onsPassword %}
+
+{% set messages_dict=dict(get_flashed_messages()|groupby('level')) %}
+{% set field_messages_dict=dict(messages_dict['ERROR']|groupby('field')) %}
+
+{% set form =  {
+    'method': 'POST',
+    'attributes': {
+        'action': form_action
+    }
+} %}
+
+{% set user_input = onsInput({
+        'id': 'user',
+        'name': 'user',
+        'label': {
+            'text': 'Username and Password',
+            'description': 'Please enter your FSDR username and password'
+        }
+    })
+%}
+
+{% set password_input = onsPassword({
+        'id': 'password',
+        'name': 'password',
+        'label': {
+            'text': ''
+        },
+        'showPasswordText': 'Show password'
+    })
+%}
+
+{% block main %}
+
+    <h1>FSDR - Sign in</h1>
+
+    {% if messages_dict %}
+        {% include 'partials/messages.html' with context %}
+    {% endif %}
+
+    {% if 'user' in field_messages_dict %}
+        {% call
+            onsPanel({
+                'type': 'error'
+            })
+        %}
+        {{
+            onsList({
+                'id': 'incor_signin',
+                'classes': 'list--bare list--errors u-mb-s',
+                'itemsList': [
+                    {
+                        'text': 'Enter a valid user name and/or password'
+                    }
+                ]
+            })
+        }}
+        {{ user_input }}
+        {{ password_input }}
+        {% endcall %}
+    {% elif 'signin_first' in field_messages_dict %}
+        {% call
+        onsPanel({
+            'type': 'error'
+        })
+        %}
+        {{
+            onsList({
+                'id': 'incor_signin',
+                'classes': 'list--bare list--errors u-mb-s',
+                'itemsList': [
+                    {
+                        'text': 'Please sign in first before accessing website'
+                    }
+                ]
+            })
+        }}
+        {{ user_input }}
+        {{ password_input }}
+        {% endcall %}
+    {% else %}
+        {{ user_input }}
+        {{ password_input }}
+    {% endif %}
+
+    {{ onsButton({
+        'text': 'Sign In',
+        'classes': 'u-mb-xl',
+        'name': 'action[save_continue]'
+    }) }}
+{% endblock %}

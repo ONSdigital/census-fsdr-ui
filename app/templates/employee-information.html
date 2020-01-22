@@ -1,0 +1,292 @@
+{% extends 'base.html' %}
+<link rel="stylesheet" type="text/css" href="fsdr.css">
+
+{% from "components/content-pagination/_macro.njk" import onsContentPagination %}
+{% from "components/table/_macro.njk" import onsTable %}
+
+{% set page_title_value = page_title %}
+
+{% block main %}
+
+    <h1>{{ page_title_value }}</h1>
+
+    {% if messages_dict %}
+        {% include 'partials/messages.html' with context %}
+    {% endif %}
+
+    {% if 'no_employee_data' in field_messages_dict %}
+        {% call
+            onsPanel({
+                'type': 'error'
+            }) %}
+            {{ onsList({
+                'id': 'incor_signin',
+                'classes': 'list--bare list--errors u-mb-s',
+                'itemsList': [
+                    {
+                        'text': 'No employee data found'
+                    }
+                ]
+            }) }}
+            {{ user_input }}
+            {{ password_input }}
+        {% endcall %}
+    {% else %}
+        <div class="grid-container">
+            <div class="emp-details">
+                <table class="tab-emp-details">
+{#                    <caption class="table__caption">Details for Field Worker</caption>#}
+                    <tr>
+                        <th align="left">
+                            {% if employee_record.firstName and employee_record.surname %}
+                                Name
+                            {% else %}
+                                -
+                            {% endif %}
+                        </th>
+                        {% if "firstName" in employee_record and "surname" in employee_record %}
+                            <td>{{ employee_record.firstName }} {{ employee_record.surname }}</td>
+                        {% else %}
+                           <td>-</td>
+                        {% endif %}
+                    </tr>
+                    <tr>
+                        <th align="left">
+                            {% if "preferredName" in employee_record %}
+                                Preferred Name
+                            {% else %}
+                                -
+                            {% endif %}
+                        </th>
+                        {% if employee_record.preferredName %}
+                            <td>{{ employee_record.preferredName }}</td>
+                        {% else %}
+                           <td>-</td>
+                        {% endif %}
+                    </tr>
+                    <tr>
+                        <th align="left">
+                            {% if "onsId" in employee_record %}
+                                ONS Email Address
+                            {% else %}
+                                -
+                            {% endif %}
+                        </th>
+                        {% if employee_record.onsId %}
+                            <td>{{ employee_record.onsId }}</td>
+                        {% else %}
+                           <td>-</td>
+                        {% endif %}
+                    </tr>
+                    <tr>
+                        <th align="left">
+                            {% if "fieldDevicePhoneNumber" in employee_device %}
+                                ONS Mobile Number
+                            {% else %}
+                                -
+                            {% endif %}
+                        </th>
+                        {% if employee_device.fieldDevicePhoneNumber %}
+                            <td>{{ employee_device.fieldDevicePhoneNumber }}</td>
+                        {% else %}
+                           <td>-</td>
+                        {% endif %}
+                    </tr>
+                </table>
+            </div>
+            <div class="emp-job-role">
+                 <table class="tab-emp-details">
+{#                    <caption class="table__caption">Details for Field Worker</caption>#}
+                    <tr>
+                        <th align="left">
+                            {% if employee_record.firstName and employee_record.surname %}
+                                Name
+                            {% else %}
+                                -
+                            {% endif %}
+                        </th>
+                        {% if "firstName" in employee_record and "surname" in employee_record %}
+                            <td>{{ employee_record.firstName }} {{ employee_record.surname }}</td>
+                        {% else %}
+                           <td>-</td>
+                        {% endif %}
+                    </tr>
+                    <tr>
+                        <th align="left">
+                            {% if "preferredName" in employee_record %}
+                                Preferred Name
+                            {% else %}
+                                -
+                            {% endif %}
+                        </th>
+                        {% if employee_record.preferredName %}
+                            <td>{{ employee_record.preferredName }}</td>
+                        {% else %}
+                           <td>-</td>
+                        {% endif %}
+                    </tr>
+                    <tr>
+                        <th align="left">
+                            {% if "onsId" in employee_record %}
+                                ONS Email Address
+                            {% else %}
+                                -
+                            {% endif %}
+                        </th>
+                        {% if employee_record.onsId %}
+                            <td>{{ employee_record.onsId }}</td>
+                        {% else %}
+                           <td>-</td>
+                        {% endif %}
+                    </tr>
+                    <tr>
+                        <th align="left">
+                            {% if "fieldDevicePhoneNumber" in employee_device %}
+                                ONS Mobile Number
+                            {% else %}
+                                -
+                            {% endif %}
+                        </th>
+                        {% if employee_device.fieldDevicePhoneNumber %}
+                            <td>{{ employee_device.fieldDevicePhoneNumber }}</td>
+                        {% else %}
+                           <td>-</td>
+                        {% endif %}
+                    </tr>
+                </table>
+            </div>
+        </div>
+{#         <div class="grid">#}
+{#                <div class="grid__col col-6@m@xl ">#}
+{#                    <div class="pl-grid-col">#}
+{#                        <table class="table">#}
+{#                            <caption class="table__caption">Details for Field Worker</caption>#}
+{#                            <tr>#}
+{#                                <th align="left">#}
+{#                                    {% if employee_record.firstName and employee_record.surname %}#}
+{#                                        Name#}
+{#                                    {% else %}#}
+{#                                        -#}
+{#                                    {% endif %}#}
+{#                                </th>#}
+{#                                {% if "firstName" in employee_record and "surname" in employee_record %}#}
+{#                                    <td>{{ employee_record.firstName }} {{ employee_record.surname }}</td>#}
+{#                                {% else %}#}
+{#                                   <td>-</td>#}
+{#                                {% endif %}#}
+{#                            </tr>#}
+{#                            <tr>#}
+{#                                <th align="left">#}
+{#                                    {% if "preferredName" in employee_record %}#}
+{#                                        Preferred Name#}
+{#                                    {% else %}#}
+{#                                        -#}
+{#                                    {% endif %}#}
+{#                                </th>#}
+{#                                {% if employee_record.preferredName %}#}
+{#                                    <td>{{ employee_record.preferredName }}</td>#}
+{#                                {% else %}#}
+{#                                   <td>-</td>#}
+{#                                {% endif %}#}
+{#                            </tr>#}
+{#                            <tr>#}
+{#                                <th align="left">#}
+{#                                    {% if "onsId" in employee_record %}#}
+{#                                        ONS Email Address#}
+{#                                    {% else %}#}
+{#                                        -#}
+{#                                    {% endif %}#}
+{#                                </th>#}
+{#                                {% if employee_record.onsId %}#}
+{#                                    <td>{{ employee_record.onsId }}</td>#}
+{#                                {% else %}#}
+{#                                   <td>-</td>#}
+{#                                {% endif %}#}
+{#                            </tr>#}
+{#                            <tr>#}
+{#                                <th align="left">#}
+{#                                    {% if "fieldDevicePhoneNumber" in employee_device %}#}
+{#                                        ONS Mobile Number#}
+{#                                    {% else %}#}
+{#                                        -#}
+{#                                    {% endif %}#}
+{#                                </th>#}
+{#                                {% if employee_device.fieldDevicePhoneNumber %}#}
+{#                                    <td>{{ employee_device.fieldDevicePhoneNumber }}</td>#}
+{#                                {% else %}#}
+{#                                   <td>-</td>#}
+{#                                {% endif %}#}
+{#                            </tr>#}
+{#                        </table>#}
+{#                    </div>#}
+{#                </div>#}
+{#                <div class="grid__col col-6@m@xl ">#}
+{#                    <div class="pl-grid-col">#}
+{#                        <table class="table">#}
+{#                            <caption class="table__caption">Details for Field Worker</caption>#}
+{#                            <tr>#}
+{#                                <th align="left">#}
+{#                                    {% if employee_record.firstName and employee_record.surname %}#}
+{#                                        Name#}
+{#                                    {% else %}#}
+{#                                        -#}
+{#                                    {% endif %}#}
+{#                                </th>#}
+{#                                {% if "firstName" in employee_record and "surname" in employee_record %}#}
+{#                                    <td>{{ employee_record.firstName }} {{ employee_record.surname }}</td>#}
+{#                                {% else %}#}
+{#                                   <td>-</td>#}
+{#                                {% endif %}#}
+{#                            </tr>#}
+{#                            <tr>#}
+{#                                <th align="left">#}
+{#                                    {% if "preferredName" in employee_record %}#}
+{#                                        Preferred Name#}
+{#                                    {% else %}#}
+{#                                        -#}
+{#                                    {% endif %}#}
+{#                                </th>#}
+{#                                {% if employee_record.preferredName %}#}
+{#                                    <td>{{ employee_record.preferredName }}</td>#}
+{#                                {% else %}#}
+{#                                   <td>-</td>#}
+{#                                {% endif %}#}
+{#                            </tr>#}
+{#                            <tr>#}
+{#                                <th align="left">#}
+{#                                    {% if "onsId" in employee_record %}#}
+{#                                        ONS Email Address#}
+{#                                    {% else %}#}
+{#                                        -#}
+{#                                    {% endif %}#}
+{#                                </th>#}
+{#                                {% if employee_record.onsId %}#}
+{#                                    <td>{{ employee_record.onsId }}</td>#}
+{#                                {% else %}#}
+{#                                   <td>-</td>#}
+{#                                {% endif %}#}
+{#                            </tr>#}
+{#                            <tr>#}
+{#                                <th align="left">#}
+{#                                    {% if "fieldDevicePhoneNumber" in employee_device %}#}
+{#                                        ONS Mobile Number#}
+{#                                    {% else %}#}
+{#                                        -#}
+{#                                    {% endif %}#}
+{#                                </th>#}
+{#                                {% if employee_device.fieldDevicePhoneNumber %}#}
+{#                                    <td>{{ employee_device.fieldDevicePhoneNumber }}</td>#}
+{#                                {% else %}#}
+{#                                   <td>-</td>#}
+{#                                {% endif %}#}
+{#                            </tr>#}
+{#                        </table>#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+{#        <table class="table">#}
+{#            <caption class="table__caption">Details for Field</caption>#}
+{#        </table>#}
+    {% endif %}
+
+{% endblock %}

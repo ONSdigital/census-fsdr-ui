@@ -1,0 +1,81 @@
+{% macro onsPagination(params) %}
+  {% set currentPageIndex = [0] %}
+  {% for page in params.pages %}
+      {% if page.current %}
+          {% set currentPageIndex = currentPageIndex.append(currentPageIndex.pop() + loop.index) %}
+      {% endif %}
+  {% endfor %}
+
+  {% set current_page = currentPageIndex.pop() %}
+  {% set totalPages = params.pages | length %}
+  {% set position = "Page " + current_page|string + " of " + totalPages|string %}
+
+  {# Calculate middle pages #}
+  {% set middlePageCount = 5 %}
+  {% set middlePagesEachSide = (middlePageCount - 1) / 2 %}
+
+  {% if (current_page|int - middlePagesEachSide|int) <= 1 %}
+      {% set middlePagesStart = 1 %}
+      {% set middlePagesEnd = middlePageCount - 1 %}
+  {% elif (current_page + middlePagesEachSide) >= totalPages %}
+      {% set middlePagesStart = totalPages - middlePageCount + 1 %}
+      {% set middlePagesEnd = totalPages %}
+  {% else %}
+      {% set middlePagesStart = current_page - middlePagesEachSide %}
+      {% set middlePagesEnd = current_page + middlePagesEachSide %}
+  {% endif %}
+
+
+  <nav class="pagination {{ params.classes }}{% if params.hideRangeIndicator %} pagination--no-indicator{% endif %}" arial-label="Pagination ({{ position }})">
+      <div class="pagination__position">{{ position }}</div>
+      <ul class="pagination__items">
+          {% if current_page != 1 %}
+              <li class="pagination__item pagination__item--previous">
+                  <a href="{{ params.pages[current_page|int - 2].url }}" class="pagination__link" rel="prev" aria-label="Go to the previous page (Page {{ current_page|int - 1 }})">{{ params.previous }}</a>
+              </li>
+          {% endif %}
+          {% if current_page|int > 3 %}
+              {% set first = params.pages | first %}
+              <li class="pagination__item">
+                  <a href="{{ first.url }}" class="pagination__link" aria-label="Go to the first page (Page 1)">1</a>
+              </li>
+          {% endif %}
+          {% if current_page|int > 4 %}
+              <li class="pagination__item pageination__item--gap">&hellip;</li>
+          {% endif %}
+          {% for page in params.pages %}
+              {% if loop.index >= middlePagesStart and loop.index <= middlePagesEnd %}
+                  <li class="pagination__item{% if page.current %} pagination__item--current{% endif %}">
+                      <a href="{{ page.url }}" class="pagination__link"
+                          {%- if page.current -%}
+                              aria-current="true" aria-label="Current page ({{ position }})"
+                          {%- else -%}
+                              aria-label="Go to page {{ loop.index }}"
+                          {%- endif -%}
+                          {%- if loop.index == current_page|int - 1 -%}
+                              rel="prev"
+                          {%- endif -%}
+                          {%- if loop.index == current_page|int + 1 -%}
+                              rel="next"
+                          {%- endif -%}
+                      >{{ loop.index }}</a>
+                  </li>
+              {% endif %}
+          {% endfor %}
+          {% if current_page|int < totalPages|int - 3 %}
+              <li class="pagination__item pageination__item--gap">&hellip;</li>
+          {% endif %}
+          {% if current_page|int < totalPages|int - 2 %}
+              {% set lastPage = params.pages | last %}
+              <li class="pagination__item">
+                  <a href="{{ lastPage.url }}" class="pagination__link" aria-label="Go to the last page (Page {{ totalPages }})">{{ totalPages }}</a>
+              </li>
+          {% endif %}
+          {% if totalPages|int > 1 and totalPages|int > current_page|int %}
+              <li class="pagination__item pagination__item--next">
+                  <a href="{{ params.pages[current_page|int].url }}" class="pagination__link" rel="next" aria-label="Go to the next page (Page {{ current_page|int }})">{{ params.next }}</a>
+              </li>
+          {% endif %}
+      </ul>
+  </nav>
+{% endmacro %}

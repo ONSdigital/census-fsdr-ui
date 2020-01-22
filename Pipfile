@@ -1,0 +1,41 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+aiohttp = "*"
+aiohttp-utils = "*"
+envparse = "*"
+"aiohttp-jinja2" = "*"
+structlog = "*"
+sdc-cryptography = "*"
+aiohttp-session = {extras = ["aioredis"],version = "*"}
+cchardet = "*"
+aiodns = "*"
+"iso8601" = "*"
+invoke = "*"
+aioredis = "*"
+python-json-logger = "*"
+babel = "*"
+requests = "*"
+# flash = "*"
+idna_ssl = "*"
+await = "*"
+flask = "*"
+jsonify = "*"
+
+[dev-packages]
+codecov = "*"
+coverage = "*"
+ipython = "*"
+"flake8" = "*"
+pytest-aiohttp = "*"
+pytest-cov = "*"
+aiohttp-devtools = "*"
+aioresponses = "*"
+requests = "*"
+retrying = "*"
+
+[requires]
+python_version = "3.6"
