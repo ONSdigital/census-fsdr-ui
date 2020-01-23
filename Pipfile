@@ -21,7 +21,6 @@ babel = "*"
 requests = "*"
 # flash = "*"
 idna_ssl = "*"
-await = "*"
 flask = "*"
 jsonify = "*"
 
@@ -38,4 +37,4 @@ requests = "*"
 retrying = "*"
 
 [requires]
-python_version = "3.6"
+python_version = "3.6.9"
