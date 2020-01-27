@@ -54,12 +54,9 @@ class BaseConfig:
 
     REDIS_PORT = env('REDIS_PORT', default='6379')
 
-    SESSION_AGE = env('SESSION_AGE', default='600')
+    SESSION_AGE = env('SESSION_AGE', default='6000')
 
     URL_PATH_PREFIX = env('URL_PATH_PREFIX', default='')
-
-    SESSION_AGE = env('SESSION_AGE', default='600')
-
 
 class ProductionConfig(BaseConfig):
     pass
@@ -86,8 +83,6 @@ class DevelopmentConfig:
     SESSION_AGE = env('SESSION_AGE', default='300')  # 5 minutes
 
     URL_PATH_PREFIX = env('URL_PATH_PREFIX', default='')
-
-    SESSION_AGE = env('SESSION_AGE', default='300')  # 5 minutes
 
 
 class TestingConfig:

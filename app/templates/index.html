@@ -37,13 +37,13 @@
                     <div style="overflow-x: auto; width: 100%">
                         <br>
                         <h1>{{ page_title_value }}</h1>
-                        <form class="form-inline" id="user_filter" action="/indexsearch+0+default+default" method="post">
+                        <form class="form-inline" id="user_filter" action="/search+0+true+default+default" method="post">
                             <table>
                                 <label class="label" for="text">Filter on field workers</label>
                                 <tr>
                                     <th>
                                         <label class="label" for="select" style="text-align: left">Job Role ID</label>
-                                        <select id="user_select" name="select" class="input input--select ">
+                                        <select id="user_select" name="job_role_select" class="input input--select ">
                                           {% if previous_select %}
                                             {% set check_drop_value = previous_select %}
                                             <option value="{{ previous_select }}" selected="selected">
@@ -93,7 +93,7 @@
                                 'text': 'Clear',
                                 'classes': 'btn--small',
                                 'submitType': "loader",
-                                'url': '/index+0'
+                                'url': '/index+1'
                             }) }}
                         </form>
 
@@ -181,70 +181,3 @@
         {% endif %}
     {% endblock %}
 {% endblock %}
-
-{#    {% if page_number == '1' %}#}
-{#        {% set previous_url = index_url + '1' %}#}
-{#    {% else %}#}
-{#        {% set previous_url = index_url + (page_number|int - 1)|string %}#}
-{#    {% endif %}#}
-{##}
-{#    {% set last_page = last_page_number|int %}#}
-{##}
-{#    {% if page_number|int >= last_page %}#}
-{#        {% set next_url = index_url + last_page|string %}#}
-{#    {% else %}#}
-{#        {% set next_url = index_url + (page_number|int + 1)|string %}#}
-{#    {% endif %}#}
-{##}
-{#    <nav class="pagination  pagination--no-indicator" style="text-align: center">#}
-{#        <div class="pagination__position"></div>#}
-{#        <ul class="pagination__items">#}
-{#            <li class="pagination__item pagination__item--previous">#}
-{#                <a href="{{ index_url + '1' }}" class="pagination__link" rel="prev"#}
-{#                   aria-label="Go to page 1">First</a>#}
-{#            </li>#}
-{#            <li class="pagination__item pagination__item--previous">#}
-{#                <a href="{{ previous_url }}" class="pagination__link" rel="prev"#}
-{#                   aria-label="Go to the previous page ({{ (page_number|int - 1 )|string }})">Previous</a>#}
-{#            </li>#}
-{#            {% set last_pages_index = last_page / page_number|int %}#}
-{#            {% set testNumber = last_pages_index %}#}
-{#            {% if last_pages_index > 5 %}#}
-{#                {% set page_range = 5 %}#}
-{#            {% else %}#}
-{#                {% set page_range = last_pages_index %}#}
-{#            {% endif %}#}
-{#            {% if page_number|int  >= page_range|int%}#}
-{#                {% for x in range(page_range|int) %}#}
-{#                    <li class="pagination__item">#}
-{#                        {% set set_page = (page_number - 1) %}#}
-{#                        <a href="{{ index_url + set_page|string }}" class="pagination__link" aria-label="Go to page {{ set_page }}" rel="prev">{{ set_page }}</a>#}
-{#                    </li>#}
-{#                {% endfor %}#}
-{#                <li class="pagination__item pagination__item--next">#}
-{#                    <a href="{{ index_url + page_number|string }}" class="pagination__link" rel="next" aria-label="Go to the next page ({{ page_number|string }}) ">{{ page_number|string }}</a>#}
-{#                </li>#}
-{#            {% else %}#}
-{#                <li class="pagination__item pagination__item--next">#}
-{#                    <a href="{{ index_url + page_number|string }}" class="pagination__link" rel="next" aria-label="Go to the next page ({{ page_number|string }}) ">{{ page_number|string }}</a>#}
-{#                </li>#}
-{#                {% for x in range(page_range|int) %}#}
-{#                    <li class="pagination__item">#}
-{#                        {% set set_page = (x + 1) + page_number|int %}#}
-{#                        <a href="{{ index_url + set_page|string }}" class="pagination__link" aria-label="Go to page {{ set_page }}" rel="prev">{{ set_page }}</a>#}
-{#                    </li>#}
-{#                {% endfor %}#}
-{#            {% endif %}#}
-{#            <li class="pagination__item pagination__item--next">#}
-{#                <a href="{{ next_url }}" class="pagination__link" rel="next" aria-label="Go to the next page ({{ (page_number|int + 1)|string }}) ">Next</a>#}
-{#            </li>#}
-{#            <li class="pagination__item pagination__item--next">#}
-{#                <a href="{{ index_url + (last_page)|string }}" class="pagination__link" rel="next" aria-label="Go to the last page ({{ last_page|string }})">Last</a>#}
-{#            </li>#}
-{#        </ul>#}
-{#    </nav>#}
-{##}
-{#    {{ last_page }}<br>#}
-{##}
-{#    {{  last_pages_index }}#}
-{#    {{ page_range|int }}#}

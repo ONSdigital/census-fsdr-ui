@@ -3,18 +3,51 @@
 
 {% if page_title %}
     {% set page_title_value = page_title %}
+    {% set pageConfig = {
+        'title': page_title_value,
+        'theme': 'census',
+        'header': {
+            'logoHref': 'https://www.ons.gov.uk/',
+            'titleLogo': '/img/census-logo-en.svg',
+            'titleLogoAlt': 'Census 2021',
+            'titleLogoHref': domain_url + '/signin',
+            'navigation': 'Test1'
+        },
+        "navigation": {
+            "id": "main-nav",
+            "ariaLabel": "Main menu",
+            "ariraListLabel": "Navigation menu",
+            "currentPath": "/get-started",
+            "itemsList": [
+                {
+                    "title": "Home",
+                    "url": "/index+1"
+                },
+                {
+                    "title": "Search",
+                    "url": "/search"
+                },
+                {
+                    "title": "Log out",
+                    "url": "/logout"
+                }
+            ]
+        }
+    } %}
 {% else %}
     {% set page_title_value = 'FSDR' %}
+        {% set pageConfig = {
+        'title': page_title_value,
+        'theme': 'census',
+        'header': {
+            'logoHref': 'https://www.ons.gov.uk/',
+            'titleLogo': '/img/census-logo-en.svg',
+            'titleLogoAlt': 'Census 2021',
+            'titleLogoHref': domain_url + '/signin',
+            'navigation': 'Test1'
+        },
+    } %}
 {% endif %}
 
-{% set pageConfig = {
-    'title': page_title_value,
-    'theme': 'census',
-    'header': {
-        'logoHref': 'https://www.ons.gov.uk/',
-        'titleLogo': '/img/census-logo-en.svg',
-        'titleLogoAlt': 'Census 2021',
-        'titleLogoHref': domain_url + '/start/'
-    },
 
-} %}
+

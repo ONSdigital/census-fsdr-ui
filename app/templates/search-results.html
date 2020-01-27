@@ -1,10 +1,11 @@
 {% extends 'base.html' %}
 
+{% from 'components/input/_macro.njk' import onsInput %}
 {% from "components/content-pagination/_macro.njk" import onsContentPagination %}
 {% from "custom/pagination/_macro.njk" import onsPagination %}
 {% from "components/table/_macro.njk" import onsTable %}
 {% set page_title_value = page_title %}
-{% set index_url = "/indexsearch+" %}
+{% set index_url = "/search+" %}
 
 {% block pageContent %}
     {% block main %}
@@ -36,65 +37,74 @@
                         <div style="overflow-x: auto; width: 100%">
                             <br>
                             <h1>{{ page_title_value }}</h1>
-                            <form class="form-inline" id="user_filter" action="/indexsearch+{{ page_number }}+default+default" method="post">
-                                <table>
-                                    <label class="label" for="text">Filter on field workers</label>
-                                    <tr>
-                                        <th>
-                                            <label class="label" for="select" style="text-align: left">Job Role ID</label>
-                                            <select id="user_select" name="select" class="input input--select ">
-                                              {% if previous_select %}
-                                                {% set check_drop_value = previous_select %}
-                                                <option value="{{ previous_select }}" selected="selected">
-                                                    {{ previous_select }}
-                                                </option>
-                                                <option value="" disabled>
-                                                    Select an option
-                                                </option>
-                                                {% for job_role in distinct_job_roles %}
-                                                    {% if job_role == previous_select %}
-                                                    {% else %}
+                            {% if called_from_index == 'false' %}
+                                {{ onsButton({
+                                    'text': 'Back to Search',
+                                    'classes': 'btn--small',
+                                    'submitType': "loader",
+                                    'url': '/search'
+                                }) }}
+                            {% else %}
+                                <form class="form-inline" id="user_filter" action="/search+{{ page_number }}+true+default+default" method="post">
+                                    <table>
+                                        <label class="label" for="text">Filter on field workers</label>
+                                        <tr>
+                                            <th>
+                                                <label class="label" for="select" style="text-align: left">Job Role ID</label>
+                                                <select id="user_select" name="job_role_select" class="input input--select ">
+                                                  {% if previous_jobrole_selected %}
+                                                    {% set check_drop_value = previous_select %}
+                                                    <option value="{{ previous_jobrole_selected }}" selected="selected">
+                                                        {{ previous_jobrole_selected }}
+                                                    </option>
+                                                    <option value="" disabled>
+                                                        Select an option
+                                                    </option>
+                                                    {% for job_role in distinct_job_roles %}
+                                                        {% if job_role == previous_jobrole_selected %}
+                                                        {% else %}
+                                                          <option value="{{ job_role }}" name="{{ job_role }}">
+                                                            {{ job_role }}
+                                                          </option>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                  {% else %}
+                                                    <option value="" selected disabled>
+                                                        Select an option
+                                                    </option>
+                                                    {% for job_role in distinct_job_roles %}
                                                       <option value="{{ job_role }}" name="{{ job_role }}">
-                                                        {{ job_role }}
+                                                      {{ job_role }}
                                                       </option>
-                                                    {% endif %}
-                                                {% endfor %}
-                                              {% else %}
-                                                <option value="" selected disabled>
-                                                    Select an option
-                                                </option>
-                                                {% for job_role in distinct_job_roles %}
-                                                  <option value="{{ job_role }}" name="{{ job_role }}">
-                                                  {{ job_role }}
-                                                  </option>
-                                                {% endfor %}
-                                              {% endif %}
-                                              </select>
-                                        </th>
-                                        <td>
-                                            <label class="label" for="text" style="text-align: left">Worker Surname</label>
-                                            <input id="user_select" name="filter_surname" class="input input--text input-type__input" value="{{ previous_surname_filter}}">
-                                        </td>
-                                        <td>
-                                            <label class="label" for="text" style="text-align: left">Area</label>
-                                            <input id="user_select" name="filter_area" class="input input--text input-type__input" value="{{ previous_area }}">
-                                        </td>
-                                    </tr>
-                                </table>
-                                <br>
-                                {{ onsButton({
-                                    'text': 'Filter',
-                                    'classes': 'btn--small',
-                                    'submitType': "loader",
-                                    'name': 'action[submit]'
-                                }) }}
-                                {{ onsButton({
-                                    'text': 'Clear',
-                                    'classes': 'btn--small',
-                                    'submitType': "loader",
-                                    'url': '/index+0'
-                                }) }}
-                            </form>
+                                                    {% endfor %}
+                                                  {% endif %}
+                                                  </select>
+                                            </th>
+                                            <td>
+                                                <label class="label" for="text" style="text-align: left">Worker Surname</label>
+                                                <input id="user_select" name="filter_surname" class="input input--text input-type__input" value="{{ previous_surname_filter}}">
+                                            </td>
+                                            <td>
+                                                <label class="label" for="text" style="text-align: left">Area</label>
+                                                <input id="user_select" name="filter_area" class="input input--text input-type__input" value="{{ previous_area }}">
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <br>
+                                    {{ onsButton({
+                                        'text': 'Filter',
+                                        'classes': 'btn--small',
+                                        'submitType': "loader",
+                                        'name': 'action[submit]'
+                                    }) }}
+                                    {{ onsButton({
+                                        'text': 'Clear',
+                                        'classes': 'btn--small',
+                                        'submitType': "loader",
+                                        'url': '/index+1'
+                                    }) }}
+                                </form>
+                            {% endif %}
 
                             <table class="table  table--sortable  table-scrollable--on" data-aria-sort="Sort by"
                                    data-aria-asc="ascending" data-aria-desc="descending">
@@ -152,10 +162,10 @@
                             {% for x in range(last_page|int) %}
                                 {% if x == page_number %}
                                     {% set set_url = index_url + x|string %}
-                                    {% set pagination_array = pagination_array.append({"url": set_url + '+' + previous_selection + '+' + last_page|string , "current": True}) %}
+                                    {% set pagination_array = pagination_array.append({"url": set_url + '+' + called_from_index + "+"  + previous_selection + '+' + last_page|string , "current": True}) %}
                                 {% else %}
                                     {% set set_url = index_url + x|string %}
-                                    {% set pagination_array = pagination_array.append({"url": set_url + '+' + previous_selection + '+' + last_page|string, "current": False}) %}
+                                    {% set pagination_array = pagination_array.append({"url": set_url + '+' + called_from_index + "+" + previous_selection + '+' + last_page|string, "current": False}) %}
                                 {% endif %}
                                 {% set count = count.append(count.pop() + 1) %}
                             {% endfor %}
