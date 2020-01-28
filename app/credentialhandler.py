@@ -2,11 +2,11 @@ import aiohttp_jinja2
 
 import requests
 
-from requests.auth import HTTPBasicAuth
 from aiohttp.client_exceptions import (ClientResponseError)
 
 from aiohttp.web import HTTPFound, RouteTableDef
 from aiohttp_session import get_session
+from requests.auth import HTTPBasicAuth
 from structlog import get_logger
 
 from . import (INVALID_SIGNIN_MSG)
@@ -15,6 +15,7 @@ from .security import remember
 
 logger = get_logger('fsdr-ui')
 credential_routes = RouteTableDef()
+
 
 def setup_request(request):
     request['client_ip'] = request.headers.get('X-Forwarded-For', None)
@@ -40,9 +41,10 @@ async def store_successful_signin(auth_json, request):
 def get_fsdr_signin(request, user, password):
     fsdr_service_pass = request.app['FSDR_SERVICE_URL_PASS']
     fsdr_service_user = request.app['FSDR_SERVICE_URL_USER']
-    return requests.get(f'http://localhost:5678/userAuth/checkCredentials?password={password}&username={user}',
-                        verify=False,
-                        auth=HTTPBasicAuth(fsdr_service_user, fsdr_service_pass))
+    credentials = {'password': password, 'username': user}
+    return requests.post(f'http://localhost:5678/userAuth/checkCredentialstest', data=credentials,
+                         verify=False,
+                         auth=HTTPBasicAuth(fsdr_service_user, fsdr_service_pass))
 
 
 @credential_routes.view('/signin')
