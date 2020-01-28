@@ -42,7 +42,7 @@ def get_fsdr_signin(request, user, password):
     fsdr_service_pass = request.app['FSDR_SERVICE_URL_PASS']
     fsdr_service_user = request.app['FSDR_SERVICE_URL_USER']
     credentials = {'password': password, 'username': user}
-    return requests.post(f'http://localhost:5678/userAuth/checkCredentialstest', data=credentials,
+    return requests.post(f'http://localhost:5678/userAuth/checkCredentials', data=credentials,
                          verify=False,
                          auth=HTTPBasicAuth(fsdr_service_user, fsdr_service_pass))
 
