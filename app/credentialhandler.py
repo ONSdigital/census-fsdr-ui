@@ -74,18 +74,19 @@ class Login:
                 return aiohttp_jinja2.render_template(
                     'signin.html',
                     request, {
-                        'display_region': 'en',
                         'page_title': 'Sign in'
                     },
                     status=401)
             elif get_user_info == 403:
                 return aiohttp_jinja2.render_template(
-                    'error403.html'
-                )
+                    'error403.html',
+                    request, {
+                    })
             elif get_user_info == 404:
                 return aiohttp_jinja2.render_template(
-                    'error404.html'
-                )
+                    'error404.html',
+                    request, {
+                    })
 
         except ClientResponseError as ex:
             if ex.status == 401:
@@ -93,29 +94,34 @@ class Login:
                             client_ip=request['client_ip'])
                 flash(request, INVALID_SIGNIN_MSG)
                 return aiohttp_jinja2.render_template(
-                    'signin.html'
-                )
+                    'signin.html',
+                    request, {
+                    })
             else:
                 return aiohttp_jinja2.render_template(
-                    'signin.html'
-                )
+                    'signin.html',
+                    request, {
+                    })
 
-        except ConnectionError:
+        except requests.exceptions.ConnectionError:
+            logger.warn('Service is down',
+                        client_ip=request['client_ip'])
             return aiohttp_jinja2.render_template(
-                'error500.html'
-            )
+                'error500.html',
+                request, {
+                    'page_title': 'FSDR - Server down'
+                })
 
 
 @credential_routes.view('/logout')
 class Logout:
-    @aiohttp_jinja2.template('signin.html')
+    @aiohttp_jinja2.template('logout.html')
     async def get(self, request):
         session = await get_session(request)
         session.pop('logged_in', None)
-        raise HTTPFound(request.app.router['Login:get'].url_for())
-        # return aiohttp_jinja2.render_template((
-        #     request.app.router['Login:get'].url_for()),
-        #     request, {
-        #         'signed_out': 'true'
-        #     },
-        # status=200)
+        return aiohttp_jinja2.render_template(
+            'logout.html',
+            request, {
+                'page_title': 'FSDR - Signed out'
+            },
+            status=200)
