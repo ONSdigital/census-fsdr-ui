@@ -5,8 +5,6 @@ services:
   census-fsdr-ui:
     container_name: census-fsdr-ui
     build: ./
-    depends_on:
-      - redis
     environment:
       - REDIS_SERVER=redis
       - REDIS_PORT=6379

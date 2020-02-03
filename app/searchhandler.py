@@ -210,6 +210,13 @@ class SecondaryPage:
                     raise ex
 
             if retrieve_employee_info.status_code == 200:
+                employees_present = retrieve_employee_info.content
+                if employees_present == b'[]':
+                    logger.warn('Attempted to login with invalid user name and/or password',
+                                client_ip=request['client_ip'])
+                    no_employee_data = 'true'
+                else:
+                    no_employee_data = 'false'
                 employee_records_json = retrieve_employee_info.json()
                 job_role_json = get_job_roles.json()
                 return {
@@ -227,6 +234,7 @@ class SecondaryPage:
                     'previous_badge': previous_badge,
                     'previous_jobid': previous_jobid,
                     'previous_surname_filter': previous_surname,
+                    'no_employee_data': no_employee_data
                 }
             else:
                 logger.warn('Attempted to login with invalid user name and/or password',
@@ -235,7 +243,6 @@ class SecondaryPage:
                 return aiohttp_jinja2.render_template(
                     'signin.html',
                     request, {
-                        'display_region': 'en',
                         'page_title': 'Sign in'
                     },
                     status=401)
