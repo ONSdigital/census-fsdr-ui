@@ -19,25 +19,24 @@
         'id': 'user',
         'name': 'user',
         'label': {
-            'text': 'Username and Password',
-            'description': 'Please enter your FSDR username and password'
+            'text': 'Username',
         }
-    })
-%}
-
-{% set password_input = onsPassword({
-        'id': 'password',
-        'name': 'password',
-        'label': {
-            'text': ''
-        },
-        'showPasswordText': 'Show password'
     })
 %}
 
 {% block main %}
 
     <h1>FSDR - Sign in</h1>
+
+    {% if signed_out%}
+        {% call onsPanel({
+                "title": "Signed out",
+                "titleTag": "h1",
+                "type": "success"
+        }) %}
+        <p>You have successfully signed out</p>
+        {% endcall %}
+    {% endif %}
 
     {% if messages_dict %}
         {% include 'partials/messages.html' with context %}
@@ -61,7 +60,22 @@
             })
         }}
         {{ user_input }}
-        {{ password_input }}
+        <p class="field js-password">
+          <label class="label" for="password">Password</label>
+          <input type="password" id="password"  name="password" class="input input--text input-type__input js-typeahead-input u-mt-xs js-password-input" />
+          <span class="checkbox js-password-toggle-wrap checkbox--toggle u-d-no">
+                <input
+                    type="checkbox"
+                    id="password-toggle"
+                    class="checkbox__input js-checkbox js-password-toggle"
+                    value=""
+                    name="show-password"
+                >
+                <label id="password-toggle-label" class="checkbox__label " for="password-toggle">
+                    Show password
+                </label>
+            </span>
+        </p>
         {% endcall %}
     {% elif 'signin_first' in field_messages_dict %}
         {% call
@@ -81,11 +95,43 @@
             })
         }}
         {{ user_input }}
-        {{ password_input }}
+        <p class="field js-password">
+          <label class="label" for="password">Password</label>
+          <input type="password" id="password"  name="password" class="input input--text input-type__input js-typeahead-input u-mt-xs js-password-input" />
+          <span class="checkbox js-password-toggle-wrap checkbox--toggle u-d-no">
+                <input
+                    type="checkbox"
+                    id="password-toggle"
+                    class="checkbox__input js-checkbox js-password-toggle"
+                    value=""
+                    name="show-password"
+                >
+                <label id="password-toggle-label" class="checkbox__label " for="password-toggle">
+                    Show password
+                </label>
+            </span>
+        </p>
         {% endcall %}
     {% else %}
         {{ user_input }}
-        {{ password_input }}
+        <p class="field js-password">
+          <label class="label" for="password">Password</label>
+          <input type="password" id="password"  name="password" class="input input--text input-type__input js-typeahead-input u-mt-xs js-password-input" />
+          <br>
+          <span class="checkbox js-password-toggle-wrap checkbox--toggle u-d-no">
+                <input
+                    type="checkbox"
+                    id="password-toggle"
+                    class="checkbox__input js-checkbox js-password-toggle"
+                    value=""
+                    name="show-password"
+                >
+                <label id="password-toggle-label" class="checkbox__label " for="password-toggle">
+                    Show password
+                </label>
+                <br>
+            </span>
+        </p>
     {% endif %}
 
     {{ onsButton({
