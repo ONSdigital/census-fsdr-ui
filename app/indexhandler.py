@@ -49,9 +49,11 @@ class MainPage:
             try:
                 employee_count = get_employee_count(request)
                 max_page = int(employee_count.text) / 50
-                if page_number >= max_page:
+                if page_number >= max_page > 1:
                     page_number = int(math.floor(max_page))
                 else:
+                    if max_page < 1:
+                        max_page = 1
                     if page_number > 1:
                         low_value = 50 * page_number
                         high_value = low_value + 50
