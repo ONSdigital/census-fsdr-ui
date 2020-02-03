@@ -28,16 +28,6 @@
 
     <h1>FSDR - Sign in</h1>
 
-    {% if signed_out%}
-        {% call onsPanel({
-                "title": "Signed out",
-                "titleTag": "h1",
-                "type": "success"
-        }) %}
-        <p>You have successfully signed out</p>
-        {% endcall %}
-    {% endif %}
-
     {% if messages_dict %}
         {% include 'partials/messages.html' with context %}
     {% endif %}
@@ -45,6 +35,7 @@
     {% if 'user' in field_messages_dict %}
         {% call
             onsPanel({
+                'title': 'Please re-enter credentials',
                 'type': 'error'
             })
         %}

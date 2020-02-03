@@ -1,8 +1,10 @@
 {% extends 'base.html' %}
 
-{% from 'components/input/_macro.njk' import onsInput %}
 {% from "components/content-pagination/_macro.njk" import onsContentPagination %}
+{% from 'components/lists/_macro.njk' import onsList %}
+{% from 'components/input/_macro.njk' import onsInput %}
 {% from "custom/pagination/_macro.njk" import onsPagination %}
+{% from 'components/panel/_macro.njk' import onsPanel %}
 {% from "components/table/_macro.njk" import onsTable %}
 {% set page_title_value = page_title %}
 {% set index_url = "/search+" %}

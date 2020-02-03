@@ -1,13 +1,15 @@
+{% extends 'base.html' %}
+
 {% block main %}
 
     <h1 data-ga="error" data-ga-category="error" data-ga-action="error-message-shown" data-ga-label="system-error">
-        {{"500"}}
+        {{page_title}}
     </h1>
 
     <p>We are experiencing some technical problems</p>
 
     {% autoescape false %}
-        <p>Service is fully down. Please try again later</p>
+        <p>Service is down. Please try again later</p>
     {% endautoescape %}
 
 {% endblock main %}
