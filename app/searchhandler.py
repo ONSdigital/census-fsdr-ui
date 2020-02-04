@@ -212,8 +212,6 @@ class SecondaryPage:
             if retrieve_employee_info.status_code == 200:
                 employees_present = retrieve_employee_info.content
                 if employees_present == b'[]':
-                    logger.warn('Attempted to login with invalid user name and/or password',
-                                client_ip=request['client_ip'])
                     no_employee_data = 'true'
                 else:
                     no_employee_data = 'false'
