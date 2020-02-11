@@ -23,6 +23,7 @@ requests = "*"
 idna_ssl = "*"
 flask = "*"
 jsonify = "*"
+python-dateutil = "*"
 
 [dev-packages]
 codecov = "*"

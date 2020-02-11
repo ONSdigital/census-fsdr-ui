@@ -21,7 +21,8 @@ def create_error_middleware(overrides):
             return await override(request) if override else resp
         except web.HTTPNotFound:
 
-            index_resource = request.app.router['IndexEN:get']
+            index_resource = request.app.router['Login:get']
+
 
             if request.path + '/' == index_resource.canonical:
                 logger.debug('redirecting to index', path=request.path)
@@ -83,9 +84,10 @@ async def payload_error(request, url: str):
 
 
 async def key_error(request):
-    logger.error('required value missing')
+    logger.error('required value missing. Path: ' + request.path)
+    # logger.error('Path: ' + request.path)
     attributes = check_display_region(request)
-    return jinja.render_template('error.html', request, attributes, status=500)
+    return jinja.render_template('error500.html', request, attributes, status=500)
 
 
 async def response_error(request):
@@ -95,7 +97,8 @@ async def response_error(request):
 
 async def not_found_error(request):
     attributes = check_display_region(request)
-    return jinja.render_template('404.html', request, attributes, status=404)
+    return jinja.render_template('error404.html', request,
+                                 {'request_path': request.path}, status=404)
 
 
 async def forbidden(request):
@@ -120,13 +123,10 @@ def check_display_region(request):
         return request.path.startswith(path_prefix + suffix)
 
     domain_url_en = request.app['DOMAIN_URL_PROTOCOL'] + request.app[
-        'DOMAIN_URL_EN']
-    domain_url_cy = request.app['DOMAIN_URL_PROTOCOL'] + request.app[
-        'DOMAIN_URL_CY']
+        'DOMAIN_URL']
 
     base_attributes = {
         'domain_url_en': domain_url_en,
-        'domain_url_cy': domain_url_cy,
         'page_title': 'Error'
     }
 

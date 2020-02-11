@@ -3,6 +3,7 @@
 
 {% if page_title %}
     {% set page_title_value = page_title %}
+    {% set css_directory = "static/css/fsdr.css" %}
     {% set pageConfig = {
         'title': page_title_value,
         'theme': 'census',
@@ -11,7 +12,7 @@
             'titleLogo': '/img/census-logo-en.svg',
             'titleLogoAlt': 'Census 2021',
             'titleLogoHref': domain_url + '/signin',
-            'navigation': 'Test1'
+            'navigation': 'Test1',
         },
         "navigation": {
             "id": "main-nav",

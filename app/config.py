@@ -1,5 +1,3 @@
-from functools import partial
-
 from envparse import Env, ConfigurationError
 
 
@@ -35,20 +33,19 @@ class Config(dict):
 
 class BaseConfig:
     env = Env()
-    env = partial(env, default=None)
 
-    HOST = env('HOST')
-    PORT = env('PORT')
-    LOG_LEVEL = env('LOG_LEVEL')
-    EXT_LOG_LEVEL = env('EXT_LOG_LEVEL')
+    PORT = env.int('PORT', default='9293')
+
+    LOG_LEVEL = env('LOG_LEVEL', default='INFO')
+    EXT_LOG_LEVEL = env('EXT_LOG_LEVEL', default='WARN')
 
     DOMAIN_URL_PROTOCOL = env('DOMAIN_URL_PROTOCOL', default='https://')
-    DOMAIN_URL = env('DOMAIN_URL')
+    DOMAIN_URL = env('DOMAIN_URL', default='localhost:6263')
 
-    JSON_SECRET_KEYS = env('JSON_SECRET_KEYS')
-
-    FSDR_SERVICE_URL = env('FSDR_SERVICE_URL')
-    FSDR_SERVICE_URL_AUTH = (env('FSDR_SERVICE_USERNAME'), env('FSDR_SERVICE_PASSWORD'))
+    FSDR_SERVICE_URL = env('FSDR_SERVICE_URL', default='localhost:5678')
+    FSDR_SERVICE_USER = env('FSDR_SERVICE_USER', default='user')
+    FSDR_SERVICE_PASS = env('FSDR_SERVICE_PASS', default='pass')
+    FSDR_SERVICE_URL_AUTH = (env('FSDR_SERVICE_USER', default='user'), env('FSDR_SERVICE_PASS', default='pass'))
 
     REDIS_SERVER = env('REDIS_SERVER', default='localhost')
 
@@ -73,8 +70,8 @@ class DevelopmentConfig:
     DOMAIN_URL = env.str('DOMAIN_URL', default='localhost:9293')
 
     FSDR_SERVICE_URL = env.str('FSDR_SERVICE_URL', default='http://localhost:5678')
-    FSDR_SERVICE_URL_PASS = env.str('FSDR_SERVICE_PASSWORD', default='pass')
-    FSDR_SERVICE_URL_USER = env.str('FSDR_SERVICE_USERNAME', default='user')
+    FSDR_SERVICE_PASS = env.str('FSDR_SERVICE_PASSWORD', default='pass')
+    FSDR_SERVICE_USER = env.str('FSDR_SERVICE_USERNAME', default='user')
 
     REDIS_SERVER = env('REDIS_SERVER', default='localhost')
 
@@ -94,7 +91,7 @@ class TestingConfig:
     DOMAIN_URL_PROTOCOL = 'http://'
     DOMAIN_URL = 'localhost:9293'
 
-    FSDR_SERVICE_URL = 'http://localhost:9293'
+    FSDR_SERVICE_URL = 'http://localhost:5678'
 
     FSDR_SERVICE_URL = ('user', 'pass')
 

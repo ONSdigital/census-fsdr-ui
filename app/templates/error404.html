@@ -3,13 +3,14 @@
 {% block main %}
 
     <h1 data-ga="error" data-ga-category="error" data-ga-action="error-message-shown" data-ga-label="system-error">
-        {{"404" }}
+        "404"
     </h1>
 
     <p>Cannot find </p>
 
     {% autoescape false %}
-        <p>{{ 'Please try again later, or %(open)scontact us%(close)s if the problem continues.' }}</p>
+        <p>Please try again later, or %(open)scontact us%(close)s if the problem continues.</p>
+        <p>Error URL: {{ request_path }}</p>
     {% endautoescape %}
 
 {% endblock main %}

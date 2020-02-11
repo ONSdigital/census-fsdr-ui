@@ -39,12 +39,24 @@ async def store_successful_signin(auth_json, request):
 
 
 def get_fsdr_signin(request, user, password):
-    fsdr_service_pass = request.app['FSDR_SERVICE_URL_PASS']
-    fsdr_service_user = request.app['FSDR_SERVICE_URL_USER']
+    fsdr_service_pass = request.app['FSDR_SERVICE_PASS']
+    fsdr_service_user = request.app['FSDR_SERVICE_USER']
+    fsdr_service_url = request.app['FSDR_SERVICE_URL']
     credentials = {'password': password, 'username': user}
-    return requests.post(f'http://localhost:5678/userAuth/checkCredentials', data=credentials,
+    return requests.post(fsdr_service_url + f'/userAuth/checkCredentials', data=credentials,
                          verify=False,
                          auth=HTTPBasicAuth(fsdr_service_user, fsdr_service_pass))
+
+
+@credential_routes.view('/')
+class Redirect:
+    async def get(self, request):
+        return aiohttp_jinja2.render_template(
+            'signin.html',
+            request, {
+                'page_title': 'Sign in'
+            }
+        )
 
 
 @credential_routes.view('/signin')
