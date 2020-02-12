@@ -1,14 +1,10 @@
 import aiohttp_jinja2
-
 import requests
-
-from datetime import datetime
-
-from requests.auth import HTTPBasicAuth
 from aiohttp.client_exceptions import (ClientResponseError)
-
 from aiohttp.web import HTTPFound, RouteTableDef
 from aiohttp_session import get_session
+from dateutil import parser
+from requests.auth import HTTPBasicAuth
 from structlog import get_logger
 
 from . import (INVALID_SIGNIN_MSG, NEED_TO_SIGN_IN_MSG, NO_EMPLOYEE_DATA)
@@ -67,8 +63,7 @@ class EmployeeInformation():
                 device_info = []
 
                 if employee_info['ingestDate']:
-                    employee_info['ingestDate'] = self.format_to_uk_dates(
-                            employee_info['ingestDate'][:-9])
+                    employee_info['ingestDate'] = self.format_to_uk_dates(employee_info['ingestDate'])
 
                 if get_employee_history.status_code == 200:
                     if get_employee_history.content != b'':
@@ -77,7 +72,7 @@ class EmployeeInformation():
                         for employee_history_dict in employee_history_json:
                             if employee_history_dict['ingestDate']:
                                 employee_history_dict['ingestDate'] = self.format_to_uk_dates(
-                                    employee_history_dict['ingestDate'][:10])
+                                    employee_history_dict['ingestDate'])
                                 employee_history.append(employee_history_dict.copy())
 
                 if get_employee_device.status_code == 200:
@@ -92,6 +87,11 @@ class EmployeeInformation():
                 for job_role in job_role_info:
                     if job_role['active']:
                         relevant_job_role = job_role
+                    else:
+                        job_role['contractStartDate'] = self.format_to_uk_dates(
+                            job_role['contractStartDate'])
+                        job_role['operationalEndDate'] = self.format_to_uk_dates(
+                            job_role['operationalEndDate'])
 
                 if relevant_job_role == '':
                     for job_role in job_role_info:
@@ -141,27 +141,30 @@ class EmployeeInformation():
                 request.app.router['Login:get'].url_for())
 
     def get_employee_information(self, request, user_role, employee_id):
-        fsdr_service_pass = request.app['FSDR_SERVICE_URL_PASS']
-        fsdr_service_user = request.app['FSDR_SERVICE_URL_USER']
-        return requests.get(f'http://localhost:5678/fieldforce/byId/{user_role}/{employee_id}',
+        fsdr_service_pass = request.app['FSDR_SERVICE_PASS']
+        fsdr_service_user = request.app['FSDR_SERVICE_USER']
+        fsdr_service_url = request.app['FSDR_SERVICE_URL']
+        return requests.get(fsdr_service_url + f'/fieldforce/byId/{user_role}/{employee_id}',
                             verify=False,
                             auth=HTTPBasicAuth(fsdr_service_user, fsdr_service_pass))
 
     def get_employee_history_information(self, request, user_role, employee_id):
-        fsdr_service_pass = request.app['FSDR_SERVICE_URL_PASS']
-        fsdr_service_user = request.app['FSDR_SERVICE_URL_USER']
-        return requests.get(f'http://localhost:5678/fieldforce/historyById/{user_role}/{employee_id}',
+        fsdr_service_pass = request.app['FSDR_SERVICE_PASS']
+        fsdr_service_user = request.app['FSDR_SERVICE_USER']
+        fsdr_service_url = request.app['FSDR_SERVICE_URL']
+        return requests.get(fsdr_service_url + f'/fieldforce/historyById/{user_role}/{employee_id}',
                             verify=False,
                             auth=HTTPBasicAuth(fsdr_service_user, fsdr_service_pass))
 
     def get_employee_device(self, request, employee_id):
-        fsdr_service_pass = request.app['FSDR_SERVICE_URL_PASS']
-        fsdr_service_user = request.app['FSDR_SERVICE_URL_USER']
-        return requests.get(f'http://localhost:5678/devices/byEmployee/getPhoneDevice/{employee_id}',
+        fsdr_service_pass = request.app['FSDR_SERVICE_PASS']
+        fsdr_service_user = request.app['FSDR_SERVICE_USER']
+        fsdr_service_url = request.app['FSDR_SERVICE_URL']
+        return requests.get(fsdr_service_url + f'/devices/byEmployee/getPhoneDevice/{employee_id}',
                             verify=False,
                             auth=HTTPBasicAuth(fsdr_service_user, fsdr_service_pass))
 
     def format_to_uk_dates(self, date):
-        date_to_format = datetime.strptime(date, '%Y-%m-%d')
+        date_to_format = parser.parse(date).date()
         formatted_date = date_to_format.strftime('%d/%m/%Y')
         return formatted_date

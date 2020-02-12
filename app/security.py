@@ -10,15 +10,55 @@ from . import VALIDATION_FAILURE_MSG
 from .flash import flash
 from structlog import get_logger
 
+CSP = {
+    'default-src': [
+        "'self'",
+        'https://cdn.ons.gov.uk',
+    ],
+    'font-src': [
+        "'self'",
+        'data:',
+        'https://cdn.ons.gov.uk',
+    ],
+    'script-src': [
+        "'self'",
+        "'unsafe-inline'",
+        'https://cdn.ons.gov.uk',
+    ],
+    'connect-src': [
+        "'self'",
+        'https://cdn.ons.gov.uk',
+    ],
+    'img-src': [
+        "'self'",
+        'data:',
+        'https://cdn.ons.gov.uk',
+    ],
+}
+
+FEATURE_POLICY = [
+    "layout-animations 'none';",
+    "unoptimized-images 'none';",
+    "oversized-images 'none';",
+    "sync-script 'none';",
+    "sync-xhr 'none';",
+    "unsized-media 'none';",
+]
+
+def _format_csp(csp_dict):
+    return ' '.join([
+        f"{section} {' '.join(content)};"
+        for section, content in csp_dict.items()
+    ])
+
 DEFAULT_RESPONSE_HEADERS = {
-    'Strict-Transport-Security': ['max-age=31536000', 'includeSubDomains'],
-    'Content-Security-Policy': {
-        'default-src': ["'self'", 'https://cdn.ons.gov.uk'],
-        'font-src': ["'self'", 'data:', 'https://cdn.ons.gov.uk']
-    },
-    'X-XSS-Protection': '1',
+    'Strict-Transport-Security': 'max-age=31536000 includeSubDomains',
+    'Content-Security-Policy': _format_csp(CSP),
+    'X-XSS-Protection': '1; mode=block',
+    'X-Frame-Options': 'DENY',
     'X-Content-Type-Options': 'nosniff',
-    'Referrer-Policy': 'same-origin',
+    'Referrer-Policy': 'strict-origin-when-cross-origin',
+    'Feature-Policy': ' '.join(FEATURE_POLICY),
 }
 
 ADD_NONCE_SECTIONS = [
@@ -46,16 +86,10 @@ async def nonce_middleware(request, handler):
 
 async def on_prepare(request: web.BaseRequest, response: web.StreamResponse):
     for header, value in DEFAULT_RESPONSE_HEADERS.items():
-        if isinstance(value, dict):
-            value = '; '.join([
-                f"{section} {' '.join(content)} 'nonce-{request.csp_nonce}'"
-                if section in ADD_NONCE_SECTIONS else
-                f"{section} {' '.join(content)}"
-                for section, content in value.items()
-            ])
-        elif not isinstance(value, str):
-            value = ' '.join(value)
-        response.headers[header] = value
+        if isinstance(value, str):
+            response.headers[header] = value
+        else:
+            logger.error('Invalid type for header content')
 
 
 async def check_permission(request):

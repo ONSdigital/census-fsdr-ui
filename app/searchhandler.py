@@ -16,7 +16,6 @@ from flask import Flask
 
 logger = get_logger('fsdr-ui')
 search_routes = RouteTableDef()
-employee_count_base_url = "http://localhost:5678/fieldforce/employeeCount/"
 app = Flask(__name__)
 
 

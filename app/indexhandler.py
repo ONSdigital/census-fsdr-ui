@@ -1,9 +1,13 @@
+import os
+import sys
+
 import aiohttp_jinja2
 import math
 
 from aiohttp.client_exceptions import (ClientResponseError)
 from aiohttp.web import HTTPFound, RouteTableDef
 from aiohttp_session import get_session
+
 from app.searchfunctions import get_distinct_job_role, get_employee_records, \
     get_employee_count
 from structlog import get_logger
@@ -13,7 +17,10 @@ from .flash import flash
 
 logger = get_logger('fsdr-ui')
 index_route = RouteTableDef()
-employee_count_base_url = "http://localhost:5678/fieldforce/employeeCount/"
+
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
+STATIC_DIR = os.path.abspath('../static')
 
 
 def setup_request(request):
@@ -35,8 +42,14 @@ class MainPage:
         page_number = int(request.match_info['page'])
 
         try:
-            user_json = session['user_details']
-            user_role = user_json['userRole']
+            if session:
+                user_json = session['user_details']
+                user_role = user_json['userRole']
+            else:
+                flash(request, NEED_TO_SIGN_IN_MSG)
+                raise HTTPFound(
+                    request.app.router['Login:get'].url_for())
+
         except ClientResponseError:
             flash(request, NEED_TO_SIGN_IN_MSG)
             raise HTTPFound(
