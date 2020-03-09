@@ -22,6 +22,9 @@
                         <div class="grid-container">
                             <div class="grid">
                                 <div class="grid__col col-12@m">
+                                {% if table.records == [] %}
+                                    <b> No records </b>
+                                {% else %}
                                     <div class="table-scrollable__content">
                                         {{  onsTable({
                                               "sortable": true,
@@ -35,6 +38,7 @@
                                           })
                                         }}
                                     </div>
+                                {% endif %}
                                 </div>
                             </div>
                         </div>

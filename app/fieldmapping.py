@@ -141,6 +141,9 @@ def map_employee_name(employee_table):
     else:
         employee_name = employee_table['firstName'] + ' ' + employee_table['surname']
 
+    if employee_name == '- -':
+        employee_name = '-'
+
     return employee_name
 
 
@@ -155,15 +158,21 @@ def map_emergency_contact_name(employee_table):
         emergency_contact_1 = employee_table['emergencyContactFirstName'] + ' ' + \
                               employee_table['emergencyContactSurname']
 
+    if emergency_contact_1 == '- -':
+        emergency_contact_1 = '-'
+
     if employee_table['emergencyContactFirstName2'] is None and employee_table['emergencyContactSurname2'] is None:
         emergency_contact_2 = '-'
     elif employee_table['emergencyContactFirstName2'] is None:
         emergency_contact_2 = employee_table['emergencyContactSurname2']
-    elif employee_table['emergencyContactSurname2'] is None:
+    elif employee_table['emergencyContactSurname2']is None:
         emergency_contact_2 = employee_table['emergencyContactFirstName2']
     else:
         emergency_contact_2 = employee_table['emergencyContactFirstName2'] + ' ' + \
                               employee_table['emergencyContactSurname2']
+
+    if emergency_contact_2 == '- -':
+        emergency_contact_2 = '-'
 
     emergency_contacts = [emergency_contact_1, emergency_contact_2]
 
