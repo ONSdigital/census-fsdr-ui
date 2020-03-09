@@ -2,28 +2,17 @@ import aiohttp_jinja2
 from aiohttp.client_exceptions import (ClientResponseError)
 from aiohttp.web import HTTPFound, RouteTableDef
 from aiohttp_session import get_session
-from dateutil import parser
 from structlog import get_logger
 
 from app.employeeinformationfunctions import get_employee_tabs, get_employee_information, \
     get_employee_history_information, get_employee_device
 from app.historytab import history_tab
+from app.tabutils import format_to_uk_dates
 from . import (NEED_TO_SIGN_IN_MSG, NO_EMPLOYEE_DATA)
 from .flash import flash
 
-logger = get_logger('fsdr-ui')
 employee_routes = RouteTableDef()
-
-
-def setup_request(request):
-    request['client_ip'] = request.headers.get('X-Forwarded-For', None)
-
-
-def log_entry(request, endpoint):
-    method = request.method
-    logger.info(f"received {method} on endpoint '{endpoint}'",
-                method=request.method,
-                path=request.path)
+logger = get_logger('fsdr-ui')
 
 
 @employee_routes.view("/employeeinformation/{employee_id}")
@@ -66,7 +55,7 @@ class EmployeeInformation():
                 employee_status = employee_info['status']
 
                 if employee_info['ingestDate']:
-                    employee_info['ingestDate'] = self.format_to_uk_dates(employee_info['ingestDate'])
+                    employee_info['ingestDate'] = format_to_uk_dates(employee_info['ingestDate'])
 
                 if get_employee_history.status_code == 200:
                     if get_employee_history.content != b'':
@@ -74,7 +63,7 @@ class EmployeeInformation():
 
                         for employee_history_dict in employee_history_json:
                             if employee_history_dict['ingestDate']:
-                                employee_history_dict['ingestDate'] = self.format_to_uk_dates(
+                                employee_history_dict['ingestDate'] = format_to_uk_dates(
                                     employee_history_dict['ingestDate'])
                                 employee_history.append(employee_history_dict.copy())
 
@@ -91,9 +80,9 @@ class EmployeeInformation():
                     if job_role['active']:
                         relevant_job_role = job_role
                     else:
-                        job_role['contractStartDate'] = self.format_to_uk_dates(
+                        job_role['contractStartDate'] = format_to_uk_dates(
                             job_role['contractStartDate'])
-                        job_role['operationalEndDate'] = self.format_to_uk_dates(
+                        job_role['operationalEndDate'] = format_to_uk_dates(
                             job_role['operationalEndDate'])
 
                 if relevant_job_role == '':
@@ -103,13 +92,13 @@ class EmployeeInformation():
 
                 if relevant_job_role:
                     if relevant_job_role['contractStartDate']:
-                        relevant_job_role['contractStartDate'] = self.format_to_uk_dates(
+                        relevant_job_role['contractStartDate'] = format_to_uk_dates(
                             relevant_job_role['contractStartDate'])
                     if relevant_job_role['contractEndDate']:
-                        relevant_job_role['contractEndDate'] = self.format_to_uk_dates(
+                        relevant_job_role['contractEndDate'] = format_to_uk_dates(
                             relevant_job_role['contractEndDate'])
                     if relevant_job_role['operationalEndDate']:
-                        relevant_job_role['operationalEndDate'] = self.format_to_uk_dates(
+                        relevant_job_role['operationalEndDate'] = format_to_uk_dates(
                             relevant_job_role['operationalEndDate'])
 
                     employee_tabs = get_employee_tabs(user_role, employee_info, relevant_job_role, job_role, device_info)
@@ -190,8 +179,3 @@ class EmployeeInformation():
             flash(request, NEED_TO_SIGN_IN_MSG)
             raise HTTPFound(
                 request.app.router['Login:get'].url_for())
-
-    def format_to_uk_dates(self, date):
-        date_to_format = parser.parse(date).date()
-        formatted_date = date_to_format.strftime('%d/%m/%Y')
-        return formatted_date

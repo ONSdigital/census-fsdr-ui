@@ -21,17 +21,6 @@ search_routes = RouteTableDef()
 app = Flask(__name__)
 
 
-def setup_request(request):
-    request['client_ip'] = request.headers.get('X-Forwarded-For', None)
-
-
-def log_entry(request, endpoint):
-    method = request.method
-    logger.info(f"received {method} on endpoint '{endpoint}'",
-                method=request.method,
-                path=request.path)
-
-
 @search_routes.view('/search')
 class Search:
     @aiohttp_jinja2.template('search.html')
@@ -40,8 +29,6 @@ class Search:
 
         if session.get('logged_in'):
             await clear_stored_search_criteria(session)
-            setup_request(request)
-            log_entry(request, 'start')
             user_json = session['user_details']
             user_role = user_json['userRole']
 
@@ -106,8 +93,6 @@ class SecondaryPage:
                 })
 
         if session.get('logged_in'):
-            setup_request(request)
-            log_entry(request, 'start')
 
             if 'page' in request.query:
                 page_number = int(request.query['page'])
