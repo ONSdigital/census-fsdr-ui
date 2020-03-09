@@ -1,13 +1,22 @@
 {% extends 'base.html' %}
 
 {% from "custom/pagination/_macro.njk" import onsPagination %}
-{% from "custom/table/_macro.njk" import onsTable %}
+{% from "components/table/_macro.njk" import onsTable %}
+{% from "custom/fsdrsearch/_macro.njk" import fsdrSearch %}
 
 {% set page_title_value = page_title %}
-{% set index_url = "/index+" %}
+{% set index_url = "/index" %}
 
-{% block pageContent %}
-    {% block main %}
+{% set form =  {
+    'method': 'POST',
+    'attributes': {
+            'action': url('SecondaryPage:post')
+    }
+} %}
+{%  block page %}
+    {% block preMain %}
+    {% endblock %}
+    {% block pageContent %}
         {% if messages_dict %}
             {% include 'partials/messages.html' with context %}
         {% endif %}
@@ -17,138 +26,50 @@
                 <div class="table-scrollable__content">
                     <br>
                     <h1>{{ page_title_value }}</h1>
-                    <form class="form-inline" id="user_filter" action="/search+0+true+default+default" method="post">
-                        <table>
-                            <label class="label" for="text">Filter on field workers</label>
-                            <tr>
-                                <th>
-                                    <label class="label u-ta-left" for="select">Job Role</label>
-                                    <select id="user_select" name="job_role_select" class="input input--select ">
-                                      {% if previous_select %}
-                                        {% set check_drop_value = previous_select %}
-                                        <option value="{{ previous_select }}" selected="selected">
-                                            {{ previous_select }}
-                                        </option>
-                                        <option value="" disabled>
-                                            Select an option
-                                        </option>
-                                        {% for job_role in distinct_job_roles %}
-                                            {% if job_role == selected_job_role %}
-                                            {% else %}
-                                              <option value="{{ job_role }}" name="{{ job_role }}">
-                                                {{ job_role }}
-                                              </option>
-                                            {% endif %}
-                                        {% endfor %}
-                                      {% else %}
-                                        <option value="" selected disabled>
-                                            Select an option
-                                        </option>
-                                        {% for job_role in distinct_job_roles %}
-                                          <option value="{{ job_role }}" name="{{ job_role }}">
-                                          {{ job_role }}
-                                          </option>
-                                        {% endfor %}
-                                      {% endif %}
-                                      </select>
-                                </th>
-                                <td>
-                                    <label class="label u-ta-left" for="text">Worker Surname</label>
-                                    <input id="user_select" name="filter_surname" class="input input--text input-type__input">
-                                </td>
-                                <td>
-                                    <label class="label u-ta-left" for="text">Area</label>
-                                    <input id="user_select" name="filter_area" class="input input--text input-type__input">
-                                </td>
-                            </tr>
-                        </table>
-                        <br>
-                        {{ onsButton({
-                            'text': 'Filter',
-                            'classes': 'btn--small',
-                            'submitType': "loader",
-                            'name': 'action[submit]'
-                        }) }}
-                        {{ onsButton({
-                            'text': 'Clear',
-                            'classes': 'btn--small',
-                            'submitType': "loader",
-                            'url': '/index+1'
-                        }) }}
-                    </form>
-
-                    <table class="table table--sortable  table-scrollable--on " data-aria-sort="Sort by"
-                           data-aria-asc="ascending" data-aria-desc="descending">
-                        <caption class="table__caption"><br>Field Workers</caption>
-                        <thead class="table__head">
-                        <tr class="table__row">
-                            <th scope="col" class="table__header " aria-sort="none">ID</th>
-                            <th scope="col" class="table__header " aria-sort="none">Name</th>
-                            <th scope="col" class="table__header " aria-sort="none">Job Role ID</th>
-                            <th scope="col" class="table__header " aria-sort="none">Job Role</th>
-                            <th scope="col" class="table__header " aria-sort="none">Area</th>
-                            <th scope="col" class="table__header " aria-sort="none">Asgmt. Status</th>
-                            <th scope="col" class="table__header ">Emp. Details</th>
-                        </tr>
-                        </thead>
-                        <tbody class="table__body">
-                        {% for employee in employee_records %}
-                            <tr class="table__row u-ta-center">
-                                <td class="table__cell ">
-                                    {{ employee.unique_employee_id }}
-                                </td>
-                                <td class="table__cell ">
-                                    {{ employee.first_name + " " + employee.surname }}
-                                </td>
-                                <td class="table__cell ">
-                                    {{ employee.unique_role_id }}
-                                </td>
-                                <td class="table__cell ">
-                                    {{ employee.job_role }}
-                                </td>
-                                <td class="table__cell ">
-                                    {{ employee.area_location }}
-                                </td>
-                                <td class="table__cell ">
-                                    {{ employee.assignment_status }}
-                                </td>
-                                <td class="table__cell ">
-                                    <a href="/employeeinformation/{{ employee.unique_employee_id }}">View Field Worker</a>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-
-                    {% if last_page_number|float %}
-                        {%  set last_page = (last_page_number|int + 1) %}
-                    {% else %}
-                        {% set last_page = last_page_number|int %}
-                    {% endif %}
-
-                    {% set count = [0] %}
-
-                    {% set pagination_array = [] %}
-
-                    {% for x in range(last_page|int) %}
-                        {% if x == 0 %}
-                            {% set pagination_array = [{"url": "/index+1", "current": false}] %}
-                        {% elif x == page_number %}
-                            {% set set_url = index_url + x|string %}
-                            {% set pagination_array = pagination_array.append({"url": set_url, "current": true}) %}
-                        {% else %}
-                            {% set set_url = index_url + x|string %}
-                            {% set pagination_array = pagination_array.append({"url": set_url, "current": false}) %}
-                        {% endif %}
-                        {% set count = count.append(count.pop() + 1) %}
-                    {% endfor %}
+                    {{ fsdrSearch({
+                            'distinct_job_roles': distinct_job_roles,
+                            'previous_select': previous_select,
+                            'previous_jobrole_selected': previous_jobrole_selected,
+                            'previous_area': previous_area,
+                            'previous_surname_filter': previous_surname_filter,
+                            'index_search': True
+                    }) }}
+                    {{ onsButton({
+                        'text': 'Filter',
+                        'classes': 'btn--small',
+                        'submitType': "loader",
+                        'name': 'action[submit]'
+                    }) }}
+                    {{ onsButton({
+                        'text': 'Clear',
+                        'type': 'reset',
+                        'classes': 'btn--small',
+                        'submitType': "loader",
+                        'url': url('MainPage:get')
+                    }) }}
+                    <br>
+                    <br>
+                    {{  onsTable({
+                        "sortable": true,
+                        "table_class": " table--sortable",
+                        "caption": "Field Workers",
+                        "sort_by": "Sort by",
+                        "aria_asc": "ascending",
+                        "aria_desc": "descending",
+                        "ths": table_headers,
+                        "trs": employee_records
+                        })
+                    }}
 
                     <div class="page_numbering" align="center">
                         {{
                             onsPagination({
+                                "called_from_index": True,
                                 "previous": "Previous",
                                 "next": "Next",
-                                "pages": pagination_array
+                                "last_page_number": last_page_number,
+                                "page_number": page_number,
+                                "link_url": index_url
                             })
                         }}
                     </div>

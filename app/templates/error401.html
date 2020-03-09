@@ -1,16 +1,14 @@
-{% extends 'base.html' %}
 
 {% block main %}
 
     <h1 data-ga="error" data-ga-category="error" data-ga-action="error-message-shown" data-ga-label="system-error">
-        "404"
+        401
     </h1>
 
-    <p>Cannot find </p>
+    <p>We are experiencing some technical problems.</p>
 
     {% autoescape false %}
-        <p>Please try again later.</p>
-        <p>Error URL: {{ request_path }}</p>
+        <p>Please try again later</p>
     {% endautoescape %}
 
 {% endblock main %}

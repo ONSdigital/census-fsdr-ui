@@ -1,0 +1,47 @@
+{% macro onsTabs(params) %}
+{% from "components/table/_macro.njk" import onsTable %}
+
+    <section role="region" class="tabs">
+        <h2 class="tabs__title">{{params.title}}</h2>
+        <ul class="tabs__list">
+            {% for tab in params.tabs %}
+                <li id="tabId{{loop.index}}Item" class="tab__list-item"><a href="#tabId{{loop.index}}" class="tab" data=ga="click" data-ga-category="tabs" data-ga-action="Show: {{tab.title}}" data-ga-label="Show: {{tab.title}}">{{tab.title}}</a></li>
+            {% endfor %}
+        </ul>
+        {% for tab in params.tabs %}
+            <section id="tabId{{loop.index}}" class="tabs__panel">
+            {{tab.content | safe}}
+            {% for table in tab.table %}
+                <details id="accordion-{{ loop.index }}" class="details js-collapsible details--accordion" open data-btn-close="Hide" data-group="accordion">
+                    <summary class="details__summary js-collapsible-summary">
+                      <div class="details__heading">
+                        <span class="details__title u-fs-r--b">{{ table.section_header }}</span>
+                      </div>
+                    </summary>
+                    <div id="accordion-{{ loop.index }}-content" class="details__content js-collapsible-content">
+                        <div class="grid-container">
+                            <div class="grid">
+                                <div class="grid__col col-12@m">
+                                    <div class="table-scrollable__content">
+                                        {{  onsTable({
+                                              "sortable": true,
+                                              "table_class": " table--sortable",
+                                              "caption": tab.caption,
+                                              "sort_by": "Sort by",
+                                              "aria_asc": "ascending",
+                                              "aria_desc": "descending",
+                                              "ths": table.headers,
+                                              "trs": table.records
+                                          })
+                                        }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </details>
+             {% endfor %}
+            </section>
+        {% endfor %}
+    </section>
+{% endmacro %}

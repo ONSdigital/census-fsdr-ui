@@ -3,7 +3,7 @@ FROM python:3.6
 WORKDIR /app
 COPY . /app
 EXPOSE 9293
-#RUN ./scripts/load_templates.sh
+RUN ./scripts/load_templates.sh
 RUN pip3 install Flask-Cors requests
 RUN pip3 install pipenv && pipenv install --deploy --system
 RUN groupadd -g 984 fsdrui && \

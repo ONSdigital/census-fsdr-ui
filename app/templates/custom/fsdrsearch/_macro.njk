@@ -1,0 +1,165 @@
+{% macro fsdrSearch(params) %}
+    {% from 'components/radios/_macro.njk' import onsRadios %}
+    {% from "components/select/_macro.njk" import onsSelect %}
+    {% from 'components/question/_macro.njk' import onsQuestion %}
+    {% from "components/input/_macro.njk" import onsInput %}
+    {% from 'components/button/_macro.njk' import onsButton %}
+    {% from 'components/panel/_macro.njk' import onsPanel %}
+    {% from "components/label/_macro.njk" import onsLabel %}
+
+    {% set action = params.action %}
+
+    {% set search_button_text = 'Search' %}
+
+    {% set previousSurnameFilter = '' %}
+    {% set previousArea = '' %}
+    {% if params.previous_surname_filter %}
+        {% set previousSurnameFilter = params.previous_surname_filter %}
+    {% endif %}
+    {% if params.previous_area %}
+        {% set previousArea = params.previous_area %}
+    {% endif %}
+
+    {% if params.index_search == True %}
+        <table>
+            <tr>
+                {{
+                    onsLabel({
+                        "id": 'label',
+                        "for": "some-input",
+                        "text": 'Filter field workers'
+                    })
+                }}
+                <td>
+                    {{
+                        onsSelect({
+                            "id": "select",
+                            'name': "job_role_select",
+                            "label": {
+                                "text": "Job Role"
+                            },
+                            "options": params.distinct_job_roles
+                        })
+                    }}
+                </td>
+                <td>
+                    {{
+                        onsInput({
+                            "id": "text",
+                            'name': "filter_surname",
+                            "label": {
+                                "text": "Worker Surname"
+                            },
+                            "value": params.previous_surname_filter
+                        })
+                    }}
+                </td>
+                <td>
+                    {{
+                        onsInput({
+                            "id": "text",
+                            'name': "filter_area",
+                            "label": {
+                                "text": "Area"
+                            },
+                            "value": params.previous_area
+                        })
+                    }}
+                </td>
+                {{
+                    onsInput({
+                        "type": "hidden",
+                        "classes": "u-d-no",
+                        "id": "adlocation",
+                        "name": "adlocation",
+                        "value": adlocation,
+                        "label": {
+                            "text": "Enter some text",
+                            "classes": "u-d-no"
+                        }
+                    })
+                }}
+            </tr>
+         <table>
+         {{
+            onsInput({
+                "type": "hidden",
+                "classes": "u-d-no",
+                "id": "indexsearch",
+                "name": "indexsearch",
+                "value": indexsearch,
+                "label": {
+                    "text": "Enter some text",
+                    "classes": "u-d-no"
+                }
+            })
+        }}
+    {% else %}
+        {{
+            onsInput({
+                "id": "text",
+                'name': "filter_firstname",
+                "label": {
+                    "text": "First Name"
+                }
+            })
+        }}
+        {{
+            onsInput({
+                "id": "text",
+                'name': "filter_surname",
+                "label": {
+                    "text": "Surname"
+                }
+            })
+        }}
+        {{
+            onsInput({
+                "id": "text",
+                'name': "filter_badge",
+                "label": {
+                    "text": "ID Badge Number"
+                }
+            })
+        }}
+        {{
+            onsInput({
+                "id": "text",
+                'name': "filter_area",
+                "label": {
+                    "text": "Area"
+                }
+            })
+        }}
+        {{
+            onsSelect({
+                "id": "select",
+                'name': "job_role_select",
+                "label": {
+                    "text": "Job Role"
+                },
+                "options": params.distinct_job_roles
+            })
+        }}
+        {{
+            onsInput({
+                "id": "text",
+                'name': "filter_jobid",
+                "label": {
+                    "text": "Role ID"
+                }
+            })
+        }}
+        {{
+            onsSelect({
+                "id": "select",
+                'name': "assignment_select",
+                "label": {
+                    "text": "Assignment Status"
+                },
+                "options": params.all_assignment_statuses
+            })
+        }}
+    {% endif %}
+    <br>
+{% endmacro %}

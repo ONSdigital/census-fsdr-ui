@@ -1,17 +1,28 @@
 {% extends 'base.html' %}
 
-{% from 'components/input/_macro.njk' import onsInput %}
-{% from 'components/lists/_macro.njk' import onsList %}
+{% from "custom/fsdrsearch/_macro.njk" import fsdrSearch %}
+{% from 'components/radios/_macro.njk' import onsRadios %}
+{% from "components/select/_macro.njk" import onsSelect %}
+{% from 'components/question/_macro.njk' import onsQuestion %}
+{% from "components/input/_macro.njk" import onsInput %}
+{% from 'components/button/_macro.njk' import onsButton %}
 {% from 'components/panel/_macro.njk' import onsPanel %}
-{% from "components/section-navigation/_macro.njk" import onsSectionNavigation %}
+
+
 
 {% set page_title_value = page_title %}
 {% set index_url = "/search" %}
 
+{% set form =  {
+    'method': 'POST',
+    'attributes': {
+        'action': url('SecondaryPage:post')
+    }
+} %}
+
 {% block pageContent %}
     {% block main %}
-
-        <div class="page__containter container">
+        <div class="page__container container">
             <div class="grid">
                 <div class="grid__col col-2@m"></div>
                 <div class="grid__col col-8@m">
@@ -27,71 +38,25 @@
                                 <p>Please include search criteria</p>
                                 {% endcall %}
                             {% endif %}
-                            <h2>Search for field workers</h2>
-                            <form class="form-inline" id="user_filter" action="/search+0+false+default+default" method="post">
-                                <legend class="fieldset__legend u-vh">Search for field workers</legend>
-                                <fieldset class="fieldset">
-                                    <p class="field">
-                                        <label class="label">First Name</label>
-                                        <input id="user_select" name="filter_firstname" class="input input--text input-type__input">
-                                    </p>
-                                    <p class="field">
-                                        <label class="label">Second Name</label>
-                                        <input id="user_select" name="filter_surname" class="input input--text input-type__input">
-                                    </p>
-                                    <p class="field">
-                                        <label class="label">ID Badge Number</label>
-                                        <input id="user_select" name="filter_badge" class="input input--text input-type__input">
-                                    </p>
-                                    <p class="field">
-                                        <label class="label">Area</label>
-                                        <input id="user_select" name="filter_area" class="input input--text input-type__input">
-                                    </p>
-                                    <p class="field">
-                                        <label class="label">Job Role</label>
-                                        <select id="user_select_job_role" name="job_role_select" class="input input--select ">
-                                            <option value="" selected disabled>
-                                                Select a job role
-                                            </option>
-                                            {% for job_role in distinct_job_roles %}
-                                              <option value="{{ job_role }}" name="{{ job_role }}">
-                                              {{ job_role }}
-                                              </option>
-                                            {% endfor %}
-                                        </select>
-                                    </p>
-                                    <p class="field">
-                                        <label class="label">Job ID</label>
-                                        <input id="user_select" name="filter_jobid" class="input input--text input-type__input">
-                                    </p>
-                                    <p class="field">
-                                        <label class="label">Assignment Status</label>
-                                        <select id="user_select_assignment" name="assignment_select" class="input input--select ">
-                                            <option value="" selected disabled>
-                                                Select an assignment status
-                                            </option>
-                                            {% for assignment in all_assignment_statuses %}
-                                              <option value="{{ assignment }}" name="{{ assignment }}">
-                                              {{ assignment }}
-                                              </option>
-                                            {% endfor %}
-                                        </select>
-                                    </p>
-                                    <br>
-                                    {{ onsButton({
-                                        'text': 'Search',
-                                        'classes': 'btn--small',
-                                        'submitType': "loader",
-                                        'name': 'action[submit]'
-                                    }) }}
-                                    {{ onsButton({
-                                        'text': 'Clear',
-                                        'classes': 'btn--small',
-                                        'submitType': "loader",
-                                        'url': '/search'
-                                    }) }}
-                                </fieldset>
-                            </form>
+                            {{ fsdrSearch({
+                                    'distinct_job_roles': distinct_job_roles,
+                                    'all_assignment_statuses': all_assignment_statuses,
+                                    'index_search': False
+
+                            }) }}
+
+                            {{ onsButton({
+                                'text': 'Submit',
+                                'classes': 'btn--small',
+                                'submitType': "loader",
+                                'name': 'action[submit]'
+                            }) }}
+                            {{ onsButton({
+                                'text': 'Clear',
+                                'classes': 'btn--small',
+                                'submitType': "loader",
+                                'url': '/search'
+                            }) }}
                         </div>
                     </main>
                 </div>

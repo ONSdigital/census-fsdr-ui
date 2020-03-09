@@ -1,45 +1,117 @@
+import math
+
+from yarl import URL
+
+from app.utils import FSDR_USER, FSDR_URL, FSDR_PASS
 import requests
 
 from requests.auth import HTTPBasicAuth
 
 
-def get_employee_count(request, retrieve_count=""):
-    fsdr_service_pass = request.app['FSDR_SERVICE_PASS']
-    fsdr_service_user = request.app['FSDR_SERVICE_USER']
-    fsdr_service_url = request.app['FSDR_SERVICE_URL']
-
-    employee_count_url = fsdr_service_url + "/fieldforce/employeeCount/" + retrieve_count
-    return requests.get(f'{employee_count_url}',
+def get_employee_count(user_filter=""):
+    employee_record_url = URL(
+        FSDR_URL + "/fieldforce/employeeCount/").with_query(
+         user_filter
+    )
+    return requests.get(f'{employee_record_url}',
                         verify=False,
-                        auth=HTTPBasicAuth(fsdr_service_user, fsdr_service_pass))
+                        auth=HTTPBasicAuth(FSDR_USER, FSDR_PASS))
 
 
-def get_distinct_job_role(request):
-    fsdr_service_pass = request.app['FSDR_SERVICE_PASS']
-    fsdr_service_user = request.app['FSDR_SERVICE_USER']
-    fsdr_service_url = request.app['FSDR_SERVICE_URL']
-
-    return requests.get(fsdr_service_url + f'/jobRoles/allJobRoles/distinct',
+def get_distinct_job_role():
+    return requests.get(FSDR_URL + f'/jobRoles/allJobRoles/distinct',
                         verify=False,
-                        auth=HTTPBasicAuth(fsdr_service_user, fsdr_service_pass))
+                        auth=HTTPBasicAuth(FSDR_USER, FSDR_PASS))
 
 
-def get_all_assignment_status(request):
-    fsdr_service_pass = request.app['FSDR_SERVICE_PASS']
-    fsdr_service_user = request.app['FSDR_SERVICE_USER']
-    fsdr_service_url = request.app['FSDR_SERVICE_URL']
-
-    return requests.get(fsdr_service_url + f'/jobRoles/assignmentStatus',
+def get_all_assignment_status():
+    return requests.get(FSDR_URL + f'/jobRoles/assignmentStatus',
                         verify=False,
-                        auth=HTTPBasicAuth(fsdr_service_user, fsdr_service_pass))
+                        auth=HTTPBasicAuth(FSDR_USER, FSDR_PASS))
 
 
-def get_employee_records(request, low_value, high_value, user_filter=""):
-    fsdr_service_pass = request.app['FSDR_SERVICE_PASS']
-    fsdr_service_user = request.app['FSDR_SERVICE_USER']
-    fsdr_service_url = request.app['FSDR_SERVICE_URL']
+def get_employee_records(user_filter=""):
+    employee_record_url = URL(
+        FSDR_URL + f'/fieldforce/byType/byRangeAndUserFilter/').with_query(
+        user_filter
+    )
+    return requests.get(employee_record_url,
+                        verify=False,
+                        auth=HTTPBasicAuth(FSDR_USER, FSDR_PASS))
 
-    return requests.get(
-        fsdr_service_url + f'/fieldforce/byType/byRangeAndUserFilter/?rangeHigh={high_value}&rangeLow={low_value}{user_filter}',
-        verify=False,
-        auth=HTTPBasicAuth(fsdr_service_user, fsdr_service_pass))
+
+async def allocate_search_ranges(user_filter, page_number):
+    employee_count = get_employee_count(user_filter)
+
+    max_page = int(employee_count.text) / 50
+    if page_number >= max_page:
+        page_number = int(math.floor(max_page))
+    if page_number == 0:
+        low_value = 1
+        high_value = 50
+    elif page_number > 1:
+        low_value = 50 * page_number
+        high_value = low_value + 50
+    else:
+        low_value = page_number
+        high_value = 50
+    return high_value, low_value, page_number, max_page
+
+
+def employee_table_headers():
+    add_headers = [
+        {
+            'value': 'ID',
+            'aria_sort': 'none'
+        },
+        {
+            'value': 'Name',
+            'aria_sort': 'none'
+        },
+        {
+            'value': 'Job Role ID',
+            'aria_sort': 'none'
+        },
+        {
+            'value': 'Job Role',
+            'aria_sort': 'none'
+        },
+        {
+            'value': 'Area',
+            'aria_sort': 'none'
+        },
+        {
+            'value': 'Asgmt. Status',
+            'aria_sort': 'none'
+        }
+    ]
+
+    return add_headers
+
+
+def employee_record_table(employee_records_json):
+    add_employees = []
+    for employees in employee_records_json:
+        add_employees.append({'tds': [
+            {
+                'value': employees['unique_employee_id']
+            },
+            {
+                'value': '<a href="/employeeinformation/' + employees['unique_employee_id'] + '">' +
+                         employees['first_name'] + " " + employees['surname'] + '</a>'
+            },
+            {
+                'value': employees['unique_role_id']
+            },
+            {
+                'value': employees['job_role']
+            },
+            {
+                'value': employees['area_location']
+            },
+            {
+                'value': employees['assignment_status']
+            }
+        ]}
+        )
+    return add_employees
