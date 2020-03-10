@@ -178,6 +178,7 @@ class SecondaryPage:
                 employees_present = retrieve_employee_info.content
                 if employees_present == b'[]':
                     no_employee_data = 'true'
+                    employee_records = ''
                 else:
                     no_employee_data = 'false'
                     employee_records = employee_record_table(retrieve_employee_info.json())
@@ -236,8 +237,6 @@ class SecondaryPage:
                 request.app.router['Login:get'].url_for())
 
         if session.get('logged_in'):
-            setup_request(request)
-            log_entry(request, 'start')
 
             if 'page' in request.query:
                 page_number = int(request.query['page'])

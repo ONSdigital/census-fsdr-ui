@@ -55,7 +55,7 @@ class MainPage:
 
             try:
                 employee_count = get_employee_count()
-                max_page = int(employee_count.text) / 50
+                max_page = (int(employee_count.text) / 50) - 1
                 if page_number >= max_page > 1:
                     page_number = int(math.floor(max_page))
                 else:
@@ -68,9 +68,7 @@ class MainPage:
                         low_value = page_number
                         high_value = 50
 
-                    search_range = {}
-                    search_range['rangeHigh'] = high_value
-                    search_range['rangeLow'] = low_value
+                    search_range = {'rangeHigh': high_value, 'rangeLow': low_value}
 
                     get_employee_info = get_employee_records(search_range)
                     get_job_roles = get_distinct_job_role()
