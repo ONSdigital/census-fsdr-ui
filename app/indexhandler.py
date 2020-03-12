@@ -9,8 +9,8 @@ from aiohttp.web import HTTPFound, RouteTableDef
 from aiohttp_session import get_session
 
 from app.searchcriteria import retrieve_job_roles, clear_stored_search_criteria
-from app.searchfunctions import get_distinct_job_role, get_employee_records, \
-    get_employee_count, employee_record_table, employee_table_headers
+from app.searchfunctions import get_employee_records, \
+    get_employee_count, employee_record_table, employee_table_headers, get_distinct_job_role_short
 from structlog import get_logger
 
 from . import (NEED_TO_SIGN_IN_MSG, NO_EMPLOYEE_DATA, SERVICE_DOWN_MSG)
@@ -71,7 +71,7 @@ class MainPage:
                     search_range = {'rangeHigh': high_value, 'rangeLow': low_value}
 
                     get_employee_info = get_employee_records(search_range)
-                    get_job_roles = get_distinct_job_role()
+                    get_job_roles = get_distinct_job_role_short()
             except ClientResponseError as ex:
                 if ex.status == 503:
                     logger.warn('Server is unavailable',
@@ -109,8 +109,4 @@ class MainPage:
 
         else:
             flash(request, NEED_TO_SIGN_IN_MSG)
-            return aiohttp_jinja2.render_template(
-                'signin.html',
-                request, {
-                    'include_nav': False
-                })
+            raise HTTPFound(request.app.router['Login:get'].url_for())

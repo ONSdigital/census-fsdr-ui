@@ -10,8 +10,8 @@ from structlog import get_logger
 
 from app.searchcriteria import store_search_criteria, retrieve_job_roles, retrieve_assignment_statuses, \
     clear_stored_search_criteria
-from app.searchfunctions import get_all_assignment_status, get_distinct_job_role, get_employee_records, \
-    allocate_search_ranges, employee_record_table, employee_table_headers
+from app.searchfunctions import get_all_assignment_status, get_employee_records, \
+    allocate_search_ranges, employee_record_table, employee_table_headers, get_distinct_job_role_short
 from . import (NEED_TO_SIGN_IN_MSG, NO_EMPLOYEE_DATA, SERVICE_DOWN_MSG)
 from .flash import flash
 from flask import Flask
@@ -33,7 +33,7 @@ class Search:
             user_role = user_json['userRole']
 
             try:
-                get_job_roles = get_distinct_job_role()
+                get_job_roles = get_distinct_job_role_short()
                 get_all_assignment_statuses = get_all_assignment_status()
             except ClientResponseError as ex:
                 if ex.status == 503:
@@ -67,11 +67,7 @@ class Search:
 
         else:
             flash(request, NEED_TO_SIGN_IN_MSG)
-            return aiohttp_jinja2.render_template(
-                'signin.html',
-                request, {
-                    'include_nav': False
-                })
+            raise HTTPFound(request.app.router['Login:get'].url_for())
 
 
 @search_routes.view('/search-results')
@@ -86,11 +82,13 @@ class SecondaryPage:
             user_role = user_json['userRole']
         except ClientResponseError:
             flash(request, NEED_TO_SIGN_IN_MSG)
-            return aiohttp_jinja2.render_template(
-                'signin.html',
-                request, {
-                    'include_nav': False
-                })
+            raise HTTPFound(request.app.router['Login:get'].url_for())
+
+            # return aiohttp_jinja2.render_template(
+            #     'signin.html',
+            #     request, {
+            #         'include_nav': False
+            #     })
 
         if session.get('logged_in'):
 
@@ -167,7 +165,7 @@ class SecondaryPage:
 
                 retrieve_employee_info = get_employee_records(search_criteria_with_range)
 
-                get_job_roles = get_distinct_job_role()
+                get_job_roles = get_distinct_job_role_short()
 
             except ClientResponseError as ex:
                 raise ex
@@ -217,12 +215,7 @@ class SecondaryPage:
 
         else:
             flash(request, NEED_TO_SIGN_IN_MSG)
-            return aiohttp_jinja2.render_template(
-                'signin.html',
-                request, {
-                    'page_title': 'Sign in',
-                    'include_nav': False
-                })
+            raise HTTPFound(request.app.router['Login:get'].url_for())
 
     @aiohttp_jinja2.template('search-results.html')
     async def get(self, request):
@@ -296,7 +289,7 @@ class SecondaryPage:
 
                 retrieve_employee_info = get_employee_records(search_criteria_with_range)
 
-                get_job_roles = get_distinct_job_role()
+                get_job_roles = get_distinct_job_role_short()
             except ClientResponseError as ex:
                 if ex.status == 503:
                     logger.warn('Server is unavailable',
@@ -350,9 +343,4 @@ class SecondaryPage:
 
         else:
             flash(request, NEED_TO_SIGN_IN_MSG)
-            return aiohttp_jinja2.render_template(
-                'signin.html',
-                request, {
-                    'page_title': 'Sign in',
-                    'include_nav': False
-                })
+            raise HTTPFound(request.app.router['Login:get'].url_for())

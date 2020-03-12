@@ -41,6 +41,7 @@ async def clear_stored_search_criteria(session):
     if session.get('jobRoleId'):
         del session['jobRoleId']
 
+
 def retrieve_job_roles(job_roles, previous_jobrole_selected):
     add_job_roles = []
     for job_roles in job_roles.json():
