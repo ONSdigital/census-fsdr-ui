@@ -8,8 +8,9 @@ from aiohttp.client_exceptions import (ClientResponseError)
 from aiohttp.web import HTTPFound, RouteTableDef
 from aiohttp_session import get_session
 
+from app.searchcriteria import retrieve_job_roles, clear_stored_search_criteria
 from app.searchfunctions import get_distinct_job_role, get_employee_records, \
-    get_employee_count
+    get_employee_count, employee_record_table, employee_table_headers
 from structlog import get_logger
 
 from . import (NEED_TO_SIGN_IN_MSG, NO_EMPLOYEE_DATA, SERVICE_DOWN_MSG)
@@ -34,34 +35,27 @@ def log_entry(request, endpoint):
                 path=request.path)
 
 
-@index_route.view('/index+{page}')
+@index_route.view('/index')
 class MainPage:
     @aiohttp_jinja2.template('index.html')
     async def get(self, request):
         session = await get_session(request)
-        page_number = int(request.match_info['page'])
-
-        try:
-            if session:
-                user_json = session['user_details']
-                user_role = user_json['userRole']
-            else:
-                flash(request, NEED_TO_SIGN_IN_MSG)
-                raise HTTPFound(
-                    request.app.router['Login:get'].url_for())
-
-        except ClientResponseError:
-            flash(request, NEED_TO_SIGN_IN_MSG)
-            raise HTTPFound(
-                request.app.router['Login:get'].url_for())
 
         if session.get('logged_in'):
+            await clear_stored_search_criteria(session)
             setup_request(request)
             log_entry(request, 'start')
+            user_json = session['user_details']
+            user_role = user_json['userRole']
+
+            if 'page' in request.query:
+                page_number = int(request.query['page'])
+            else:
+                page_number = 1
 
             try:
-                employee_count = get_employee_count(request)
-                max_page = int(employee_count.text) / 50
+                employee_count = get_employee_count()
+                max_page = (int(employee_count.text) / 50) - 1
                 if page_number >= max_page > 1:
                     page_number = int(math.floor(max_page))
                 else:
@@ -73,37 +67,50 @@ class MainPage:
                     else:
                         low_value = page_number
                         high_value = 50
-                    get_employee_info = get_employee_records(request, low_value, high_value)
-                    get_job_roles = get_distinct_job_role(request)
+
+                    search_range = {'rangeHigh': high_value, 'rangeLow': low_value}
+
+                    get_employee_info = get_employee_records(search_range)
+                    get_job_roles = get_distinct_job_role()
             except ClientResponseError as ex:
                 if ex.status == 503:
                     logger.warn('Server is unavailable',
                                 client_ip=request['client_ip'])
                     flash(request, SERVICE_DOWN_MSG)
-                    raise HTTPFound(
-                        request.app.router.url_for('error503.html')
-                    )
+                    return aiohttp_jinja2.render_template(
+                        'error503.html',
+                        request, {
+                            'include_nav': False
+                        })
                 else:
                     raise ex
 
             if get_employee_info.status_code == 200:
-                employee_records_json = get_employee_info.json()
-                job_role_json = get_job_roles.json()
+                table_headers = employee_table_headers()
+
+                employee_records = employee_record_table(get_employee_info.json())
+
+                job_role_json = retrieve_job_roles(get_job_roles, '')
+
                 return {
                     'page_title': f'Field Force view for: {user_role}',
-                    'employee_records': employee_records_json,
+                    'table_headers': table_headers,
+                    'employee_records': employee_records,
                     'page_number': page_number,
                     'last_page_number': int(math.floor(max_page)),
-                    'distinct_job_roles': job_role_json
+                    'distinct_job_roles': job_role_json,
                 }
             else:
                 logger.warn('Database is down',
                             client_ip=request['client_ip'])
                 flash(request, NO_EMPLOYEE_DATA)
                 raise HTTPFound(
-                    request.app.router['MainPage:get'].url_for(page=0))
+                    request.app.router['MainPage:get'].url_for())
 
         else:
             flash(request, NEED_TO_SIGN_IN_MSG)
-            raise HTTPFound(
-                request.app.router['Login:get'].url_for())
+            return aiohttp_jinja2.render_template(
+                'signin.html',
+                request, {
+                    'include_nav': False
+                })

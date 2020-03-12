@@ -145,7 +145,7 @@ def logger_initial_config(log_level=os.getenv('LOG_LEVEL', 'INFO'),
         cache_logger_on_first_use=True,
     )
 
-    logger = structlog.get_logger('respondent-home')
+    logger = structlog.get_logger('fsdr-ui')
     logger.setLevel(log_level)
     logger.info('logging configured',
                 log_level=log_level,

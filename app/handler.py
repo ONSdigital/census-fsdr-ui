@@ -24,7 +24,7 @@ class Info():
         setup_request(request)
         log_entry(request, 'info')
         info = {
-            'name': 'respondent-home-ui',
+            'name': 'fsdr-ui',
             'version': VERSION,
         }
         if 'check' in request.query:

@@ -9,7 +9,8 @@ from aiohttp_session import get_session
 from requests.auth import HTTPBasicAuth
 from structlog import get_logger
 
-from . import (INVALID_SIGNIN_MSG)
+from app.utils import FSDR_USER, FSDR_URL, FSDR_PASS
+from . import (INVALID_SIGNIN_MSG, SOMETHING_WENT_WRONG)
 from .flash import flash
 from .security import remember
 
@@ -38,14 +39,11 @@ async def store_successful_signin(auth_json, request):
     session.permamnent = False
 
 
-def get_fsdr_signin(request, user, password):
-    fsdr_service_pass = request.app['FSDR_SERVICE_PASS']
-    fsdr_service_user = request.app['FSDR_SERVICE_USER']
-    fsdr_service_url = request.app['FSDR_SERVICE_URL']
+def get_fsdr_signin( user, password):
     credentials = {'password': password, 'username': user}
-    return requests.post(fsdr_service_url + f'/userAuth/checkCredentials', data=credentials,
+    return requests.post(FSDR_URL + f'/userAuth/checkCredentials', data=credentials,
                          verify=False,
-                         auth=HTTPBasicAuth(fsdr_service_user, fsdr_service_pass))
+                         auth=HTTPBasicAuth(FSDR_USER, FSDR_PASS))
 
 
 @credential_routes.view('/')
@@ -54,9 +52,9 @@ class Redirect:
         return aiohttp_jinja2.render_template(
             'signin.html',
             request, {
-                'page_title': 'Sign in'
-            }
-        )
+                'page_title': 'Sign in',
+                'include_nav': False
+            })
 
 
 @credential_routes.view('/signin')
@@ -65,6 +63,12 @@ class Login:
     async def get(self, request):
         setup_request(request)
         log_entry(request, 'signin')
+        return aiohttp_jinja2.render_template(
+            'signin.html',
+            request, {
+                'page_title': 'Sign in',
+                'include_nav': False
+            })
 
     @aiohttp_jinja2.template('signin.html')
     async def post(self, request):
@@ -73,12 +77,12 @@ class Login:
         data = await request.post()
 
         try:
-            get_user_info = get_fsdr_signin(request, data.get('user'), data.get('password'))
+            get_user_info = get_fsdr_signin(data.get('user'), data.get('password'))
             if get_user_info.status_code == 200:
                 auth_json = get_user_info.json()
                 await store_successful_signin(auth_json, request)
                 raise HTTPFound(
-                    request.app.router['MainPage:get'].url_for(page='1'))
+                    request.app.router['MainPage:get'].url_for())
             elif get_user_info.status_code == 401:
                 logger.warn('Attempted to login with invalid user name and/or password',
                             client_ip=request['client_ip'])
@@ -86,34 +90,35 @@ class Login:
                 return aiohttp_jinja2.render_template(
                     'signin.html',
                     request, {
-                        'page_title': 'Sign in'
+                        'page_title': 'Sign in',
+                        'include_nav': False
                     },
                     status=401)
-            elif get_user_info == 403:
-                return aiohttp_jinja2.render_template(
-                    'error403.html',
-                    request, {
-                    })
             elif get_user_info == 404:
                 return aiohttp_jinja2.render_template(
                     'error404.html',
                     request, {
-                    })
-
-        except ClientResponseError as ex:
-            if ex.status == 401:
-                logger.warn('Attempted sign in with incorrect details',
-                            client_ip=request['client_ip'])
-                flash(request, INVALID_SIGNIN_MSG)
-                return aiohttp_jinja2.render_template(
-                    'signin.html',
-                    request, {
+                        'include_nav': False
                     })
             else:
+                logger.warn('Something went wrong. Please try again.',
+                            client_ip=request['client_ip'])
+                flash(request, SOMETHING_WENT_WRONG)
                 return aiohttp_jinja2.render_template(
                     'signin.html',
                     request, {
+                        'include_nav': False
                     })
+
+        except ClientResponseError:
+            logger.warn('Something went wrong. Please try again.',
+                        client_ip=request['client_ip'])
+            flash(request, SOMETHING_WENT_WRONG)
+            return aiohttp_jinja2.render_template(
+                'signin.html',
+                request, {
+                    'include_nav': False
+                })
 
         except requests.exceptions.ConnectionError:
             logger.warn('Service is down',
@@ -121,7 +126,8 @@ class Login:
             return aiohttp_jinja2.render_template(
                 'error500.html',
                 request, {
-                    'page_title': 'FSDR - Server down'
+                    'page_title': 'FSDR - Server down',
+                    'include_nav': False
                 })
 
 
@@ -134,6 +140,7 @@ class Logout:
         return aiohttp_jinja2.render_template(
             'logout.html',
             request, {
-                'page_title': 'FSDR - Signed out'
+                'page_title': 'FSDR - Signed out',
+                'include_nav': False
             },
             status=200)

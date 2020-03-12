@@ -1,28 +1,18 @@
 import aiohttp_jinja2
-import requests
 from aiohttp.client_exceptions import (ClientResponseError)
 from aiohttp.web import HTTPFound, RouteTableDef
 from aiohttp_session import get_session
-from dateutil import parser
-from requests.auth import HTTPBasicAuth
 from structlog import get_logger
 
-from . import (INVALID_SIGNIN_MSG, NEED_TO_SIGN_IN_MSG, NO_EMPLOYEE_DATA)
+from app.employeeinformationfunctions import get_employee_tabs, get_employee_information, \
+    get_employee_history_information, get_employee_device
+from app.historytab import history_tab
+from app.tabutils import format_to_uk_dates
+from . import (NEED_TO_SIGN_IN_MSG, NO_EMPLOYEE_DATA)
 from .flash import flash
 
-logger = get_logger('fsdr-ui')
 employee_routes = RouteTableDef()
-
-
-def setup_request(request):
-    request['client_ip'] = request.headers.get('X-Forwarded-For', None)
-
-
-def log_entry(request, endpoint):
-    method = request.method
-    logger.info(f"received {method} on endpoint '{endpoint}'",
-                method=request.method,
-                path=request.path)
+logger = get_logger('fsdr-ui')
 
 
 @employee_routes.view("/employeeinformation/{employee_id}")
@@ -41,19 +31,19 @@ class EmployeeInformation():
 
         if session.get('logged_in'):
             try:
-                get_employee_info = self.get_employee_information(request, user_role, employee_id)
-                get_employee_device = self.get_employee_device(request, employee_id)
-                get_employee_history = self.get_employee_history_information(request, user_role, employee_id)
+                get_employee_info = get_employee_information(user_role, employee_id)
+                get_employee_devices = get_employee_device(employee_id)
+                get_employee_history = get_employee_history_information(user_role, employee_id)
             except ClientResponseError as ex:
-                if ex.status == 404:
-                    logger.warn('attempt to use an invalid access code',
+                if ex.status == 500:
+                    logger.warn('Service is down',
                                 client_ip=request['client_ip'])
-                    flash(request, INVALID_SIGNIN_MSG)
                     return aiohttp_jinja2.render_template(
-                        'index.html',
+                        'error500.html',
                         request, {
-                        },
-                        status=401)
+                            'page_title': 'FSDR - Server down',
+                            'include_nav': False
+                        })
                 else:
                     raise ex
 
@@ -61,9 +51,11 @@ class EmployeeInformation():
                 employee_info = get_employee_info.json()
                 employee_history = []
                 device_info = []
+                employee_name = employee_info['firstName'] + ' ' + employee_info['surname']
+                employee_status = employee_info['status']
 
                 if employee_info['ingestDate']:
-                    employee_info['ingestDate'] = self.format_to_uk_dates(employee_info['ingestDate'])
+                    employee_info['ingestDate'] = format_to_uk_dates(employee_info['ingestDate'])
 
                 if get_employee_history.status_code == 200:
                     if get_employee_history.content != b'':
@@ -71,13 +63,13 @@ class EmployeeInformation():
 
                         for employee_history_dict in employee_history_json:
                             if employee_history_dict['ingestDate']:
-                                employee_history_dict['ingestDate'] = self.format_to_uk_dates(
+                                employee_history_dict['ingestDate'] = format_to_uk_dates(
                                     employee_history_dict['ingestDate'])
                                 employee_history.append(employee_history_dict.copy())
 
-                if get_employee_device.status_code == 200:
-                    if get_employee_device.content != b'':
-                        device_info_json = get_employee_device.json()
+                if get_employee_devices.status_code == 200:
+                    if get_employee_devices.content != b'':
+                        device_info_json = get_employee_devices.json()
                         device_info.append(device_info_json.copy())
 
                 last_job_role = employee_info['lastRoleId']
@@ -88,9 +80,9 @@ class EmployeeInformation():
                     if job_role['active']:
                         relevant_job_role = job_role
                     else:
-                        job_role['contractStartDate'] = self.format_to_uk_dates(
+                        job_role['contractStartDate'] = format_to_uk_dates(
                             job_role['contractStartDate'])
-                        job_role['operationalEndDate'] = self.format_to_uk_dates(
+                        job_role['operationalEndDate'] = format_to_uk_dates(
                             job_role['operationalEndDate'])
 
                 if relevant_job_role == '':
@@ -100,27 +92,75 @@ class EmployeeInformation():
 
                 if relevant_job_role:
                     if relevant_job_role['contractStartDate']:
-                        relevant_job_role['contractStartDate'] = self.format_to_uk_dates(
+                        relevant_job_role['contractStartDate'] = format_to_uk_dates(
                             relevant_job_role['contractStartDate'])
                     if relevant_job_role['contractEndDate']:
-                        relevant_job_role['contractEndDate'] = self.format_to_uk_dates(
+                        relevant_job_role['contractEndDate'] = format_to_uk_dates(
                             relevant_job_role['contractEndDate'])
                     if relevant_job_role['operationalEndDate']:
-                        relevant_job_role['operationalEndDate'] = self.format_to_uk_dates(
+                        relevant_job_role['operationalEndDate'] = format_to_uk_dates(
                             relevant_job_role['operationalEndDate'])
 
+                    employee_tabs = get_employee_tabs(user_role, employee_info, relevant_job_role, job_role, device_info)
+
+                    for tabs in employee_tabs:
+                        if 'all_info' in tabs:
+                            employee_info = tabs['all_info']
+                        else:
+                            for device_table in tabs:
+                                if 'headers' in device_table:
+                                    device_headers = device_table['headers']
+                                if 'tds' in device_table:
+                                    device_data = device_table['tds']
+
+                    employee_history_tabs = history_tab(user_role, employee_history, job_role_info)
+
+                    if user_role != 'hr':
+
+                        for employee_history in employee_history_tabs[0]:
+                            if 'headers' in employee_history:
+                                history_header = employee_history['headers']
+                            if 'tds' in employee_history:
+                                    history_data = employee_history['tds']
+
+                        for employee_history in employee_history_tabs[1]:
+                            if 'headers' in employee_history:
+                                job_role_history_header = employee_history['headers']
+                            if 'tds' in employee_history:
+                                job_role_history_data = employee_history['tds']
+                    else:
+                        for employee_history in employee_history_tabs[0]:
+                            if 'headers' in employee_history:
+                                history_header = employee_history['headers']
+                            if 'tds' in employee_history:
+                                history_data = employee_history['tds']
+
+                        job_role_history_header = []
+                        job_role_history_data = []
+                        device_headers = []
+                        device_data = []
+
+                    page_title = 'Employee: %s (%s)' % (employee_name, employee_id)
                 try:
                     return {
-                        'page_title': f'Worker details for: {employee_id}',
-                        'employee_device': device_info,
+                        'user_role': user_role,
+                        'page_title': page_title,
+                        'device_headers': device_headers,
+                        'device_data': device_data,
+                        'employment_history_headers': history_header,
+                        'employment_history_data': history_data,
+                        'employee_job_role_history_header': job_role_history_header,
+                        'employee_job_role_history_data': job_role_history_data,
                         'employee_history': employee_history,
                         'employee_job_role': relevant_job_role,
                         'employee_job_role_history': job_role_info,
-                        'employee_record': employee_info
+                        'employee_record': employee_info,
+                        'employee_status': employee_status
                     }
                 except ValueError:
                     return {
-                        'page_title': f'Worker details for: {employee_id}',
+                        'page_title': page_title,
+                        'employee_status': employee_status,
                         'employee_record': employee_info,
                         'employee_device': "No device"
                     }
@@ -129,42 +169,13 @@ class EmployeeInformation():
                             client_ip=request['client_ip'])
                 flash(request, NO_EMPLOYEE_DATA)
                 return aiohttp_jinja2.render_template(
-                    'index.html',
+                    'signin.html',
                     request, {
-                        'display_region': 'en',
-                        'page_title': 'Sign in'
-                    },
+                        'page_title': 'Sign in',
+                        'include_nav': False
+                },
                     status=401)
         else:
             flash(request, NEED_TO_SIGN_IN_MSG)
             raise HTTPFound(
                 request.app.router['Login:get'].url_for())
-
-    def get_employee_information(self, request, user_role, employee_id):
-        fsdr_service_pass = request.app['FSDR_SERVICE_PASS']
-        fsdr_service_user = request.app['FSDR_SERVICE_USER']
-        fsdr_service_url = request.app['FSDR_SERVICE_URL']
-        return requests.get(fsdr_service_url + f'/fieldforce/byId/{user_role}/{employee_id}',
-                            verify=False,
-                            auth=HTTPBasicAuth(fsdr_service_user, fsdr_service_pass))
-
-    def get_employee_history_information(self, request, user_role, employee_id):
-        fsdr_service_pass = request.app['FSDR_SERVICE_PASS']
-        fsdr_service_user = request.app['FSDR_SERVICE_USER']
-        fsdr_service_url = request.app['FSDR_SERVICE_URL']
-        return requests.get(fsdr_service_url + f'/fieldforce/historyById/{user_role}/{employee_id}',
-                            verify=False,
-                            auth=HTTPBasicAuth(fsdr_service_user, fsdr_service_pass))
-
-    def get_employee_device(self, request, employee_id):
-        fsdr_service_pass = request.app['FSDR_SERVICE_PASS']
-        fsdr_service_user = request.app['FSDR_SERVICE_USER']
-        fsdr_service_url = request.app['FSDR_SERVICE_URL']
-        return requests.get(fsdr_service_url + f'/devices/byEmployee/getPhoneDevice/{employee_id}',
-                            verify=False,
-                            auth=HTTPBasicAuth(fsdr_service_user, fsdr_service_pass))
-
-    def format_to_uk_dates(self, date):
-        date_to_format = parser.parse(date).date()
-        formatted_date = date_to_format.strftime('%d/%m/%Y')
-        return formatted_date

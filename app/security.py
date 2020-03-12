@@ -1,6 +1,5 @@
 import random
 import string
-import hashlib
 
 from aiohttp import web
 from aiohttp_session import get_session
@@ -141,6 +140,3 @@ async def remember(identity, request):
                 client_ip=request['client_ip'],
                 identity=identity)
 
-
-def get_sha256_hash(uac: str):
-    return hashlib.sha256(uac.encode()).hexdigest()

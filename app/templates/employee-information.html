@@ -1,7 +1,9 @@
 {% extends 'base.html' %}
 
-{% from "custom/metadata/_macro.njk" import onsMetadata %}
-{% from "custom/table/_macro.njk" import onsTable %}
+{% from "components/metadata/_macro.njk" import onsMetadata %}
+{% from "components/table/_macro.njk" import onsTable %}
+{% from "custom/tabs/_macro.njk" import onsTabs %}
+
 
 {% set page_title_value = page_title %}
 {% block pageContent %}
@@ -10,487 +12,70 @@
             <div class="grid__col col-2@m"></div>
             <div class="grid__col col-8@m">
                 {% if employee_record.status == 'ACTIVE' %}
-                    {% set emp_status = 'status status--success' %}
+                    {% set emp_status = 'Active' %}
                 {% elif employee_record.status == 'INACTIVE' %}
-                   {% set emp_status = 'status status--dead' %}
+                   {% set emp_status = 'Inactive' %}
                 {% else %}
-                    {% set emp_status = 'status status--error' %}
+                    {% set emp_status = 'Left' %}
                 {% endif %}
-                <h1 class="{{ emp_status }}">{{ page_title_value }}</h1>
-                <div role="region" class="tabs">
-                    <h2 class="tabs__title">Tabs</h2>
-                    <ul class="tabs__list">
-                        <li id="tabId1Item" class="tab__list-item"><a href="#employee_info_tab" class="tab"
-                                                                      data=ga="click"
-                                                                      data-ga-category="tabs"
-                                                                      data-ga-action="Employee Information"
-                                                                      data-ga-label="Employee Information">Employee
-                            Information</a></li>
-                        <li id="tabId2Item" class="tab__list-item"><a href="#employee_hist_info" class="tab" data=ga="click"
-                                                                      data-ga-category="tabs"
-                                                                      data-ga-action="Employee History"
-                                                                      data-ga-label="Employee History">Employee
-                            History</a></li>
-                    </ul>
-                    <section id="employee_info_tab" class="tabs__panel">
-                        <div id="accordion" class="accordion">
-                          <details id="accordion-1" class="details js-collapsible details--accordion" open data-btn-close="Hide" data-group="accordion">
-                            <summary class="details__summary js-collapsible-summary">
-                              <div class="details__heading">
-                                <span class="details__title u-fs-r--b">At a glance</span>
-                              </div>
-                            </summary>
-                            <div id="accordion-1-content" class="details__content js-collapsible-content">
-                            <dl class="metadata metadata__list grid grid--gutterless u-cf u-mb-l">
-                                {% if employee_record.firstName and employee_record.surname %}
-                                    <dt class="metadata__term grid__col col-4@m">Name:</dt>
-                                    <dd class="metadata__value grid__col col-8@m">{{ employee_record.firstName }} {{ employee_record.surname }}</dd>
-                                {% endif %}
-                                {% if employee_record.preferredName %}
-                                    <dt class="metadata__term grid__col col-4@m">Preferred Name:</dt>
-                                    <dd class="metadata__value grid__col col-8@m">{{ employee_record.preferredName }}</dd>
-                                {% endif %}
-                                {% if employee_record.onsId %}
-                                    <dt class="metadata__term grid__col col-4@m">ONS Email Address:</dt>
-                                    <dd class="metadata__value grid__col col-8@m">{{ employee_record.onsId }}</dd>
-                                {% endif %}
-                                {% set device_numnber_found = false %}
-                                {% set device_number = [''] %}
-                                {% for device in employee_device %}
-                                    {% if device.fieldDevicePhoneNumber and device_numnber_found == false %}
-                                        {% set device_number = device_number.append(device_number.pop() + device.fieldDevicePhoneNumber) %}
-                                        {% set device_numnber_found = true %}
-                                    {% endif %}
-                                {% endfor %}
-                                    <dt class="metadata__term grid__col col-4@m"> ONS Mobile Number:</dt>
-                                {% if device_number %}
-                                    <dd class="metadata__value grid__col col-8@m">{{ device_number.pop() }}</dd>
-                                {% else %}
-                                    No number found
-                                {% endif %}
-                                {% if employee_record.status %}
-                                    <dt class="metadata__term grid__col col-4@m"> Status:</dt>
-                                    <dd class="metadata__value grid__col col-8@m">{{ employee_record.status }}</dd>
-                                {% endif %}
-                            </dl>
-                            </div>
-                          </details>
-                          <details id="accordion-2" class="details js-collapsible details--accordion" open data-btn-close="Hide" data-group="accordion">
-                            <summary class="details__summary js-collapsible-summary">
-                              <div class="details__heading">
-                                <span class="details__title u-fs-r--b">Job Role Details</span>
-                              </div>
-                            </summary>
-                            <div id="accordion-2-content" class="details__content js-collapsible-content">
-                                <dl class="metadata metadata__list grid grid--gutterless u-cf u-mb-l">
-                                    {% if employee_job_role.uniqueRoleId %}
-                                        <dt class="metadata__term grid__col col-4@m">Job Role ID:</dt>
-                                        <dd class="metadata__value grid__col col-8@m">{{ employee_job_role.uniqueRoleId }}</dd>
-                                    {% endif %}
-                                    {% if employee_record.idBadgeNo %}
-                                        <dt class="metadata__term grid__col col-4@m">Badge Number:</dt>
-                                        <dd class="metadata__value grid__col col-8@m">{{ employee_record.idBadgeNo }}</dd>
-                                    {% endif %}
-                                    {% if employee_record.postcode %}
-                                        <dt class="metadata__term grid__col col-4@m">Postcode:</dt>
-                                        <dd class="metadata__value grid__col col-8@m">{{ employee_record.postcode }}</dd>
-                                    {% endif %}
-                                    {% if employee_job_role.jobRoleShort %}
-                                        <dt class="metadata__term grid__col col-4@m">Job Role Short:</dt>
-                                        <dd class="metadata__value grid__col col-8@m">{{ employee_job_role.jobRoleShort }}</dd>
-                                    {% endif %}
-                                    {% if employee_job_role.jobRole %}
-                                        <dt class="metadata__term grid__col col-4@m">Job Role:</dt>
-                                        <dd class="metadata__value grid__col col-8@m">{{ employee_job_role.jobRole }}</dd>
-                                    {% endif %}
-                                    {% if employee_job_role.jobRoleType %}
-                                        <dt class="metadata__term grid__col col-4@m">Job Role Type:</dt>
-                                        <dd class="metadata__value grid__col col-8@m">{{ employee_job_role.jobRoleType }}</dd>
-                                    {% endif %}
-                                    {% if employee_job_role.lineManagerFirstName and employee_job_role.lineManagerSurname %}
-                                        <dt class="metadata__term grid__col col-4@m">Line Manager:</dt>
-                                        <dd class="metadata__value grid__col col-8@m">{{ employee_job_role.lineManagerFirstName }} {{ employee_job_role.lineManagerSurname }}</dd>
-                                    {% endif %}
-                                    {% if employee_job_role.areaLocation %}
-                                        <dt class="metadata__term grid__col col-4@m">Area:</dt>
-                                        <dd class="metadata__value grid__col col-8@m">{{ employee_job_role.areaLocation }}</dd>
-                                    {% endif %}
-                                    {% if employee_job_role.mobility %}
-                                        <dt class="metadata__term grid__col col-4@m">Mobility:</dt>
-                                        <dd class="metadata__value grid__col col-8@m">{{ employee_job_role.mobility }}</dd>
-                                    {% endif %}
-                                    <dt class="metadata__term grid__col col-4@m">Mobile Staff:</dt>
-                                    {% if employee_job_role.mobileStaff == 'true' %}
-                                        <dd class="metadata__value grid__col col-8@m">Yes</dd>
-                                    {% else %}
-                                        <dd class="metadata__value grid__col col-8@m">No</dd>
-                                    {% endif %}
-                                    {% if employee_record.weeklyHours %}
-                                        <dt class="metadata__term grid__col col-4@m">Weekly Hours:</dt>
-                                        <dd class="metadata__value grid__col col-8@m">{{ employee_record.weeklyHours }}</dd>
-                                    {% endif %}
-                                    {% if employee_job_role.coordGroup %}
-                                        <dt class="metadata__term grid__col col-4@m">Coordinator Group:</dt>
-                                        <dd class="metadata__value grid__col col-8@m">{{ employee_job_role.coordGroup }}</dd>
-                                    {% endif %}
-                                    {% if employee_job_role.orgUnit %}
-                                        <dt class="metadata__term grid__col col-4@m">Organisation Unit:</dt>
-                                        <dd class="metadata__value grid__col col-8@m">{{ employee_job_role.orgUnit }}</dd>
-                                    {% endif %}
-                                </dl>
-                            </div>
-                          </details>
-                          <details id="accordion-3" class="details js-collapsible details--accordion" open data-btn-close="Hide" data-group="accordion">
-                            <summary class="details__summary js-collapsible-summary">
-                              <div class="details__heading">
-                                <span class="details__title u-fs-r--b">Employment Status</span>
-                              </div>
-                            </summary>
-                            <div id="accordion-3-content" class="details__content js-collapsible-content">
-                                <dl class="metadata metadata__list grid grid--gutterless u-cf u-mb-l">
-                                    {% if employee_job_role.assignmentStatus %}
-                                        <dt class="metadata__term grid__col col-4@m">Assignment Status:</dt>
-                                        <dd class="metadata__value grid__col col-8@m">{{ employee_job_role.assignmentStatus }}</dd>
-                                    {% endif %}
-                                    {% if employee_job_role.crStatus %}
-                                        <dt class="metadata__term grid__col col-4@m">Employee Status:</dt>
-                                        <dd class="metadata__value grid__col col-8@m">{{ employee_job_role.crStatus }}</dd>
-                                    {% endif %}
-                                    {% if employee_job_role.contractStartDate %}
-                                        <dt class="metadata__term grid__col col-4@m">Contract Start Date:</dt>
-                                        <dd class="metadata__value grid__col col-8@m">{{ employee_job_role.contractStartDate }}</dd>
-                                    {% endif %}
-                                    {% if employee_job_role.contractEndDate %}
-                                        <dt class="metadata__term grid__col col-4@m">Contract End Date:</dt>
-                                        <dd class="metadata__value grid__col col-8@m">{{ employee_job_role.contractEndDate }}</dd>
-                                    {% endif %}
-                                    {% if employee_job_role.contractStartDate %}
-                                        <dt class="metadata__term grid__col col-4@m">Operational Start Date:
-                                        </dt>
-                                        <dd class="metadata__value grid__col col-8@m">{{ employee_job_role.contractStartDate }}</dd>
-                                    {% endif %}
-                                    {% if employee_job_role.operationalEndDate %}
-                                        <dt class="metadata__term grid__col col-4@m">Operational End Date:</dt>
-                                        <dd class="metadata__value grid__col col-8@m">{{ employee_job_role.operationalEndDate }}</dd>
-                                    {% endif %}
-                                    {% if employee_record.ingestDate %}
-                                        <dt class="metadata__term grid__col col-4@m">Ingest Date:</dt>
-                                        <dd class="metadata__value grid__col col-8@m">{{ employee_record.ingestDate }}</dd>
-                                    {% endif %}
-                                </dl>
-                            </div>
-                          </details>
-                          <details id="accordion-4" class="details js-collapsible details--accordion" open data-btn-close="Hide" data-group="accordion">
-                            <summary class="details__summary js-collapsible-summary">
-                              <div class="details__heading">
-                                <span class="details__title u-fs-r--b">Employment Personal Details</span>
-                              </div>
-                            </summary>
-                            <div id="accordion-4-content" class="details__content js-collapsible-content">
-                                <dl class="metadata metadata__list grid grid--gutterless u-cf u-mb-l">
-                                    {% if employee_record.address %}
-                                        <dt class="metadata__term grid__col col-4@m">Address:</dt>
-                                        <dd class="metadata__value grid__col col-8@m">{{ employee_record.address }}</dd>
-                                    {% endif %}
-                                    {% if employee_record.telephoneNumberContact1 %}
-                                        <dt class="metadata__term grid__col col-4@m">Personal Mobile Number:</dt>
-                                        <dd class="metadata__value grid__col col-8@m">{{ employee_record.telephoneNumberContact1 }}</dd>
-                                    {% endif %}
-                                    {% if employee_record.telephoneNumberContact2 %}
-                                        <dt class="metadata__term grid__col col-4@m">Home Phone Number:</dt>
-                                        <dd class="metadata__value grid__col col-8@m">{{ employee_record.telephoneNumberContact2 }}</dd>
-                                    {% endif %}
-                                    {% if employee_record.personalEmailAddress %}
-                                        <dt class="metadata__term grid__col col-4@m">Personal Email Account:</dt>
-                                        <dd class="metadata__value grid__col col-8@m">{{ employee_record.personalEmailAddress }}</dd>
-                                    {% endif %}
-                                    {% if employee_record.emergencyContactFirstName %}
-                                        <dt class="metadata__term grid__col col-4@m">Emergency Contact 1 Name:</dt>
-                                        <dd class="metadata__value grid__col col-8@m">{{ employee_record.emergencyContactFirstName }} {{ employee_record.emergencyContactSurname }}</dd>
-                                    {% endif %}
-                                    {% if employee_record.emergencyContactMobileNo %}
-                                        <dt class="metadata__term grid__col col-4@m">Emergency Contact 1 Number:
-                                        </dt>
-                                        <dd class="metadata__value grid__col col-8@m">{{ employee_record.emergencyContactMobileNo }}</dd>
-                                    {% endif %}
-                                    {% if employee_record.emergencyContactFirstName2 %}
-                                        <dt class="metadata__term grid__col col-4@m">Emergency Contact 2 Name:
-                                        </dt>
-                                        <dd class="metadata__value grid__col col-8@m">{{ employee_record.emergencyContactFirstName2 }} {{ employee_record.emergencyContactSurname2 }}</dd>
-                                    {% endif %}
-                                    {% if employee_record.emergencyContactMobileNo2 %}
-                                        <dt class="metadata__term grid__col col-4@m">Emergency Contact 2 Number:
-                                        </dt>
-                                        <dd class="metadata__value grid__col col-8@m">{{ employee_record.emergencyContactMobileNo2 }}</dd>
-                                    {% endif %}
-                                </dl>
-                            </div>
-                          </details>
-                        <details id="accordion-5" class="details js-collapsible details--accordion" open data-btn-close="Hide" data-group="accordion">
-                            <summary class="details__summary js-collapsible-summary">
-                              <div class="details__heading">
-                                <span class="details__title u-fs-r--b">Employee Device Details</span>
-                              </div>
-                            </summary>
-                            <div id="accordion-5-content" class="details__content js-collapsible-content">
-                                {% if employee_device %}
-                                    <div class="grid-container">
-                                    <div class="grid">
-                                        <div class="grid__col col-8@m">
-                                            {% if employee_device %}
-                                                {% for device in employee_device %}
-                                                    <table class="table  table--sortable  table-scrollable--on" data-aria-sort="Sort by"
-                                                    data-aria-asc="ascending" data-aria-desc="descending">
-                                                        <thead class="table__head">
-                                                            <tr class="table__row">
-                                                                {% if device['deviceId'] %}
-                                                                    <th scope="col" class="table__header " aria-sort="none">Device ID</th>
-                                                                {% endif %}
-                                                                {% if device.fieldDevicePhoneNumber %}
-                                                                    <th scope="col" class="table__header " aria-sort="none">Device Phone Number</th>
-                                                                {% endif %}
-                                                                {% if device.deviceType %}
-                                                                    <th scope="col" class="table__header " aria-sort="none">Device Type</th>
-                                                                {% endif %}
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody class="table__body">
-                                                            <tr class="table__row" >
-                                                                {% if device.deviceId %}
-                                                                    <td class="table__cell ">{{ device.deviceId }}</td>
-                                                                {% endif %}
-                                                                {% if device.fieldDevicePhoneNumber %}
-                                                                    <td class="table__cell ">{{ device.fieldDevicePhoneNumber }}</td>
-                                                                {% endif %}
-                                                                {% if device.deviceType %}
-                                                                    <td class="table__cell ">{{ device.deviceType }}</td>
-                                                                {% endif %}
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
-                                                {% endfor %}
-                                            {% else %}
-                                                <br>
-                                                <p>Field Worker has no devices</p>
-                                            {% endif %}
-                                        </div>
-                                        <div class="grid__col col-5@m"></div>
-                                    </div>
-                                </div>
-                                {% else %}
-                                    No devices found for Field Worker
-                                {% endif %}
-                            </div>
-                          </details>
-                        </div>
-                        <br>
-                    </section>
-                    <section id="employee_hist_info" class="tabs__panel">
-                        <details id="accordion-1" class="details js-collapsible details--accordion" open data-btn-close="Hide" data-group="accordion">
-                            <summary class="details__summary js-collapsible-summary">
-                              <div class="details__heading">
-                                <span class="details__title u-fs-r--b">Employee History Information</span>
-                              </div>
-                            </summary>
-                            <div id="accordion-1-content" class="details__content js-collapsible-content">
-                                {% if employee_history %}
-                                    <div class="table-scrollable__content">
-                                    <table class="table table--sortable  table-scrollable--on" data-aria-sort="Sort by"
-                                       data-aria-asc="ascending" data-aria-desc="descending">
-                                        <thead class="table__head">
-                                        <tr class="table__row">
-                                            <th scope="col" class="table__header " aria-sort="none">Ingest Date</th>
-                                            <th scope="col" class="table__header " aria-sort="none">ID</th>
-                                            <th scope="col" class="table__header " aria-sort="none">Name</th>
-                                            <th scope="col" class="table__header " aria-sort="none">Preferred Name</th>
-                                            <th scope="col" class="table__header " aria-sort="none">ONS ID</th>
-                                            <th scope="col" class="table__header " aria-sort="none">Personal Mobile Number</th>
-                                            <th scope="col" class="table__header " aria-sort="none">Home Phone Number</th>
-                                            <th scope="col" class="table__header " aria-sort="none">Status</th>
-                                            <th scope="col" class="table__header " aria-sort="none">Badge ID</th>
-                                            <th scope="col" class="table__header " aria-sort="none">Personal Email Address</th>
-                                            <th scope="col" class="table__header " aria-sort="none">Postcode</th>
-                                            <th scope="col" class="table__header " aria-sort="none">Country</th>
-                                            <th scope="col" class="table__header " aria-sort="none">Emergency Contact 1 Name</th>
-                                            <th scope="col" class="table__header " aria-sort="none">Emergency Contact 1 Mobile Number</th>
-                                            <th scope="col" class="table__header " aria-sort="none">Emergency Contact 2 Name</th>
-                                            <th scope="col" class="table__header " aria-sort="none">Emergency Contact 2 Mobile Number</th>
-                                            <th scope="col" class="table__header " aria-sort="none">Languages Spoken</th>
-                                            <th scope="col" class="table__header " aria-sort="none">Weekly Hours</th>
-                                            <th scope="col" class="table__header " aria-sort="none">Mobile Staff</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody class="table__body">
-                                            {% for employee in employee_history %}
-                                                <tr class="table__row">
-                                                    <td class="table__cell ">
-                                                        {{ employee.ingestDate }}
-                                                    </td>
-                                                    <td class="table__cell ">
-                                                        {{ employee.uniqueEmployeeId }}
-                                                    </td>
-                                                    <td class="table__cell ">
-                                                        {{ employee.firstName + " " + employee.surname }}
-                                                    </td>
-                                                    <td class="table__cell ">
-                                                        {% if employee.preferredName %}
-                                                            {{ employee.preferredName }}
-                                                        {% else %}
-                                                            -
-                                                        {% endif %}
-                                                    </td>
-                                                    <td class="table__cell ">
-                                                        {{ employee.onsId }}
-                                                    </td>
-                                                    <td class="table__cell ">
-                                                        {{ employee.telephoneNumberContact1 }}
-                                                    </td>
-                                                    <td class="table__cell ">
-                                                        {{ employee.telephoneNumberContact2 }}
-                                                    </td>
-                                                    <td class="table__cell ">
-                                                        {{ employee.status }}
-                                                    </td>
-                                                    <td class="table__cell ">
-                                                        {{ employee.idBadgeNo }}
-                                                    </td>
-                                                    <td class="table__cell ">
-                                                        {{ employee.personalEmailAddress }}
-                                                    </td>
-                                                    <td class="table__cell ">
-                                                        {{ employee.postcode }}
-                                                    </td>
-                                                    <td class="table__cell ">
-                                                        {{ employee.country }}
-                                                    </td>
-                                                    {% if employee.emergencyContactFirstName and employee.emergencyContactSurname %}
-                                                        <td class="table__cell ">
-                                                            {{ employee.emergencyContactFirstName }} {{ employee.emergencyContactSurname }}
-                                                        </td>
-                                                        <td class="table__cell ">
-                                                            {{ employee.emergencyContactMobileNo }}
-                                                        </td>
-                                                    {% else %}
-                                                        <td class="table__cell ">
-                                                            -
-                                                        </td>
-                                                        <td class="table__cell ">
-                                                            -
-                                                        </td>
-                                                    {% endif %}
-                                                    {% if employee.emergencyContactFirstName2 and employee.emergencyContactSurname2 %}
-                                                        <td class="table__cell ">
-                                                            {{ employee.emergencyContactFirstName2 }} {{ employee.emergencyContactSurname2 }}
-                                                        </td>
-                                                        <td class="table__cell ">
-                                                            {{ employee.emergencyContactMobileNo2 }}
-                                                        </td>
-                                                    {% else %}
-                                                        <td class="table__cell ">
-                                                            -
-                                                        </td>
-                                                        <td class="table__cell ">
-                                                            -
-                                                        </td>
-                                                    {% endif %}
-                                                    <td class="table__cell ">
-                                                        {% if employee.anyLanguagesSpoken %}
-                                                            {{ employee.anyLanguagesSpoken }}
-                                                        {% else %}
-                                                            -
-                                                        {% endif %}
-                                                    </td>
-                                                    <td class="table__cell ">
-                                                        {% if employee.weeklyHours %}
-                                                            {{ employee.weeklyHours }}
-                                                        {% else %}
-                                                            -
-                                                        {% endif %}
-                                                    </td>
-                                                    <td class="table__cell ">
-                                                        {% if employee.mobileStaaff == True %}
-                                                            Yes
-                                                        {% else %}
-                                                            No
-                                                        {% endif %}
-                                                    </td>
-                                                </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
-                                {% else %}
-                                    No history found for Field Worker
-                                {% endif %}
-                            </div>
-                          </details>
-                        <details id="accordion-2" class="details js-collapsible details--accordion" open data-btn-close="Hide" data-group="accordion">
-                            <summary class="details__summary js-collapsible-summary">
-                              <div class="details__heading">
-                                <span class="details__title u-fs-r--b">Employee Job Role History</span>
-                              </div>
-                            </summary>
-                            <div id="accordion-2-content" class="details__content js-collapsible-content">
-                                {% if employee_job_role_history %}
-                                    <div class="table-scrollable__content">
-                                    <table class="table  table--sortable  table-scrollable--on" data-aria-sort="Sort by"
-                                       data-aria-asc="ascending" data-aria-desc="descending">
-                                        <thead class="table__head">
-                                        <tr class="table__row">
-                                            <th scope="col" class="table__header " aria-sort="none">Operational Start Date</th>
-                                            <th scope="col" class="table__header " aria-sort="none">Operational End Date</th>
-                                            <th scope="col" class="table__header " aria-sort="none">Job Role ID</th>
-                                            <th scope="col" class="table__header " aria-sort="none">Job Role</th>
-                                            <th scope="col" class="table__header " aria-sort="none">Area Location</th>
-                                            <th scope="col" class="table__header " aria-sort="none">Assignment Status</th>
-                                            <th scope="col" class="table__header " aria-sort="none">Active Job</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody class="table__body">
-                                            {% for job_role in employee_job_role_history %}
-                                                {% if job_role.active == True %}
-                                                    {% set active_colour = '#f0f762' %}
-                                                {% else %}
-                                                    {% set active_colour = '#ffffff' %}
-                                                {% endif %}
-                                                <tr bgcolor="{{ active_colour }}" class="table__row">
-                                                    <td class="table__cell ">
-                                                        {{ job_role.contractStartDate }}
-                                                    </td>
-                                                    <td class="table__cell ">
-                                                        {{ job_role.operationalEndDate }}
-                                                    </td>
-                                                    <td class="table__cell ">
-                                                        {{ job_role.uniqueRoleId }}
-                                                    </td>
-                                                    <td class="table__cell ">
-                                                        {{ job_role.jobRole }}
-                                                    </td>
-                                                    <td class="table__cell ">
-                                                        {{ job_role.areaLocation }}
-                                                    </td>
-                                                    <td class="table__cell ">
-                                                        {{ job_role.assignmentStatus }}
-                                                    </td>
-                                                    <td class="table__cell ">
-                                                        {% if job_role.active == True %}
-                                                            Yes
-                                                        {% else %}
-                                                            No
-                                                        {% endif %}
-                                                    </td>
-                                                </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
-                                {% else %}
-                                    No job role history found for Field Worker
-                                {% endif %}
-                            </div>
-                          </details>
-                    </section>
-                </section>
+                <br>
+                <div class="grid">
+                    <div class=" grid__col col-9@m">
+                        <h1>{{ page_title }}</h1>
+                    </div>
+                    <div class="grid--center grid__col col-3@m">
+                        <h1>Status: {{ employee_status }}</h1>
+                    </div>
+                </div>
+                {% if user_role != 'hr' %}
+                    {{
+                        onsTabs({
+                            'tabs': [
+                                {
+                                    'title': 'Employee Information',
+                                    'content': employee_record,
+                                    'table': [{
+                                        'section_header': 'Employee Device Details',
+                                        'headers': device_headers,
+                                        'records': device_data
+                                        }]
+                                 },
+                                {
+                                    'title': 'Employee History',
+                                    'table': [{
+                                        'section_header': 'Employee History',
+                                        'headers': employment_history_headers,
+                                        'records': employment_history_data
+                                        },
+                                        {
+                                        'section_header': 'Employee Job Role History',
+                                        'headers': employee_job_role_history_header,
+                                        'records': employee_job_role_history_data
+                                        }]
+                                }
+                            ]
+                        })
+                    }}
+                {% else %}
+                    {{
+                        onsTabs({
+                            'tabs': [
+                                {
+                                    'title': 'Employee Information',
+                                    'content': employee_record,
+                                 },
+                                {
+                                    'title': 'Employee History',
+                                    'table': [{
+                                        'section_header': 'Employee History',
+                                        'headers': employment_history_headers,
+                                        'records': employment_history_data
+                                        }]
+                                }
+                            ]
+                        })
+                    }}
+                {% endif %}
             </div>
             <div class="grid__col col-2@m"></div>
         </div>

@@ -20,7 +20,7 @@ from . import session
 from . import settings
 from .app_logging import logger_initial_config
 
-logger = get_logger('respondent-home')
+logger = get_logger('fsdr-ui')
 
 
 async def on_startup(app):

@@ -1,13 +1,9 @@
-import base64
 import time
 from asyncio import get_event_loop
 
-import aiohttp_session
 from aiohttp_session import session_middleware, Session
-from aiohttp_session.cookie_storage import EncryptedCookieStorage
 from aiohttp_session.redis_storage import RedisStorage
 from aioredis import RedisError, create_pool
-from cryptography import fernet
 from structlog import get_logger
 
 logger = get_logger('fsdr-ui')
@@ -47,7 +43,7 @@ def setup(app_config):
         make_redis_pool(app_config['REDIS_SERVER'], app_config['REDIS_PORT']))
     return session_middleware(
         RedisStorage(redis_pool,
-                     cookie_name='RH_SESSION',
+                     cookie_name='FSDRUI_SESSION',
                      max_age=int(app_config['SESSION_AGE'])))
 
 

@@ -1,13 +1,58 @@
 {% macro onsPagination(params) %}
+
+   {% if params.called_from_index == True %}
+        {% if params.last_page_number|float %}
+            {% set last_page = (params.last_page_number|int + 1) %}
+        {% else %}
+            {% set last_page = params.last_page_number|int %}
+        {% endif %}
+
+        {% set count = [0] %}
+
+        {% set pagination_array = [] %}
+
+        {% for x in range(last_page|int) %}
+            {% if x == 0 %}
+                {% set pagination_array = [{"page": 1, "called_from_index": params.called_from_index, "current": false}] %}
+            {% elif x == params.page_number %}
+                {% set pagination_array = pagination_array.append({"page": params.page_number, "current": true}) %}
+            {% else %}
+                {% set pagination_array = pagination_array.append({"page": loop.index - 1, "current": false}) %}
+            {% endif %}
+            {% set count = count.append(count.pop() + 1) %}
+        {% endfor %}
+   {% else %}
+        {% if params.last_page_number|float or params.last_page_number|int == 0 %}
+            {% set last_page = (params.last_page_number|int + 1) %}
+        {% else %}
+            {% set last_page = params.last_page_number|int %}
+        {% endif %}
+
+        {% set count = [0] %}
+
+        {% set pagination_array = [] %}
+
+        {% for x in range(last_page|int) %}
+            {% if x == 0 %}
+                {% set pagination_array = [{"page": 1, "called_from_index": params.called_from_index, "current": false}] %}
+            {% elif x == params.page_number %}
+                {% set pagination_array = pagination_array.append({"page": params.page_number, "last_page": last_page|string , "current": True}) %}
+            {% else %}
+                {% set pagination_array = pagination_array.append({"page": loop.index - 1, "last_page": last_page|string , "current": False}) %}
+            {% endif %}
+            {% set count = count.append(count.pop() + 1) %}
+        {% endfor %}
+   {% endif %}
+
   {% set currentPageIndex = [0] %}
-  {% for page in params.pages %}
+  {% for page in pagination_array %}
       {% if page.current %}
-          {% set currentPageIndex = currentPageIndex.append(currentPageIndex.pop() + loop.index) %}
+          {% set currentPageIndex = currentPageIndex.append(currentPageIndex.pop() + page.page) %}
       {% endif %}
   {% endfor %}
 
   {% set current_page = currentPageIndex.pop() %}
-  {% set totalPages = params.pages | length %}
+  {% set totalPages = pagination_array | length %}
   {% set position = "Page " + current_page|string + " of " + totalPages|string %}
 
   {# Calculate middle pages #}
@@ -26,27 +71,27 @@
   {% endif %}
 
 
-  <nav class="pagination {{ params.classes }}{% if params.hideRangeIndicator %} pagination--no-indicator{% endif %}" arial-label="Pagination ({{ position }})">
+  <nav class="pagination {% if hideRangeIndicator %} pagination--no-indicator{% endif %}" arial-label="Pagination ({{ position }})">
       <div class="pagination__position">{{ position }}</div>
       <ul class="pagination__items">
-          {% if current_page != 1 %}
+          {% if current_page > 1 %}
               <li class="pagination__item pagination__item--previous">
-                  <a href="{{ params.pages[current_page|int - 2].url }}" class="pagination__link" rel="prev" aria-label="Go to the previous page (Page {{ current_page|int - 1 }})">{{ params.previous }}</a>
+                  <a href="{{ url(params.link_url).with_query({'page':current_page - 1}) }}" class="pagination__link" rel="prev" aria-label="Go to the previous page (Page {{ current_page|int - 1 }})">{{ params.previous }}</a>
               </li>
           {% endif %}
           {% if current_page|int > 3 %}
-              {% set first = params.pages | first %}
+              {% set first = pagination_array | first %}
               <li class="pagination__item">
-                  <a href="{{ first.url }}" class="pagination__link" aria-label="Go to the first page (Page 1)">1</a>
+                  <a href="{{ url(params.link_url).with_query({'page':1}) }}" class="pagination__link" aria-label="Go to the first page (Page 1)">1</a>
               </li>
           {% endif %}
           {% if current_page|int > 4 %}
-              <li class="pagination__item pageination__item--gap">&hellip;</li>
+              <li class="pagination__item pagination__item--gap">&hellip;</li>
           {% endif %}
-          {% for page in params.pages %}
+          {% for page in pagination_array %}
               {% if loop.index >= middlePagesStart and loop.index <= middlePagesEnd %}
                   <li class="pagination__item{% if page.current %} pagination__item--current{% endif %}">
-                      <a href="{{ page.url }}" class="pagination__link"
+                      <a href='{{ url(params.link_url).with_query({'page':page.page}) }}' class="pagination__link"
                           {%- if page.current -%}
                               aria-current="true" aria-label="Current page ({{ position }})"
                           {%- else -%}
@@ -66,14 +111,14 @@
               <li class="pagination__item pageination__item--gap">&hellip;</li>
           {% endif %}
           {% if current_page|int < totalPages|int - 2 %}
-              {% set lastPage = params.pages | last %}
+              {% set lastPage = pagination_array | last %}
               <li class="pagination__item">
-                  <a href="{{ lastPage.url }}" class="pagination__link" aria-label="Go to the last page (Page {{ totalPages }})">{{ totalPages }}</a>
+                  <a href="{{ url(params.link_url).with_query({'page':last_page - 1}) }}" class="pagination__link" aria-label="Go to the last page (Page {{ totalPages }})">{{ totalPages }}</a>
               </li>
           {% endif %}
           {% if totalPages|int > 1 and totalPages|int > current_page|int %}
               <li class="pagination__item pagination__item--next">
-                  <a href="{{ params.pages[current_page|int].url }}" class="pagination__link" rel="next" aria-label="Go to the next page (Page {{ current_page|int }})">{{ params.next }}</a>
+                  <a href="{{ url(params.link_url).with_query({'page':current_page + 1}) }}" class="pagination__link" rel="next" aria-label="Go to the next page (Page {{ current_page|int }})">{{ params.next }}</a>
               </li>
           {% endif %}
       </ul>

@@ -1,5 +1,5 @@
+import json
 import math
-import re
 
 import aiohttp_jinja2
 
@@ -8,8 +8,10 @@ from aiohttp.web import HTTPFound, RouteTableDef
 from aiohttp_session import get_session
 from structlog import get_logger
 
+from app.searchcriteria import store_search_criteria, retrieve_job_roles, retrieve_assignment_statuses, \
+    clear_stored_search_criteria
 from app.searchfunctions import get_all_assignment_status, get_distinct_job_role, get_employee_records, \
-    get_employee_count
+    allocate_search_ranges, employee_record_table, employee_table_headers
 from . import (NEED_TO_SIGN_IN_MSG, NO_EMPLOYEE_DATA, SERVICE_DOWN_MSG)
 from .flash import flash
 from flask import Flask
@@ -19,51 +21,38 @@ search_routes = RouteTableDef()
 app = Flask(__name__)
 
 
-def setup_request(request):
-    request['client_ip'] = request.headers.get('X-Forwarded-For', None)
-
-
-def log_entry(request, endpoint):
-    method = request.method
-    logger.info(f"received {method} on endpoint '{endpoint}'",
-                method=request.method,
-                path=request.path)
-
-
 @search_routes.view('/search')
 class Search:
     @aiohttp_jinja2.template('search.html')
     async def get(self, request):
         session = await get_session(request)
-        try:
-            user_json = session['user_details']
-            user_role = user_json['userRole']
-        except ClientResponseError:
-            flash(request, NEED_TO_SIGN_IN_MSG)
-            raise HTTPFound(
-                request.app.router['Login:get'].url_for())
 
         if session.get('logged_in'):
-            setup_request(request)
-            log_entry(request, 'start')
+            await clear_stored_search_criteria(session)
+            user_json = session['user_details']
+            user_role = user_json['userRole']
 
             try:
-                get_job_roles = get_distinct_job_role(request)
-                get_all_assignment_statuses = get_all_assignment_status(request)
+                get_job_roles = get_distinct_job_role()
+                get_all_assignment_statuses = get_all_assignment_status()
             except ClientResponseError as ex:
                 if ex.status == 503:
                     logger.warn('Server is unavailable',
                                 client_ip=request['client_ip'])
                     flash(request, SERVICE_DOWN_MSG)
-                    raise HTTPFound(
-                        request.app.router.url_for('error503.html')
-                    )
+                    return aiohttp_jinja2.render_template(
+                        'error503.html',
+                        request, {
+                            'include_nav': False
+                        })
                 else:
                     raise ex
 
             if get_job_roles.status_code == 200 and get_all_assignment_statuses.status_code == 200:
-                job_role_json = get_job_roles.json()
-                assignment_statuses_json = get_all_assignment_statuses.json()
+
+                job_role_json = retrieve_job_roles(get_job_roles, '')
+                assignment_statuses_json = retrieve_assignment_statuses(get_all_assignment_statuses)
+
                 return {
                     'page_title': f'Field Force view for: {user_role}',
                     'distinct_job_roles': job_role_json,
@@ -74,34 +63,41 @@ class Search:
                             client_ip=request['client_ip'])
                 flash(request, NO_EMPLOYEE_DATA)
                 raise HTTPFound(
-                    request.app.router['MainPage:get'].url_for(page=0))
+                    request.app.router['MainPage:get'].url_for())
 
         else:
             flash(request, NEED_TO_SIGN_IN_MSG)
-            raise HTTPFound(
-                request.app.router['Login:get'].url_for())
+            return aiohttp_jinja2.render_template(
+                'signin.html',
+                request, {
+                    'include_nav': False
+                })
 
 
-@search_routes.view('/search+{page}+{called_from_index}+{previous_query}+{retrieve_count}')
+@search_routes.view('/search-results')
 class SecondaryPage:
     @aiohttp_jinja2.template('search-results.html')
     async def post(self, request):
         session = await get_session(request)
-        page_number = int(request.match_info['page'])
         data = await request.post()
-        from_index = request.match_info['called_from_index']
 
         try:
             user_json = session['user_details']
             user_role = user_json['userRole']
         except ClientResponseError:
             flash(request, NEED_TO_SIGN_IN_MSG)
-            raise HTTPFound(
-                request.app.router['Login:get'].url_for())
+            return aiohttp_jinja2.render_template(
+                'signin.html',
+                request, {
+                    'include_nav': False
+                })
 
         if session.get('logged_in'):
-            setup_request(request)
-            log_entry(request, 'start')
+
+            if 'page' in request.query:
+                page_number = int(request.query['page'])
+            else:
+                page_number = 1
 
             previous_assignment_selected = ''
             previous_jobrole_selected = ''
@@ -112,83 +108,48 @@ class SecondaryPage:
             previous_jobid = ''
 
             try:
-                user_filter = ''
-                format_user_filter = ''
+                if data.get('indexsearch') == '' or 'called_from_index' in request.query:
+                    from_index = 'true'
+                else:
+                    from_index = 'false'
+
+                search_criteria = {}
 
                 if data.get('assignment_select'):
                     previous_assignment_selected = data.get('assignment_select')
-                    selected_assignment = '&assignmentStatus=' + previous_assignment_selected
-                    if user_filter == '':
-                        user_filter = selected_assignment
-                        format_user_filter = '?assignmentStatus=' + previous_assignment_selected
-                    else:
-                        user_filter = user_filter + '&' + selected_assignment
-                        format_user_filter = format_user_filter + '&assignmentStatus=' + previous_assignment_selected
+                    search_criteria['assignmentStatus'] = previous_assignment_selected
 
                 if data.get('job_role_select'):
                     previous_jobrole_selected = data.get('job_role_select')
-                    selected_job_role = '&jobRole=' + previous_jobrole_selected
-                    if user_filter == '':
-                        user_filter = selected_job_role
-                        format_user_filter = '?jobRole=' + previous_jobrole_selected
-                    else:
-                        user_filter = user_filter + '&' + selected_job_role
-                        format_user_filter = format_user_filter + '&jobRole=' + previous_jobrole_selected
+                    search_criteria['jobRole'] = previous_jobrole_selected
 
                 if data.get('filter_area'):
                     previous_area = data.get('filter_area')
-                    filter_area = '&area=' + previous_area
-                    if user_filter == '':
-                        user_filter = filter_area
-                        format_user_filter = '?area=' + previous_area
-                    else:
-                        user_filter = user_filter + filter_area
-                        format_user_filter = format_user_filter + '&area=' + previous_area
+                    search_criteria['area'] = previous_area
 
                 if data.get('filter_surname'):
                     previous_surname = data.get('filter_surname')
-                    filter_surname = '&surname=' + previous_surname
-                    if user_filter == '':
-                        user_filter = filter_surname
-                        format_user_filter = '?surname=' + previous_surname
-                    else:
-                        user_filter = user_filter + filter_surname
-                        format_user_filter = format_user_filter + '&surname=' + previous_surname
+                    search_criteria['surname'] = previous_surname
 
                 if data.get('filter_firstname'):
                     previous_firstname = data.get('filter_firstname')
-                    filter_firstname = '&firstName=' + previous_firstname
-                    if user_filter == '':
-                        user_filter = filter_firstname
-                        format_user_filter = '?firstName=' + previous_firstname
-                    else:
-                        user_filter = user_filter + filter_firstname
-                        format_user_filter = format_user_filter + '&firstNme=' + previous_firstname
+                    search_criteria['firstName'] = previous_firstname
 
                 if data.get('filter_badge'):
                     previous_badge = data.get('filter_badge')
-                    filter_badge = '&badgeNumber=' + previous_badge
-                    if user_filter == '':
-                        user_filter = filter_badge
-                        format_user_filter = '?badgeNumber=' + previous_badge
-                    else:
-                        user_filter = user_filter + filter_badge
-                        format_user_filter = format_user_filter + '&badgeNumber=' + previous_badge
+                    search_criteria['badgeNumber'] = previous_badge
 
                 if data.get('filter_jobid'):
                     previous_jobid = data.get('filter_jobid')
-                    filter_jobid = '&jobRoleId=' + previous_jobid
-                    if user_filter == '':
-                        user_filter = filter_jobid
-                        format_user_filter = '?jobRoleId=' + previous_jobid
-                    else:
-                        user_filter = user_filter + filter_jobid
-                        format_user_filter = format_user_filter + '&jobRoleId=' + previous_jobid
+                    search_criteria['jobRoleId'] = previous_jobid
 
-                if user_filter == '' and from_index == 'true':
+                if search_criteria:
+                    await store_search_criteria(request, search_criteria)
+
+                if search_criteria == '' and from_index == 'true':
                     raise HTTPFound(
-                        request.app.router['MainPage:get'].url_for(page='1'))
-                elif user_filter == '' and from_index == 'false':
+                        request.app.router['MainPage:get'].url_for())
+                elif search_criteria == '' and from_index == 'false':
                     return aiohttp_jinja2.render_template(
                         'search.html',
                         request, {
@@ -196,34 +157,43 @@ class SecondaryPage:
                         },
                         status=405)
 
-                high_value, low_value, page_number, max_page = await self.allocate_search_ranges(request,
-                                                                                                 format_user_filter,
-                                                                                                 page_number)
+                high_value, low_value, page_number, max_page = await allocate_search_ranges(search_criteria,
+                                                                                            page_number)
 
-                retrieve_employee_info = get_employee_records(request, low_value,
-                                                              high_value, user_filter)
+                search_criteria_with_range = search_criteria.copy()
 
-                get_job_roles = get_distinct_job_role(request)
+                search_criteria_with_range['rangeHigh'] = high_value
+                search_criteria_with_range['rangeLow'] = low_value
+
+                retrieve_employee_info = get_employee_records(search_criteria_with_range)
+
+                get_job_roles = get_distinct_job_role()
 
             except ClientResponseError as ex:
-                    raise ex
+                raise ex
 
             if retrieve_employee_info.status_code == 200:
+                table_headers = employee_table_headers()
+
                 employees_present = retrieve_employee_info.content
                 if employees_present == b'[]':
                     no_employee_data = 'true'
+                    employee_records = ''
                 else:
                     no_employee_data = 'false'
-                employee_records_json = retrieve_employee_info.json()
-                job_role_json = get_job_roles.json()
+                    employee_records = employee_record_table(retrieve_employee_info.json())
+
+                job_role_json = retrieve_job_roles(get_job_roles, previous_jobrole_selected)
+
                 return {
                     'called_from_index': from_index,
                     'page_title': f'Field Force view for: {user_role}',
-                    'employee_records': employee_records_json,
+                    'table_headers': table_headers,
+                    'employee_records': employee_records,
                     'page_number': page_number,
                     'last_page_number': int(math.floor(max_page)),
                     'distinct_job_roles': job_role_json,
-                    'previous_selection': user_filter,
+                    'previous_selection': json.dumps(search_criteria),
                     'previous_area': previous_area,
                     'previous_assignment_selected': previous_assignment_selected,
                     'previous_jobrole_selected': previous_jobrole_selected,
@@ -240,21 +210,23 @@ class SecondaryPage:
                 return aiohttp_jinja2.render_template(
                     'signin.html',
                     request, {
-                        'page_title': 'Sign in'
+                        'page_title': 'Sign in',
+                        'include_nav': False
                     },
                     status=401)
 
         else:
             flash(request, NEED_TO_SIGN_IN_MSG)
-            raise HTTPFound(
-                request.app.router['Login:get'].url_for())
+            return aiohttp_jinja2.render_template(
+                'signin.html',
+                request, {
+                    'page_title': 'Sign in',
+                    'include_nav': False
+                })
 
     @aiohttp_jinja2.template('search-results.html')
     async def get(self, request):
         session = await get_session(request)
-        page_number = int(request.match_info['page'])
-        previous_query = request.match_info['previous_query']
-        from_index = request.match_info['called_from_index']
 
         try:
             user_json = session['user_details']
@@ -265,84 +237,98 @@ class SecondaryPage:
                 request.app.router['Login:get'].url_for())
 
         if session.get('logged_in'):
-            setup_request(request)
-            log_entry(request, 'start')
 
+            if 'page' in request.query:
+                page_number = int(request.query['page'])
+            else:
+                page_number = 1
+
+            if 'called_from_index' in request.query:
+                from_index = request.query['called_from_index']
+            else:
+                from_index = False
+
+            search_criteria = {}
+
+            previous_assignment_selected = ''
+            previous_jobrole_selected = ''
+            previous_area = ''
+            previous_surname = ''
+            previous_firstname = ''
+            previous_badge = ''
+            previous_jobid = ''
             try:
-                if previous_query == "default":
-                    user_filter = ""
-                    format_user_filter = ""
-                else:
-                    user_filter = previous_query
-                    format_user_filter = previous_query.replace("&", "?", 1)
+                if session.get('assignmentStatus'):
+                    previous_assignment_selected = session['assignmentStatus']
+                    search_criteria['assignmentStatus'] = previous_assignment_selected
 
-                high_value, low_value, page_number, max_page = await self.allocate_search_ranges(request,
-                                                                                                 format_user_filter,
-                                                                                                 page_number)
+                if session.get('jobRole'):
+                    previous_jobrole_selected = session['jobRole']
+                    search_criteria['jobRole'] = previous_jobrole_selected
 
-                retrieve_employee_info = get_employee_records(request, low_value,
-                                                              high_value, user_filter)
-                get_job_roles = get_distinct_job_role(request)
+                if session.get('area'):
+                    previous_area = session['area']
+                    search_criteria['area'] = previous_area
+
+                if session.get('surname'):
+                    previous_surname = session['surname']
+                    search_criteria['surname'] = previous_surname
+
+                if session.get('firstName'):
+                    previous_firstname = session['firstName']
+                    search_criteria['firstName'] = previous_firstname
+
+                if session.get('badgeNumber'):
+                    previous_badge = session['badgeNumber']
+                    search_criteria['badgeNumber'] = previous_badge
+
+                if session.get('jobRoleId'):
+                    previous_jobid = session['jobRoleId']
+                    search_criteria['jobRoleId'] = previous_jobid
+
+                high_value, low_value, page_number, max_page = await allocate_search_ranges(search_criteria,
+                                                                                            page_number)
+
+                search_criteria_with_range = search_criteria.copy()
+
+                search_criteria_with_range['rangeHigh'] = high_value
+                search_criteria_with_range['rangeLow'] = low_value
+
+                retrieve_employee_info = get_employee_records(search_criteria_with_range)
+
+                get_job_roles = get_distinct_job_role()
             except ClientResponseError as ex:
                 if ex.status == 503:
                     logger.warn('Server is unavailable',
                                 client_ip=request['client_ip'])
                     flash(request, SERVICE_DOWN_MSG)
-                    raise HTTPFound(
-                        request.app.router.url_for('error503.html')
-                    )
+                    return aiohttp_jinja2.render_template(
+                        'error503.html',
+                        request, {
+                            'include_nav': False
+                        })
                 else:
                     raise ex
 
             except ClientResponseError as ex:
-                    raise ex
+                raise ex
 
             if retrieve_employee_info.status_code == 200:
-                previous_assignment_selected = ''
-                previous_jobrole_selected = ''
-                previous_area = ''
-                previous_surname = ''
-                previous_firstname = ''
-                previous_badge = ''
-                previous_jobid = ''
-                employee_records_json = retrieve_employee_info.json()
-                job_role_json = get_job_roles.json()
+                table_headers = employee_table_headers()
 
-                split_user_filter = user_filter.replace("&", "", 1)
-                filter_form_list = re.split('&|=', split_user_filter)
+                employee_records = employee_record_table(retrieve_employee_info.json())
 
-                filter_form_dict = {filter_form_list[i]: filter_form_list[i + 1]
-                                    for i in range(0, len(filter_form_list), 2)}
-
-                if 'area' in filter_form_dict.keys():
-                    previous_area = filter_form_dict['area']
-
-                if 'jobRole' in filter_form_dict.keys():
-                    previous_jobrole_selected = filter_form_dict['jobRole']
-
-                if 'surname' in filter_form_dict.keys():
-                    previous_surname = filter_form_dict['surname']
-
-                if 'assignmentStatus' in filter_form_dict.keys():
-                    previous_assignment_selected = filter_form_dict['assignmentStatus']
-
-                if 'jobRoleId' in filter_form_dict.keys():
-                    previous_jobid = filter_form_dict['jobRoleId']
-
-                if 'firstName' in filter_form_dict.keys():
-                    previous_surname = filter_form_dict['firstName']
-
-                if 'badgeNumber' in filter_form_dict.keys():
-                    previous_surname = filter_form_dict['badgeNumber']
+                job_role_json = retrieve_job_roles(get_job_roles, previous_jobrole_selected)
 
                 return {
                     'called_from_index': from_index,
                     'page_title': f'Field Force view for: {user_role}',
-                    'employee_records': employee_records_json,
+                    'table_headers': table_headers,
+                    'employee_records': employee_records,
                     'page_number': int(page_number),
                     'last_page_number': int(math.floor(max_page)),
                     'distinct_job_roles': job_role_json,
-                    'previous_selection': user_filter,
+                    'previous_selection': json.dumps(search_criteria),
                     'previous_area': previous_area,
                     'previous_assignment_selected': previous_assignment_selected,
                     'previous_jobrole_selected': previous_jobrole_selected,
@@ -358,29 +344,15 @@ class SecondaryPage:
                 return aiohttp_jinja2.render_template(
                     'signin.html',
                     request, {
-                        'display_region': 'en',
-                        'page_title': 'Sign in'
-                    },
-                    status=401)
+                        'page_title': 'Sign in',
+                        'include_nav': False
+                    })
 
         else:
             flash(request, NEED_TO_SIGN_IN_MSG)
-            raise HTTPFound(
-                request.app.router['Login:get'].url_for())
-
-    async def allocate_search_ranges(self, request, user_filter, page_number):
-        employee_count = get_employee_count(request, user_filter)
-
-        max_page = int(employee_count.text) / 50
-        if page_number >= max_page:
-            page_number = int(math.floor(max_page))
-        if page_number == 0:
-            low_value = 1
-            high_value = 50
-        elif page_number > 1:
-            low_value = 50 * page_number
-            high_value = low_value + 50
-        else:
-            low_value = page_number
-            high_value = 50
-        return high_value, low_value, page_number, max_page
+            return aiohttp_jinja2.render_template(
+                'signin.html',
+                request, {
+                    'page_title': 'Sign in',
+                    'include_nav': False
+                })
