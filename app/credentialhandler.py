@@ -11,6 +11,7 @@ from requests.auth import HTTPBasicAuth
 from structlog import get_logger
 from werkzeug.utils import redirect
 
+from app.searchcriteria import clear_stored_search_criteria
 from app.utils import FSDR_USER, FSDR_URL, FSDR_PASS
 from . import (INVALID_SIGNIN_MSG, SOMETHING_WENT_WRONG)
 from .flash import flash
@@ -40,6 +41,7 @@ async def store_successful_signin(auth_json, request):
     session['logged_in'] = True
     session.permamnent = False
 
+    await clear_stored_search_criteria(session)
 
 def get_fsdr_signin( user, password):
     credentials = {'password': password, 'username': user}
@@ -133,6 +135,7 @@ class Logout:
     @aiohttp_jinja2.template('logout.html')
     async def get(self, request):
         session = await get_session(request)
+        await clear_stored_search_criteria(session)
         session.pop('logged_in', None)
         return aiohttp_jinja2.render_template(
             'logout.html',
