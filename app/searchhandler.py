@@ -29,9 +29,12 @@ class Search:
 
         if session.get('logged_in'):
             await clear_stored_search_criteria(session)
-            user_json = session['user_details']
-            user_role = user_json['userRole']
-
+            try:
+                user_json = session['user_details']
+                user_role = user_json['userRole']
+            except:
+                flash(request, NEED_TO_SIGN_IN_MSG)
+                raise HTTPFound(request.app.router['Login:get'].url_for())
             try:
                 get_job_roles = get_distinct_job_role_short()
                 get_all_assignment_statuses = get_all_assignment_status()
@@ -84,12 +87,6 @@ class SecondaryPage:
             flash(request, NEED_TO_SIGN_IN_MSG)
             raise HTTPFound(request.app.router['Login:get'].url_for())
 
-            # return aiohttp_jinja2.render_template(
-            #     'signin.html',
-            #     request, {
-            #         'include_nav': False
-            #     })
-
         if session.get('logged_in'):
 
             if 'page' in request.query:
@@ -115,11 +112,11 @@ class SecondaryPage:
 
                 if data.get('assignment_select'):
                     previous_assignment_selected = data.get('assignment_select')
-                    search_criteria['assignmentStatus'] = previous_assignment_selected
+                    search_criteria['assignmentStatus'] = data.get('assignment_select')
 
                 if data.get('job_role_select'):
                     previous_jobrole_selected = data.get('job_role_select')
-                    search_criteria['jobRole'] = previous_jobrole_selected
+                    search_criteria['jobRoleShort'] = data.get('job_role_select')
 
                 if data.get('filter_area'):
                     previous_area = data.get('filter_area')
@@ -181,7 +178,7 @@ class SecondaryPage:
                     no_employee_data = 'false'
                     employee_records = employee_record_table(retrieve_employee_info.json())
 
-                job_role_json = retrieve_job_roles(get_job_roles, previous_jobrole_selected)
+                job_role_short_json = retrieve_job_roles(get_job_roles, previous_jobrole_selected)
 
                 return {
                     'called_from_index': from_index,
@@ -190,7 +187,7 @@ class SecondaryPage:
                     'employee_records': employee_records,
                     'page_number': page_number,
                     'last_page_number': int(math.floor(max_page)),
-                    'distinct_job_roles': job_role_json,
+                    'distinct_job_roles': job_role_short_json,
                     'previous_selection': json.dumps(search_criteria),
                     'previous_area': previous_area,
                     'previous_assignment_selected': previous_assignment_selected,
@@ -255,9 +252,9 @@ class SecondaryPage:
                     previous_assignment_selected = session['assignmentStatus']
                     search_criteria['assignmentStatus'] = previous_assignment_selected
 
-                if session.get('jobRole'):
-                    previous_jobrole_selected = session['jobRole']
-                    search_criteria['jobRole'] = previous_jobrole_selected
+                if session.get('jobRoleShort'):
+                    previous_jobrole_selected = session['jobRoleShort']
+                    search_criteria['jobRoleShort'] = previous_jobrole_selected
 
                 if session.get('area'):
                     previous_area = session['area']

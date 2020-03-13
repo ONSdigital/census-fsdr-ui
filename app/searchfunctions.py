@@ -11,17 +11,12 @@ from requests.auth import HTTPBasicAuth
 def get_employee_count(user_filter=""):
     employee_record_url = URL(
         FSDR_URL + "/fieldforce/employeeCount/").with_query(
-         user_filter
+        user_filter
     )
     return requests.get(f'{employee_record_url}',
                         verify=False,
                         auth=HTTPBasicAuth(FSDR_USER, FSDR_PASS))
 
-
-def get_distinct_job_role():
-    return requests.get(FSDR_URL + f'/jobRoles/allJobRoles/distinct',
-                        verify=False,
-                        auth=HTTPBasicAuth(FSDR_USER, FSDR_PASS))
 
 def get_distinct_job_role_short():
     return requests.get(FSDR_URL + f'/jobRoles/allJobRoleShorts/distinct',
@@ -48,7 +43,7 @@ def get_employee_records(user_filter=""):
 async def allocate_search_ranges(user_filter, page_number):
     employee_count = get_employee_count(user_filter)
 
-    max_page = int(employee_count.text) / 50
+    max_page = (int(employee_count.text) / 50) - 1
     if page_number >= max_page:
         page_number = int(math.floor(max_page))
     if page_number == 0:

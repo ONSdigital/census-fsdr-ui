@@ -45,8 +45,12 @@ class MainPage:
             await clear_stored_search_criteria(session)
             setup_request(request)
             log_entry(request, 'start')
-            user_json = session['user_details']
-            user_role = user_json['userRole']
+            try:
+                user_json = session['user_details']
+                user_role = user_json['userRole']
+            except:
+                flash(request, NEED_TO_SIGN_IN_MSG)
+                raise HTTPFound(request.app.router['Login:get'].url_for())
 
             if 'page' in request.query:
                 page_number = int(request.query['page'])
