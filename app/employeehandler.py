@@ -53,6 +53,7 @@ class EmployeeInformation():
                 device_info = []
                 employee_name = employee_info['firstName'] + ' ' + employee_info['surname']
                 employee_status = employee_info['status']
+                employee_badge = employee_info['idBadgeNo']
 
                 if employee_info['ingestDate']:
                     employee_info['ingestDate'] = format_to_uk_dates(employee_info['ingestDate'])
@@ -140,7 +141,7 @@ class EmployeeInformation():
                         device_headers = []
                         device_data = []
 
-                    page_title = 'Employee: %s (%s)' % (employee_name, employee_id)
+                    page_title = 'Employee: %s (%s)' % (employee_name, employee_badge)
                 try:
                     return {
                         'user_role': user_role,

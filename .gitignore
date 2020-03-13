@@ -129,4 +129,4 @@ dmypy.json
 .pyre/
 
 # CDS templates
-app/templates/components
+app/templates/components/

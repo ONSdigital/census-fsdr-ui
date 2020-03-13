@@ -23,6 +23,11 @@ def get_distinct_job_role():
                         verify=False,
                         auth=HTTPBasicAuth(FSDR_USER, FSDR_PASS))
 
+def get_distinct_job_role_short():
+    return requests.get(FSDR_URL + f'/jobRoles/allJobRoleShorts/distinct',
+                        verify=False,
+                        auth=HTTPBasicAuth(FSDR_USER, FSDR_PASS))
+
 
 def get_all_assignment_status():
     return requests.get(FSDR_URL + f'/jobRoles/assignmentStatus',
@@ -61,7 +66,7 @@ async def allocate_search_ranges(user_filter, page_number):
 def employee_table_headers():
     add_headers = [
         {
-            'value': 'ID',
+            'value': 'Badge No',
             'aria_sort': 'none'
         },
         {
@@ -94,7 +99,7 @@ def employee_record_table(employee_records_json):
     for employees in employee_records_json:
         add_employees.append({'tds': [
             {
-                'value': employees['unique_employee_id']
+                'value': employees['id_badge_no']
             },
             {
                 'value': '<a href="/employeeinformation/' + employees['unique_employee_id'] + '">' +
@@ -104,7 +109,7 @@ def employee_record_table(employee_records_json):
                 'value': employees['unique_role_id']
             },
             {
-                'value': employees['job_role']
+                'value': employees['job_role_short']
             },
             {
                 'value': employees['area_location']
