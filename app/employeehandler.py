@@ -53,7 +53,10 @@ class EmployeeInformation():
                 device_info = []
                 employee_name = employee_info['firstName'] + ' ' + employee_info['surname']
                 employee_status = employee_info['status']
-                employee_badge = employee_info['idBadgeNo']
+                if user_role != 'hr':
+                    employee_badge = employee_info['idBadgeNo']
+                else:
+                    employee_badge = ''
 
                 if employee_info['ingestDate']:
                     employee_info['ingestDate'] = format_to_uk_dates(employee_info['ingestDate'])
@@ -140,8 +143,11 @@ class EmployeeInformation():
                         job_role_history_data = []
                         device_headers = []
                         device_data = []
+                    if user_role == 'hr':
+                        page_title = 'Employee: %s' % employee_name
+                    else:
+                        page_title = 'Employee: %s (%s)' % (employee_name, employee_badge)
 
-                    page_title = 'Employee: %s (%s)' % (employee_name, employee_badge)
                 try:
                     return {
                         'user_role': user_role,
