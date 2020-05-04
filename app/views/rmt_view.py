@@ -54,16 +54,74 @@ def get_employee_tabs(user_role, employee_information, current_job_role, job_rol
 
     employee_name = map_employee_name(employee_information)
 
-    employment_glance = {'Name': employee_name,
-                         'ONS Email Address': employee_information['onsId'],
-                         'ONS Mobile Number': device_number, 'Status': employee_information['status']}
+    if user_role == 'rmt':
+        if employee_information['preferredName'] == '':
+            preferred_name = employee_information['preferredName']
+        else:
+            preferred_name = employee_information['preferredName']
 
-    if user_role != 'hr':
+        employment_glance = {'Name': employee_name,
+                             'Preferred Name': preferred_name,
+                             'ONS Email': employee_information['onsId'],
+                             'ONS Mobile Number': device_number,
+                             'Status': employee_information['status']}
+
+        if employee_information['mobileStaff']:
+            mobile_staff = 'Yes'
+        else:
+            mobile_staff = 'No'
+
+        if employee_information['workRestrictions'] == '':
+            work_restrictions = 'None'
+        else:
+            work_restrictions = employee_information['workRestrictions']
+
         emp_job_role = {'Job Role ID': current_job_role['uniqueRoleId'],
                         'Badge Number': employee_information['idBadgeNo'],
                         'Postcode': employee_information['postcode'],
                         'Job Role Short': current_job_role['jobRoleShort'],
-                        'Job Role': current_job_role['jobRole'], 'Job Role Type': current_job_role['jobRoleType'],
+                        'Line Manager': line_manager,
+                        'Area Location': current_job_role['areaLocation'],
+                        'Mobility': employee_information['mobility'],
+                        'Mobile Staff': mobile_staff,
+                        'Weekly Hours': employee_information['weeklyHours'],
+                        'Work Restrictions': work_restrictions
+                        }
+
+        emp_status = {'Assignment Status': current_job_role['assignmentStatus'],
+                      'Status': current_job_role['crStatus'],
+                      'Contract Start Date': current_job_role['contractStartDate'],
+                      'Contract End Date': current_job_role['contractEndDate']
+                      }
+
+        if employee_information['welshLanguageSpeaker']:
+            welsh_speaker = 'Yes'
+        else:
+            welsh_speaker = 'No'
+
+        if employee_information['anyLanguagesSpoken'] == '':
+            any_languages_spoken = 'None'
+        else:
+            any_languages_spoken = employee_information['anyLanguagesSpoken']
+
+        emp_personal_details = {'Personal Mobile Number': employee_information['telephoneNumberContact1'],
+                                'Personal Email Account': employee_information['personalEmailAddress'],
+                                'Welsh Speaker': welsh_speaker,
+                                'Any Languages Spoken': any_languages_spoken
+                                }
+    else:
+        employment_glance = {'Name': employee_name,
+                             'ONS Email Address': employee_information['onsId'],
+                             'ONS Mobile Number': device_number,
+                             'Status': employee_information['status']}
+
+    if user_role != 'hr' and user_role != 'rmt':
+        emp_job_role = {'Job Role ID': current_job_role['uniqueRoleId'],
+                        'Badge Number': employee_information['idBadgeNo'],
+                        'Postcode': employee_information['postcode'],
+                        'Job Role Short': current_job_role['jobRoleShort'],
+                        'Job Role': current_job_role['jobRole'],
+                        'Job Role Type': current_job_role['jobRoleType'],
                         'Line Manager': line_manager,
                         'Area Location': current_job_role['areaLocation'], 'Mobility': employee_information['mobility'],
                         'Mobile Staff': employee_information['mobileStaff'],
@@ -72,15 +130,16 @@ def get_employee_tabs(user_role, employee_information, current_job_role, job_rol
                         'Organisation Unit': current_job_role['uniqueRoleId']
                         }
 
-    emp_status = {'Assignment Status': current_job_role['assignmentStatus'],
-                  'Status': current_job_role['crStatus'],
-                  'Contract Start Date': current_job_role['contractStartDate'],
-                  'Contract End Date': current_job_role['contractEndDate'],
-                  'Operational Start Date': current_job_role['contractStartDate'],
-                  'Operational End Date': current_job_role['operationalEndDate'],
-                  'Ingest Date': employee_information['ingestDate']}
+    if user_role != 'rmt':
+        emp_status = {'Assignment Status': current_job_role['assignmentStatus'],
+                      'Status': current_job_role['crStatus'],
+                      'Contract Start Date': current_job_role['contractStartDate'],
+                      'Contract End Date': current_job_role['contractEndDate'],
+                      'Operational Start Date': current_job_role['contractStartDate'],
+                      'Operational End Date': current_job_role['operationalEndDate'],
+                      'Ingest Date': employee_information['ingestDate']}
 
-    if user_role != 'hr':
+    if user_role != 'hr' and user_role != 'rmt':
         emergency_contacts = map_emergency_contact_name(employee_information)
 
         emergency_contact_name_1 = emergency_contacts[0]
@@ -90,7 +149,7 @@ def get_employee_tabs(user_role, employee_information, current_job_role, job_rol
         del emp_status['Contract Start Date']
         del emp_status['Contract End Date']
 
-    if user_role != 'hr':
+    if user_role != 'hr' and user_role != 'rmt':
         if user_role == 'recruitment':
             employee_information['address'] = employee_information['address1'] + ' ' + employee_information['address2']
             employee_information['telephoneNumberContact2'] = ''
@@ -107,7 +166,7 @@ def get_employee_tabs(user_role, employee_information, current_job_role, job_rol
 
         if user_role == 'recruitment':
             del emp_personal_details['Home Phone Number']
-    else:
+    elif  user_role != 'rmt':
         emp_personal_details = {'Personal Mobile Number': employee_information['telephoneNumberContact1'],
                                 'Personal Email Account': employee_information['personalEmailAddress']
                                 }
@@ -125,14 +184,15 @@ def get_employee_tabs(user_role, employee_information, current_job_role, job_rol
         else:
             emp_other_personal_details = {'Date of Birth': employee_information['dob']}
 
-        emp_diversity_information = {'Age': employee_information['age'],
-                                     'Ethnicity': employee_information['ethnicity'],
-                                     'Disability': employee_information['disability'],
-                                     'Nationality': employee_information['nationality'],
-                                     'Gender': employee_information['gender'],
-                                     'Sexual Orientation': employee_information['sexualOrientation'],
-                                     'Religion': employee_information['religion']
-                                     }
+        if user_role != 'rmt':
+            emp_diversity_information = {'Age': employee_information['age'],
+                                         'Ethnicity': employee_information['ethnicity'],
+                                         'Disability': employee_information['disability'],
+                                         'Nationality': employee_information['nationality'],
+                                         'Gender': employee_information['gender'],
+                                         'Sexual Orientation': employee_information['sexualOrientation'],
+                                         'Religion': employee_information['religion']
+                                         }
 
     else:
         emp_other_personal_details = ''
@@ -149,7 +209,7 @@ def get_employee_tabs(user_role, employee_information, current_job_role, job_rol
 
     tab_employee_personal_details = tab_generation('Employee Personal Details', emp_personal_details)
 
-    if user_role != 'fsss':
+    if user_role != 'fsss' and user_role != 'rmt':
         tab_other_employee_personal_details = tab_generation('Other Personal Details', emp_other_personal_details)
 
         tab_employee_diversity_information = tab_generation('Diversity Information', emp_diversity_information)

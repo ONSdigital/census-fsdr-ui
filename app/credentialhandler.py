@@ -17,6 +17,8 @@ from . import (INVALID_SIGNIN_MSG, SOMETHING_WENT_WRONG)
 from .flash import flash
 from .security import remember
 
+import requests
+
 logger = get_logger('fsdr-ui')
 credential_routes = RouteTableDef()
 
