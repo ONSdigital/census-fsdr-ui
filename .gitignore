@@ -130,3 +130,6 @@ dmypy.json
 
 # CDS templates
 app/templates/components/
+
+# Security certificates and settings
+app/saml/

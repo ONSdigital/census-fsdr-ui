@@ -16,6 +16,6 @@ def setup(app, url_path_prefix):
         use_prefix = route.kwargs.get('use_prefix', True)
         prefix = url_path_prefix if use_prefix else ''
         with add_resource_context(app,
-                                  module='app.handler',
+                                  module=('app.handler'),
                                   url_prefix=prefix) as new_route:
             new_route(route.path, route.handler())

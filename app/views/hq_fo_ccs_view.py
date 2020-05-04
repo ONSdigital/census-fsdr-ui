@@ -1,42 +1,13 @@
-from app.tabutils import tab_generation, format_to_uk_dates
-from app.fieldmapping import map_employee_name
+from app.employee_view_functions import device_details, format_line_manager
+from app.tabutils import tab_generation, table_generation
+from app.fieldmapping import map_employee_name, map_emergency_contact_name
 
 
-def get_employee_tabs(employee_information, current_job_role, job_roles, device_information):
-    device_number = ''
+def get_employee_tabs(employee_information, current_job_role, device_information):
 
-    for information in device_information:
-        for devices in information:
-            if 'fieldDevicePhoneNumber' in devices:
-                if devices['fieldDevicePhoneNumber'] != '-':
-                    device_number = devices['fieldDevicePhoneNumber']
+    employee_devices, device_number = device_details(device_information)
 
-    for emp_info in employee_information:
-        if employee_information[emp_info] is None:
-            if emp_info == 'mobility':
-                employee_information[emp_info] = 'No'
-            elif emp_info == 'mobileStaff':
-                employee_information[emp_info] = 'No'
-            else:
-                employee_information[emp_info] = '-'
-
-    for current_role in current_job_role:
-        if current_job_role[current_role] is None:
-            current_job_role[current_role] = '-'
-
-    for role in job_roles:
-        if job_roles[role] is None:
-            job_roles[role] = '-'
-
-    if current_job_role['lineManagerFirstName'] == '-' and current_job_role['lineManagerSurname'] == '-':
-        line_manager = '-'
-    elif current_job_role['lineManagerFirstName'] == '-':
-        line_manager = current_job_role['lineManagerSurname']
-    elif current_job_role['lineManagerSurname'] == '-':
-        line_manager = current_job_role['lineManagerFirstName']
-    else:
-        line_manager = current_job_role['lineManagerFirstName'] + ' ' + current_job_role[
-            'lineManagerSurname']
+    line_manager = format_line_manager(current_job_role)
 
     employee_name = map_employee_name(employee_information)
 
@@ -49,23 +20,13 @@ def get_employee_tabs(employee_information, current_job_role, job_roles, device_
                          'Name': employee_name,
                          'Preferred Name': preferred_name,
                          'ONS Email': employee_information['onsId'],
-                         'ONS Mobile Number': device_number,
-                         'Status': employee_information['status']}
+                         'ONS Mobile Number': device_number
+                         }
 
     if employee_information['mobileStaff']:
         mobile_staff = 'Yes'
     else:
         mobile_staff = 'No'
-
-    if employee_information['workRestrictions'] == '':
-        work_restrictions = 'None'
-    else:
-        work_restrictions = employee_information['workRestrictions']
-
-    if employee_information['reasonableAdjustments'] == '':
-        reasonable_adjustments = 'None'
-    else:
-        reasonable_adjustments = employee_information['reasonableAdjustments']
 
     emp_job_role = {'Job Role ID': current_job_role['uniqueRoleId'],
                     'Badge Number': employee_information['idBadgeNo'],
@@ -76,13 +37,12 @@ def get_employee_tabs(employee_information, current_job_role, job_roles, device_
                     'Mobility': employee_information['mobility'],
                     'Mobile Staff': mobile_staff,
                     'Weekly Hours': employee_information['weeklyHours'],
-                    'Work Restrictions': work_restrictions,
-                    'Reasonable Adjustments': reasonable_adjustments
+                    'Work Restrictions': employee_information['workRestrictions'],
+                    'Reasonable Adjustments': employee_information['reasonableAdjustments']
 
                     }
 
     emp_status = {'Assignment Status': current_job_role['assignmentStatus'],
-                  'Status': current_job_role['crStatus'],
                   'Contract Start Date': current_job_role['contractStartDate'],
                   'Contract End Date': current_job_role['contractEndDate']
                   }
@@ -97,15 +57,19 @@ def get_employee_tabs(employee_information, current_job_role, job_roles, device_
     else:
         any_languages_spoken = employee_information['anyLanguagesSpoken']
 
-    emp_personal_details = {'Personal Mobile Number': employee_information['telephoneNumberContact1'],
+    emergency_contacts = map_emergency_contact_name(employee_information, False)
+
+    emergency_contact_name_1 = emergency_contacts[0]
+
+    emp_personal_details = {'Address': employee_information['address'],
+                            'Personal Mobile Number': employee_information['telephoneNumberContact1'],
+                            'Home Phone Number': employee_information['telephoneNumberContact2'],
                             'Personal Email Account': employee_information['personalEmailAddress'],
+                            'Emergency Contact 1 Name': emergency_contact_name_1,
+                            'Emergency Contact 1 Number': employee_information['emergencyContactMobileNo'],
                             'Welsh Speaker': welsh_speaker,
                             'Any Languages Spoken': any_languages_spoken
                             }
-
-    employee_information['dob'] = format_to_uk_dates(employee_information['dob'])
-    emp_other_personal_details = {'Date of Birth': employee_information['dob']}
-    tab_other_employee_personal_details = tab_generation('Other Personal Details', emp_other_personal_details)
 
     tab_glance = tab_generation('At a Glance', employment_glance)
 
@@ -116,9 +80,10 @@ def get_employee_tabs(employee_information, current_job_role, job_roles, device_
     tab_employee_personal_details = tab_generation('Employee Personal Details', emp_personal_details)
 
     all_employee_information = {
-        'all_info': tab_glance + tab_job_role + tab_employment_status + tab_employee_personal_details
-                    + tab_other_employee_personal_details}
+        'all_info': tab_glance + tab_job_role + tab_employment_status + tab_employee_personal_details}
 
-    all_employee_tabs = [all_employee_information]
+    tab_employee_device_details = table_generation(employee_devices)
+
+    all_employee_tabs = [all_employee_information, tab_employee_device_details]
 
     return all_employee_tabs

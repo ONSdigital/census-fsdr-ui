@@ -147,7 +147,7 @@ def map_employee_name(employee_table):
     return employee_name
 
 
-def map_emergency_contact_name(employee_table):
+def map_emergency_contact_name(employee_table, both_required=True):
     if employee_table['emergencyContactFirstName'] is None and employee_table['emergencyContactSurname'] is None:
         emergency_contact_1 = '-'
     elif employee_table['emergencyContactFirstName'] is None:
@@ -161,19 +161,22 @@ def map_emergency_contact_name(employee_table):
     if emergency_contact_1 == '- -':
         emergency_contact_1 = '-'
 
-    if employee_table['emergencyContactFirstName2'] is None and employee_table['emergencyContactSurname2'] is None:
-        emergency_contact_2 = '-'
-    elif employee_table['emergencyContactFirstName2'] is None:
-        emergency_contact_2 = employee_table['emergencyContactSurname2']
-    elif employee_table['emergencyContactSurname2']is None:
-        emergency_contact_2 = employee_table['emergencyContactFirstName2']
+    if both_required:
+        if employee_table['emergencyContactFirstName2'] is None and employee_table['emergencyContactSurname2'] is None:
+            emergency_contact_2 = '-'
+        elif employee_table['emergencyContactFirstName2'] is None:
+            emergency_contact_2 = employee_table['emergencyContactSurname2']
+        elif employee_table['emergencyContactSurname2'] is None:
+            emergency_contact_2 = employee_table['emergencyContactFirstName2']
+        else:
+            emergency_contact_2 = employee_table['emergencyContactFirstName2'] + ' ' + \
+                                  employee_table['emergencyContactSurname2']
+
+        if emergency_contact_2 == '- -':
+            emergency_contact_2 = '-'
+
+        emergency_contacts = [emergency_contact_1, emergency_contact_2]
     else:
-        emergency_contact_2 = employee_table['emergencyContactFirstName2'] + ' ' + \
-                              employee_table['emergencyContactSurname2']
-
-    if emergency_contact_2 == '- -':
-        emergency_contact_2 = '-'
-
-    emergency_contacts = [emergency_contact_1, emergency_contact_2]
+        emergency_contacts = [emergency_contact_1]
 
     return emergency_contacts

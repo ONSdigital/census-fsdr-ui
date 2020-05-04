@@ -27,7 +27,7 @@
                         <h1>Status: {{ employee_status }}</h1>
                     </div>
                 </div>
-                {% if user_role != 'hr' %}
+                {% if user_role != 'hr' and user_role != 'rmt' and user_role != 'logistics'%}
                     {{
                         onsTabs({
                             'tabs': [

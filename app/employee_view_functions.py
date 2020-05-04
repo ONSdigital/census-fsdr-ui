@@ -2,50 +2,17 @@ import requests
 from requests.auth import HTTPBasicAuth
 
 from app.utils import FSDR_URL, FSDR_USER, FSDR_PASS
-from app.views import rmt_view, hq_fo_ccs_view, logistics_view, hr_view, fsss_view, recruitment_view
 
 
-def get_employee_tabs(user_role, employee_information, current_job_role, job_roles, device_information):
-    for emp_info in employee_information:
-        if employee_information[emp_info] is None:
-            if emp_info == 'mobility':
-                employee_information[emp_info] = 'No'
-            elif emp_info == 'mobileStaff':
-                employee_information[emp_info] = 'No'
-            else:
-                employee_information[emp_info] = '-'
-
+def get_current_job_role(current_job_role):
     for current_role in current_job_role:
         if current_job_role[current_role] is None:
             current_job_role[current_role] = '-'
 
-    for role in job_roles:
-        if job_roles[role] is None:
-            job_roles[role] = '-'
-
-    if user_role == 'rmt':
-        all_employee_tabs = rmt_view.get_employee_tabs(employee_information, current_job_role, job_roles,
-                                                       device_information)
-    elif user_role == 'hq' or user_role == 'fo' or user_role == 'ccs':
-        all_employee_tabs = hq_fo_ccs_view.get_employee_tabs(employee_information, current_job_role, job_roles,
-                                                             device_information)
-    elif user_role == 'logistics':
-        all_employee_tabs = logistics_view.get_employee_tabs(employee_information, current_job_role, job_roles,
-                                                             device_information)
-    elif user_role == 'hr':
-        all_employee_tabs = hr_view.get_employee_tabs(employee_information, current_job_role, job_roles,
-                                                      device_information)
-    elif user_role == 'fsss':
-        all_employee_tabs = fsss_view.get_employee_tabs(employee_information, current_job_role, job_roles,
-                                                        device_information)
-    elif user_role == 'recruitment':
-        all_employee_tabs = recruitment_view.get_employee_tabs(employee_information, current_job_role, job_roles,
-                                                               device_information)
-
-    return all_employee_tabs
+    return current_job_role
 
 
-def employee_devices(device_information):
+def device_details(device_information):
     device_number = ''
     employee_devices = []
 
@@ -65,6 +32,42 @@ def employee_devices(device_information):
     })
 
     return employee_devices, device_number
+
+
+def process_job_roles(job_roles):
+    for role in job_roles:
+        if job_roles[role] is None:
+            job_roles[role] = '-'
+
+    return job_roles
+
+
+def process_employee_information(employee_information):
+    for emp_info in employee_information:
+        if employee_information[emp_info] is '' or employee_information[emp_info] is None:
+            if emp_info == 'mobility':
+                employee_information[emp_info] = 'No'
+            elif emp_info == 'workRestrictions':
+                employee_information[emp_info] = 'None'
+            elif emp_info == 'anyLanguagesSpoken':
+                employee_information['anyLanguagesSpoken'] = 'None'
+            else:
+                employee_information[emp_info] = '-'
+
+    return employee_information
+
+
+def format_line_manager(current_job_role):
+    if current_job_role['lineManagerFirstName'] == '-' and current_job_role['lineManagerSurname'] == '-':
+        line_manager = '-'
+    elif current_job_role['lineManagerFirstName'] == '-':
+        line_manager = current_job_role['lineManagerSurname']
+    elif current_job_role['lineManagerSurname'] == '-':
+        line_manager = current_job_role['lineManagerFirstName']
+    else:
+        line_manager = current_job_role['lineManagerFirstName'] + ' ' + current_job_role[
+            'lineManagerSurname']
+    return line_manager
 
 
 def get_employee_device(employee_id):

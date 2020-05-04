@@ -22,6 +22,10 @@ idna_ssl = "*"
 flask = "*"
 jsonify = "*"
 python-dateutil = "*"
+authlib = "*"
+google-api-python-client = "*"
+google-auth = "*"
+
 
 [dev-packages]
 codecov = "*"
@@ -37,3 +41,4 @@ retrying = "*"
 
 [requires]
 python_version = "3.6.9"
+
