@@ -9,8 +9,8 @@ def get_employee_tabs(employee_information, current_job_role, device_information
 
     employee_name = map_employee_name(employee_information)
 
-    if employee_information['preferredName'] == '':
-        preferred_name = employee_information['preferredName']
+    if employee_information['preferredName'] != '':
+        preferred_name = 'None'
     else:
         preferred_name = employee_information['preferredName']
 

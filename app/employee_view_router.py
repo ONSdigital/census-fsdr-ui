@@ -3,7 +3,6 @@ from app.views import rmt_view, hq_fo_ccs_view, logistics_view, hr_view, fsss_vi
 
 
 def get_employee_tabs(user_role, employee_information, current_job_role, device_information):
-
     employee_information = process_employee_information(employee_information)
 
     current_job_role = get_current_job_role(current_job_role)
