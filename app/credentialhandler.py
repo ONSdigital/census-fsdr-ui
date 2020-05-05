@@ -6,16 +6,16 @@ from aiohttp.client_exceptions import (ClientResponseError)
 
 from aiohttp.web import HTTPFound, RouteTableDef
 from aiohttp_session import get_session
-from flask import url_for
 from requests.auth import HTTPBasicAuth
 from structlog import get_logger
-from werkzeug.utils import redirect
 
 from app.searchcriteria import clear_stored_search_criteria
 from app.utils import FSDR_USER, FSDR_URL, FSDR_PASS
 from . import (INVALID_SIGNIN_MSG, SOMETHING_WENT_WRONG)
 from .flash import flash
 from .security import remember
+
+import requests
 
 logger = get_logger('fsdr-ui')
 credential_routes = RouteTableDef()

@@ -4,8 +4,8 @@ from aiohttp.web import HTTPFound, RouteTableDef
 from aiohttp_session import get_session
 from structlog import get_logger
 
-from app.employeeinformationfunctions import get_employee_tabs, get_employee_information, \
-    get_employee_history_information, get_employee_device
+from app.employee_view_functions import get_employee_information, get_employee_history_information, get_employee_device
+from app.employee_view_router import get_employee_tabs
 from app.historytab import history_tab
 from app.tabutils import format_to_uk_dates
 from . import (NEED_TO_SIGN_IN_MSG, NO_EMPLOYEE_DATA)
@@ -58,8 +58,9 @@ class EmployeeInformation():
                 else:
                     employee_badge = ''
 
-                if employee_info['ingestDate']:
-                    employee_info['ingestDate'] = format_to_uk_dates(employee_info['ingestDate'])
+                if user_role != 'logistics':
+                    if employee_info['ingestDate']:
+                        employee_info['ingestDate'] = format_to_uk_dates(employee_info['ingestDate'])
 
                 if get_employee_history.status_code == 200:
                     if get_employee_history.content != b'':
@@ -105,7 +106,7 @@ class EmployeeInformation():
                         relevant_job_role['operationalEndDate'] = format_to_uk_dates(
                             relevant_job_role['operationalEndDate'])
 
-                    employee_tabs = get_employee_tabs(user_role, employee_info, relevant_job_role, job_role, device_info)
+                    employee_tabs = get_employee_tabs(user_role, employee_info, relevant_job_role, device_info)
 
                     for tabs in employee_tabs:
                         if 'all_info' in tabs:
@@ -119,7 +120,7 @@ class EmployeeInformation():
 
                     employee_history_tabs = history_tab(user_role, employee_history, job_role_info)
 
-                    if user_role != 'hr':
+                    if user_role != 'hr' and user_role != 'logistics':
 
                         for employee_history in employee_history_tabs[0]:
                             if 'headers' in employee_history:
@@ -132,6 +133,10 @@ class EmployeeInformation():
                                 job_role_history_header = employee_history['headers']
                             if 'tds' in employee_history:
                                 job_role_history_data = employee_history['tds']
+
+                        if user_role == 'rmt':
+                            device_headers = []
+                            device_data = []
                     else:
                         for employee_history in employee_history_tabs[0]:
                             if 'headers' in employee_history:

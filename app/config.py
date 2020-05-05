@@ -55,6 +55,11 @@ class BaseConfig:
 
     URL_PATH_PREFIX = env('URL_PATH_PREFIX', default='')
 
+    # FN_AUTH_REDIRECT_URI = env("http://localhost:9293/auth")
+    # FN_BASE_URI = env("http://localhost:9293")
+    # FN_CLIENT_ID = env('705755761858-n1vinsandkq3n7borr3bdplkj6cghv2b.apps.googleusercontent.com')
+    # FN_CLIENT_SECRET = env('mej--fVERcHXiOeezGkBz13p')
+
 class ProductionConfig(BaseConfig):
     pass
 

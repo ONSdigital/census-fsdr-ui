@@ -49,7 +49,7 @@ async def check_services(app: Application) -> bool:
         return True
 
 
-def create_app(config_name=None) -> Application:
+def create_app(config_name=None, google_auth=None) -> Application:
     """
     App factory. Sets up routes and all plugins.
     """
@@ -73,7 +73,7 @@ def create_app(config_name=None) -> Application:
             session.setup(app_config),
             flash.flash_middleware,
         ],
-        router=routing.ResourceRouter()
+        router=routing.ResourceRouter(),
     )
 
     # Handle 500 errors
