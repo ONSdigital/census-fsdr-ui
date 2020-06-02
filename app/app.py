@@ -18,6 +18,7 @@ from . import routes
 from . import security
 from . import session
 from . import settings
+from . import saml
 from .app_logging import logger_initial_config
 
 logger = get_logger('fsdr-ui')
@@ -25,6 +26,7 @@ logger = get_logger('fsdr-ui')
 
 async def on_startup(app):
     app.http_session_pool = ClientSession(timeout=ClientTimeout(total=30))
+    saml.fetch_settings(app)
 
 
 async def on_cleanup(app):

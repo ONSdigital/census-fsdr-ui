@@ -60,6 +60,10 @@ class BaseConfig:
     # FN_CLIENT_ID = env('705755761858-n1vinsandkq3n7borr3bdplkj6cghv2b.apps.googleusercontent.com')
     # FN_CLIENT_SECRET = env('mej--fVERcHXiOeezGkBz13p')
 
+    SECRET_KEY = 'examplesecretkey'
+    SAML_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'saml')
+
+
 class ProductionConfig(BaseConfig):
     pass
 
@@ -86,6 +90,9 @@ class DevelopmentConfig:
 
     URL_PATH_PREFIX = env('URL_PATH_PREFIX', default='')
 
+    SECRET_KEY = 'examplesecretkey'
+    SAML_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'saml')
+
 
 class TestingConfig:
     HOST = '0.0.0.0'
@@ -109,3 +116,6 @@ class TestingConfig:
     URL_PATH_PREFIX = ''
 
     SESSION_AGE = ''
+
+    SECRET_KEY = 'examplesecretkey'
+    SAML_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'saml')
