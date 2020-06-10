@@ -1,14 +1,20 @@
-version: '0'
-
+version: '3'
 services:
-
   census-fsdr-ui:
-    container_name: census-fsdr-ui
-    build: ./
-    environment:
-      - REDIS_SERVER=redis
-      - REDIS_PORT=6379
-      - APP_SETTINGS=DevelopmentConfig
-      - PORT=9293
+    container_name: 'census-fsdr-ui'
+    build: './'
+    depends_on:
+    - 'redis'
     ports:
-      - "9293:9293"
+    - '9293:9293'
+    environment:
+      REDIS_SERVER: 'redis'
+      REDIS_PORT: '6379'
+      APP_SETTINGS: 'DevelopmentConfig'
+      PORT: '9293'
+  redis:
+    image: 'redis:alpine'
+    ports:
+    - '6379:6379'
+    environment:
+      POSTGRES_PASSWORD: 'password'

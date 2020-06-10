@@ -25,6 +25,9 @@ python-dateutil = "*"
 authlib = "*"
 google-api-python-client = "*"
 google-auth = "*"
+# Introduced for SAML
+OneLogin = "*"
+python3-saml = "*"
 
 
 [dev-packages]

@@ -10,7 +10,7 @@ from .searchhandler import search_routes
 def setup(app, url_path_prefix):
     """Set up routes as resources so we can use the `Index:get` notation for URL lookup."""
 
-    combined_routes = [*credential_routes, *employee_routes, *index_route, *static_routes, *search_routes]
+    combined_routes = [*credential_routes, *employee_routes, *index_route, *static_routes, *search_routes, *saml_routes]
 
     for route in combined_routes:
         use_prefix = route.kwargs.get('use_prefix', True)

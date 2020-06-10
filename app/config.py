@@ -1,5 +1,7 @@
 from envparse import Env, ConfigurationError
 
+import os
+
 
 class Config(dict):
     def from_object(self, obj):
