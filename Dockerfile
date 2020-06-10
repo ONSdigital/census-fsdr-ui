@@ -4,7 +4,7 @@ WORKDIR /app
 COPY . /app
 
 RUN apt-get update \
-    && apt-get -y --no-install-recommends install apt-utils xmlsec1 \
+    && apt-get -y --no-install-recommends install libxml2-dev libxmlsec1-dev libxmlsec1-openssl \
     && apt-get clean
 RUN ./scripts/load_templates.sh
 RUN pip3 install Flask-Cors requests pipenv
