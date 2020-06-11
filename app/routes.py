@@ -4,6 +4,7 @@ from .credentialhandler import credential_routes
 from .employeehandler import employee_routes
 from .indexhandler import index_route
 from .handler import static_routes
+from .saml import saml_routes
 from .searchhandler import search_routes
 
 
