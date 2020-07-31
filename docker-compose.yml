@@ -6,7 +6,7 @@ services:
     depends_on:
     - 'redis'
     ports:
-    - '9293:9293'
+    - '0.0.0.0:9293:9293'
     environment:
       REDIS_SERVER: 'redis'
       REDIS_PORT: '6379'
