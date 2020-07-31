@@ -1,0 +1,15 @@
+
+{% block main %}
+
+    <h1 data-ga="error" data-ga-category="error" data-ga-action="error-message-shown" data-ga-label="system-error">
+        401
+    </h1>
+
+    <p>No view could be found for the user.</p>
+
+    {% autoescape false %}
+        <p>Please submit a ServiceNow ticket</p>
+    {% endautoescape %}
+
+{% endblock main %}
+
