@@ -50,13 +50,13 @@ def get_fsdr_signin( user, password):
                          auth=HTTPBasicAuth(FSDR_USER, FSDR_PASS))
 
 
-@credential_routes.view('/')
+#@credential_routes.view('/')
 class Redirect:
     async def get(self, request):
         raise HTTPFound(request.app.router['Login:get'].url_for())
 
 
-@credential_routes.view('/signin')
+#@credential_routes.view('/signin')
 class Login:
     @aiohttp_jinja2.template('signin.html')
     async def get(self, request):

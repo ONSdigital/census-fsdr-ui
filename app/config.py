@@ -63,7 +63,7 @@ class BaseConfig:
     # FN_CLIENT_SECRET = env('mej--fVERcHXiOeezGkBz13p')
 
     SECRET_KEY = 'examplesecretkey'
-    SAML_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'saml')
+    SAML_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'saml')
 
 
 class ProductionConfig(BaseConfig):
@@ -93,7 +93,7 @@ class DevelopmentConfig:
     URL_PATH_PREFIX = env('URL_PATH_PREFIX', default='')
 
     SECRET_KEY = 'examplesecretkey'
-    SAML_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'saml')
+    SAML_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'saml')
 
 
 class TestingConfig:
@@ -120,4 +120,4 @@ class TestingConfig:
     SESSION_AGE = ''
 
     SECRET_KEY = 'examplesecretkey'
-    SAML_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'saml')
+    SAML_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'saml')

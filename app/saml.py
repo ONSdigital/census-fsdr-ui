@@ -29,12 +29,12 @@ logger = get_logger('fsdr-ui')
 
 
 def fetch_settings(app):
-    json_filename = app.config['SAML_PATH'] + '/settings.json'
-    json_data_file = open(filename, 'r')
+    json_filename = app['SAML_PATH'] + '/settings.json'
+    json_data_file = open(json_filename, 'r')
     settings_base = json.load(json_data_file)
     json_data_file.close()
-    idp_filename = app.config['SAML_PATH'] + '/idp'
-    idp_data_file = open(filename, 'r')
+    idp_filename = app['SAML_PATH'] + '/idp'
+    idp_data_file = open(idp_filename, 'r')
     idp_data = OneLogin_Saml2_IdPMetadataParser.parse(idp_data_file.read())
     idp_data_file.close()
     settings = OneLogin_Saml2_IdPMetadataParser.merge_settings(settings_base, idp_data)
@@ -42,7 +42,7 @@ def fetch_settings(app):
 
 
 
-def init_saml_auth(saml_req):
+def init_saml_auth(saml_req, settings):
     auth = OneLogin_Saml2_Auth(saml_req, settings)
     return auth
 
@@ -59,12 +59,43 @@ def prepare_saml_req(request):
         'query_string': request.query_string,
     }
 
+@saml_routes.get("/signin")
+async def signin(request):
+    req = prepare_saml_req(request)
+    auth = init_saml_auth(req, request.app['saml_settings'])
 
-@saml_routes.get("/")
-@saml_routes.post("/")
-def index():
-    req = prepare_flask_request(request)
-    auth = init_saml_auth(req)
+    # if 'sso' in request.query:
+    raise HTTPFound(auth.login())
+        # If AuthNRequest ID need to be stored in order to later validate it, do instead
+        # sso_built_url = auth.login()
+        # request.session['AuthNRequestID'] = auth.get_last_request_id()
+        # return redirect(sso_built_url)
+    # elif 'sso2' in request.query:
+        # return_to = '%sattrs/' % request.host_url
+        # return redirect(auth.login(return_to))
+
+@saml_routes.get("/logout")
+async def logout(request):
+    name_id = session_index = name_id_format = name_id_nq = name_id_spnq = None
+    if 'samlNameId' in session:
+        name_id = session['samlNameId']
+    if 'samlSessionIndex' in session:
+        session_index = session['samlSessionIndex']
+    if 'samlNameIdFormat' in session:
+        name_id_format = session['samlNameIdFormat']
+    if 'samlNameIdNameQualifier' in session:
+        name_id_nq = session['samlNameIdNameQualifier']
+    if 'samlNameIdSPNameQualifier' in session:
+        name_id_spnq = session['samlNameIdSPNameQualifier']
+
+    return redirect(auth.logout(name_id=name_id, session_index=session_index, nq=name_id_nq, name_id_format=name_id_format, spnq=name_id_spnq))
+
+# TODO split this section up
+#@saml_routes.get("/signin")
+#@saml_routes.post("/signin")
+async def index(request):
+    req = prepare_saml_req(request)
+    auth = init_saml_auth(req, request.app['saml_settings'])
     errors = []
     error_reason = None
     not_auth_warn = False
@@ -72,16 +103,18 @@ def index():
     attributes = False
     paint_logout = False
 
-    if 'sso' in request.args:
+    session = await get_session(request)
+
+    if 'sso' in request.query:
         return redirect(auth.login())
         # If AuthNRequest ID need to be stored in order to later validate it, do instead
         # sso_built_url = auth.login()
         # request.session['AuthNRequestID'] = auth.get_last_request_id()
         # return redirect(sso_built_url)
-    elif 'sso2' in request.args:
+    elif 'sso2' in request.query:
         return_to = '%sattrs/' % request.host_url
         return redirect(auth.login(return_to))
-    elif 'slo' in request.args:
+    elif 'slo' in request.query:
         name_id = session_index = name_id_format = name_id_nq = name_id_spnq = None
         if 'samlNameId' in session:
             name_id = session['samlNameId']
@@ -95,7 +128,7 @@ def index():
             name_id_spnq = session['samlNameIdSPNameQualifier']
 
         return redirect(auth.logout(name_id=name_id, session_index=session_index, nq=name_id_nq, name_id_format=name_id_format, spnq=name_id_spnq))
-    elif 'acs' in request.args:
+    elif 'acs' in request.query:
         request_id = None
         if 'AuthNRequestID' in session:
             request_id = session['AuthNRequestID']
@@ -117,7 +150,7 @@ def index():
                 return redirect(auth.redirect_to(request.form['RelayState']))
         elif auth.get_settings().is_debug_active():
             error_reason = auth.get_last_error_reason()
-    elif 'sls' in request.args:
+    elif 'sls' in request.query:
         request_id = None
         if 'LogoutRequestID' in session:
             request_id = session['LogoutRequestID']
