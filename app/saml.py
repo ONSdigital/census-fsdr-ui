@@ -29,11 +29,11 @@ logger = get_logger('fsdr-ui')
 
 
 def fetch_settings(app):
-    json_filename = app['SAML_PATH'] + '/settings.json'
+    json_filename = app['SSO_CONFIG_FOLDER'] + '/settings.json'
     json_data_file = open(json_filename, 'r')
     settings_base = json.load(json_data_file)
     json_data_file.close()
-    idp_filename = app['SAML_PATH'] + '/idp'
+    idp_filename = app['SSO_CONFIG_FOLDER'] + '/idp.xml'
     idp_data_file = open(idp_filename, 'r')
     idp_data = OneLogin_Saml2_IdPMetadataParser.parse(idp_data_file.read())
     idp_data_file.close()
