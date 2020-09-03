@@ -121,4 +121,4 @@ class TestingConfig:
     SESSION_AGE = ''
 
     SECRET_KEY = 'examplesecretkey'
-    SSO_CONFIG_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file)), '..', 'test_saml')
+    SSO_CONFIG_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'test_saml')
