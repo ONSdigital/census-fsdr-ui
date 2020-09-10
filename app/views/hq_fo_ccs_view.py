@@ -36,10 +36,7 @@ def get_employee_tabs(employee_information, current_job_role, device_information
                     'Area Location': current_job_role['areaLocation'],
                     'Mobility': employee_information['mobility'],
                     'Mobile Staff': mobile_staff,
-                    'Weekly Hours': employee_information['weeklyHours'],
-                    'Work Restrictions': employee_information['workRestrictions'],
-                    'Reasonable Adjustments': employee_information['reasonableAdjustments']
-
+                    'Weekly Hours': employee_information['weeklyHours']
                     }
 
     emp_status = {'Assignment Status': current_job_role['assignmentStatus'],
@@ -47,17 +44,7 @@ def get_employee_tabs(employee_information, current_job_role, device_information
                   'Contract End Date': current_job_role['contractEndDate']
                   }
 
-    if employee_information['welshLanguageSpeaker']:
-        welsh_speaker = 'Yes'
-    else:
-        welsh_speaker = 'No'
-
-    if employee_information['anyLanguagesSpoken'] == '':
-        any_languages_spoken = 'None'
-    else:
-        any_languages_spoken = employee_information['anyLanguagesSpoken']
-
-    emergency_contacts = map_emergency_contact_name(employee_information, False)
+    emergency_contacts = map_emergency_contact_name(employee_information)
 
     emergency_contact_name_1 = emergency_contacts[0]
 
@@ -66,9 +53,7 @@ def get_employee_tabs(employee_information, current_job_role, device_information
                             'Home Phone Number': employee_information['telephoneNumberContact2'],
                             'Personal Email Account': employee_information['personalEmailAddress'],
                             'Emergency Contact 1 Name': emergency_contact_name_1,
-                            'Emergency Contact 1 Number': employee_information['emergencyContactMobileNo'],
-                            'Welsh Speaker': welsh_speaker,
-                            'Any Languages Spoken': any_languages_spoken
+                            'Emergency Contact 1 Number': employee_information['emergencyContactMobileNo']
                             }
 
     tab_glance = tab_generation('At a Glance', employment_glance)
