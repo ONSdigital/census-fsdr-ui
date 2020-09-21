@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 aiohttp = "*"
 aiohttp-utils = "*"
+aiohttp-remotes = "*"
 envparse = "*"
 "aiohttp-jinja2" = "*"
 structlog = "*"
