@@ -59,6 +59,7 @@ def prepare_saml_req(request):
         'query_string': request.query_string,
     }
 
+
 @saml_routes.get("/signin")
 async def signin(request):
     req = prepare_saml_req(request)

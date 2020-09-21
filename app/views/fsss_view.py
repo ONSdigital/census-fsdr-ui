@@ -39,20 +39,14 @@ def get_employee_tabs(employee_information, current_job_role, device_information
                   'Operational End Date': current_job_role['operationalEndDate'],
                   'Ingest Date': employee_information['ingestDate']}
 
-    emergency_contacts = map_emergency_contact_name(employee_information)
-
-    emergency_contact_name_1 = emergency_contacts[0]
-
-    emergency_contact_name_2 = emergency_contacts[1]
+    emergency_contact_name = map_emergency_contact_name(employee_information)
 
     emp_personal_details = {'Address': employee_information['address'],
                             'Personal Mobile Number': employee_information['telephoneNumberContact1'],
                             'Home Phone Number': employee_information['telephoneNumberContact2'],
                             'Personal Email Account': employee_information['personalEmailAddress'],
-                            'Emergency Contact 1 Name': emergency_contact_name_1,
-                            'Emergency Contact 1 Number': employee_information['emergencyContactMobileNo'],
-                            'Emergency Contact 2 Name': emergency_contact_name_2, 'Emergency Contact 2 Number':
-                                employee_information['emergencyContactMobileNo2']
+                            'Emergency Contact Name': emergency_contact_name,
+                            'Emergency Contact Number': employee_information['emergencyContactMobileNo']
                             }
 
     tab_glance = tab_generation('At a Glance', employment_glance)

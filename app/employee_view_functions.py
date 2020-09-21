@@ -49,8 +49,6 @@ def process_employee_information(employee_information):
                 employee_information[emp_info] = 'No'
             elif emp_info == 'workRestrictions':
                 employee_information[emp_info] = 'None'
-            elif emp_info == 'anyLanguagesSpoken':
-                employee_information['anyLanguagesSpoken'] = 'None'
             else:
                 employee_information[emp_info] = '-'
 

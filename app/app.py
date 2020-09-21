@@ -8,6 +8,7 @@ from aiohttp.client_exceptions import (ClientConnectionError,
                                        ClientResponseError)
 from aiohttp.web import Application
 from aiohttp_utils import negotiation, routing
+import aiohttp_remotes
 from structlog import get_logger
 
 from . import config
@@ -25,6 +26,7 @@ logger = get_logger('fsdr-ui')
 
 
 async def on_startup(app):
+    await aiohttp_remotes.setup(app, aiohttp_remotes.XForwardedRelaxed())
     app.http_session_pool = ClientSession(timeout=ClientTimeout(total=30))
     saml.fetch_settings(app)
 
