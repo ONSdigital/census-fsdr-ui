@@ -18,3 +18,10 @@ services:
     - '6379:6379'
     environment:
       POSTGRES_PASSWORD: 'password'
+  idp:
+    image: 'kristophjunge/test-saml-idp:latest'
+    ports:
+    - '8080:8080'
+    volumes:
+    - /Users/felixaldam-gates/onscode/fsdr/census-fsdr-ui/local-idp-config/users.php:/var/www/simplesamlphp/config/authsources.php
+ 
