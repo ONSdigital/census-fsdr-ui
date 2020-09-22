@@ -9,7 +9,7 @@
 
 
 import aiohttp_jinja2
-from aiohttp.client_exceptions import (ClientResponseError)
+from aiohttp.client_exceptions import ClientResponseError
 from aiohttp.web import Response, HTTPFound, RouteTableDef, HTTPInternalServerError, HTTPForbidden
 from aiohttp_session import get_session
 from structlog import get_logger
@@ -23,9 +23,32 @@ from onelogin.saml2.settings import OneLogin_Saml2_Settings
 from onelogin.saml2.utils import OneLogin_Saml2_Utils
 from onelogin.saml2.idp_metadata_parser import OneLogin_Saml2_IdPMetadataParser
 
+from . import NEED_TO_SIGN_IN_MSG
+from .flash import flash
+
 
 saml_routes = RouteTableDef()
 logger = get_logger('fsdr-ui')
+
+
+# Check if the user is logged in
+async def is_logged_in(request):
+    session = await get_session(request)
+    return 'samlUserdata' in session
+
+
+# Direct the user to the login screen
+def redirect_to_login(request):
+    flash(request, NEED_TO_SIGN_IN_MSG)
+    raise HTTPFound(request.app.router['sso'].url_for())
+
+
+# Ensure the user is logged in, and redirect them to the login screen if they are not
+async def ensure_logged_in(request):
+    if is_logged_in(request):
+        return
+    else:
+        redirect_to_login(request)
 
 
 # Build the OneLogin SAML settings structure
@@ -69,7 +92,7 @@ async def sso(request):
     # If AuthNRequest ID need to be stored in order to later validate it, do instead:
     # sso_built_url = auth.login()
     # request.session['AuthNRequestID'] = auth.get_last_request_id()
-    # return HTTPFound(sso_built_url)
+    # raise HTTPFound(sso_built_url)
 
     # If we need to redirect to a specific URL:
     return_to = '{}://{}/index'.format(request.scheme, request.host)
@@ -154,7 +177,10 @@ async def attrs(request):
     session = await get_session(request)
     if 'samlUserdata' in session:
         attributes = session['samlUserdata'].items()
-        return Response(text='Attributes: ' + ', '.join(attributes), content_type='text/xml')
+        lines = []
+        for attr in attributes:
+            lines.append(attr.0 + ': ' + ';'.join(attr.1))
+        return Response(text='Attributes:\n  ' + '\n  '.join(lines))
     else:
         raise HTTPForbidden(text='Not logged in')
 
