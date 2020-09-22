@@ -10,7 +10,7 @@
 
 import aiohttp_jinja2
 from aiohttp.client_exceptions import (ClientResponseError)
-from aiohttp.web import Response, HTTPFound, RouteTableDef
+from aiohttp.web import Response, HTTPFound, RouteTableDef, HTTPInternalServerError, HTTPForbidden
 from aiohttp_session import get_session
 from structlog import get_logger
 
