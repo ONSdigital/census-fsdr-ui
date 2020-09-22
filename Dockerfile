@@ -16,6 +16,7 @@ WORKDIR /opt/ui
 RUN mkdir /opt/ui/scripts
 COPY ./scripts ./scripts
 RUN ls
+RUN mkdir -p app/templates
 RUN ./scripts/load_templates.sh
 COPY Pipfile* ./
 RUN pipenv install --deploy --system
