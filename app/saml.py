@@ -103,7 +103,7 @@ async def acs(request):
         session['samlSessionIndex'] = auth.get_session_index()
         self_url = OneLogin_Saml2_Utils.get_self_url(req)
         if 'RelayState' in post and self_url != post['RelayState']:
-            return redirect(auth.redirect_to(post['RelayState']))
+            raise HTTPFound(auth.redirect_to(post['RelayState']))
     elif auth.get_settings().is_debug_active():
         raise HTTPInternalServerError(text=auth.get_last_error_reason())
 
