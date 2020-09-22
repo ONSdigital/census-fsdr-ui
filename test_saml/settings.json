@@ -4,11 +4,11 @@
     "sp": {
         "entityId": "https://test-fsdrui.fsdr.census-gcp.onsdigital.uk/metadata/",
         "assertionConsumerService": {
-            "url": "https://test-fsdrui.fsdr.census-gcp.onsdigital.uk/?acs",
+            "url": "https://test-fsdrui.fsdr.census-gcp.onsdigital.uk/signin",
             "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
         },
         "singleLogoutService": {
-            "url": "https://test-fsdrui.fsdr.census-gcp.onsdigital.uk/?sls",
+            "url": "https://test-fsdrui.fsdr.census-gcp.onsdigital.uk/logout",
             "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
         },
         "NameIDFormat": "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified",
