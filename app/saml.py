@@ -72,10 +72,8 @@ async def sso(request):
     # return HTTPFound(sso_built_url)
 
     # If we need to redirect to a specific URL:
-    # return_to = '%sattrs/' % request.host_url
-    # return HTTPFound(auth.login(return_to))
-
-    raise HTTPFound(auth.login())
+    return_to = '%sindex/' % request.host_url
+    raise HTTPFound(auth.login(return_to))
 
 
 # Assertion Consumer Service
