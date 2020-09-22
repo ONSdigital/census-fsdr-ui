@@ -49,14 +49,14 @@ def init_saml_auth(saml_req, settings):
 
 
 # Takes in an AIOHTTP request object and creates a OneLogin SAML request
-def prepare_saml_req(request):
+async def prepare_saml_req(request):
     return {
         'https': 'on' if request.scheme == 'https' else 'off',
         'http_host': request.url.host,
         'server_port': request.url.port,
         'script_name': request.url.path,
         'get_data': request.query.copy(),
-        'post_data': request.post(),
+        'post_data': await request.post(),
         'query_string': request.query_string,
     }
 
@@ -64,8 +64,7 @@ def prepare_saml_req(request):
 # Single Sign-on Service
 @saml_routes.get("/signin")
 async def sso(request):
-    req = prepare_saml_req(request)
-    auth = init_saml_auth(req, request.app['saml_settings'])
+    auth = init_saml_auth(await prepare_saml_req(request), request.app['saml_settings'])
 
     # If AuthNRequest ID need to be stored in order to later validate it, do instead:
     # sso_built_url = auth.login()
@@ -84,7 +83,7 @@ async def sso(request):
 async def acs(request):
     session = await get_session(request)
     post = await request.post()
-    auth = init_saml_auth(prepare_saml_req(request), request.app['saml_settings'])
+    auth = init_saml_auth(await prepare_saml_req(request), request.app['saml_settings'])
 
     request_id = None
     if 'AuthNRequestID' in session:
@@ -111,7 +110,7 @@ async def acs(request):
 # Start Logout
 @saml_routes.get("/logout")
 async def slo(request):
-    auth = init_saml_auth(prepare_saml_req(request), request.app['saml_settings'])
+    auth = init_saml_auth(await prepare_saml_req(request), request.app['saml_settings'])
     name_id = session_index = name_id_format = name_id_nq = name_id_spnq = None
     if 'samlNameId' in session:
         name_id = session['samlNameId']
@@ -131,7 +130,7 @@ async def slo(request):
 @saml_routes.get("/logoutfull")
 async def sls(request):
     session = await get_session(request)
-    auth = init_saml_auth(prepare_saml_req(request), request.app['saml_settings'])
+    auth = init_saml_auth(await prepare_saml_req(request), request.app['saml_settings'])
 
     request_id = None
     if 'LogoutRequestID' in session:
@@ -164,8 +163,7 @@ async def attrs(request):
 # Metadata display function
 @saml_routes.get('/metadata')
 def metadata(request):
-    req = prepare_saml_req(request)
-    auth = init_saml_auth(req, request.app['saml_settings'])
+    auth = init_saml_auth(await prepare_saml_req(request), request.app['saml_settings'])
     settings = auth.get_settings()
     metadata = settings.get_sp_metadata()
     errors = settings.validate_metadata(metadata)
