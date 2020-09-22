@@ -83,7 +83,8 @@ async def sso(request):
 async def acs(request):
     session = await get_session(request)
     post = await request.post()
-    auth = init_saml_auth(await prepare_saml_req(request), request.app['saml_settings'])
+    req = await prepare_saml_req(request)
+    auth = init_saml_auth(req, request.app['saml_settings'])
 
     request_id = None
     if 'AuthNRequestID' in session:
