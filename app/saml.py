@@ -162,7 +162,7 @@ async def attrs(request):
 
 # Metadata display function
 @saml_routes.get('/metadata')
-def metadata(request):
+async def metadata(request):
     auth = init_saml_auth(await prepare_saml_req(request), request.app['saml_settings'])
     settings = auth.get_settings()
     metadata = settings.get_sp_metadata()
