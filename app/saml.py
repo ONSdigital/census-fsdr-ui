@@ -179,7 +179,7 @@ async def attrs(request):
         attributes = session['samlUserdata'].items()
         lines = []
         for attr in attributes:
-            lines.append(attr.0 + ': ' + ';'.join(attr.1))
+            lines.append(attr[0] + ': ' + ';'.join(attr[1]))
         return Response(text='Attributes:\n  ' + '\n  '.join(lines))
     else:
         raise HTTPForbidden(text='Not logged in')
