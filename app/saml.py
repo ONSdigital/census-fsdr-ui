@@ -72,7 +72,7 @@ async def sso(request):
     # return HTTPFound(sso_built_url)
 
     # If we need to redirect to a specific URL:
-    return_to = '%sindex/' % request.url
+    return_to = '{}://{}/index'.format(request.scheme, request.host)
     raise HTTPFound(auth.login(return_to))
 
 
