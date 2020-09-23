@@ -7,7 +7,6 @@
 #  It should contain and idp file with the Identity Provider's XML metadata
 #  It should contain required certificate files in a certs folder
 
-
 import aiohttp_jinja2
 from aiohttp.client_exceptions import ClientResponseError
 from aiohttp.web import Response, HTTPFound, RouteTableDef, HTTPInternalServerError, HTTPForbidden
@@ -26,7 +25,6 @@ from onelogin.saml2.idp_metadata_parser import OneLogin_Saml2_IdPMetadataParser
 from . import NEED_TO_SIGN_IN_MSG
 from .flash import flash
 
-
 saml_routes = RouteTableDef()
 logger = get_logger('fsdr-ui')
 
@@ -35,6 +33,18 @@ logger = get_logger('fsdr-ui')
 async def is_logged_in(request):
     session = await get_session(request)
     return 'samlUserdata' in session
+
+
+# used to replace:
+#            user_json = session['user_details']
+#            user_role = user_json['userRole']
+async def get_role_id(request):
+    session = await get_session(request)
+    if not 'samlUserdata' in session:
+        redirect_to_login(request)
+    roleids = session['samlUserdata']['roleID']
+
+    return roleids[0]
 
 
 # Direct the user to the login screen
@@ -61,11 +71,12 @@ def fetch_settings(app):
     idp_data_file = open(idp_filename, 'r')
     idp_data = OneLogin_Saml2_IdPMetadataParser.parse(idp_data_file.read())
     idp_data_file.close()
-    settings = OneLogin_Saml2_IdPMetadataParser.merge_settings(settings_base, idp_data)
+    settings = OneLogin_Saml2_IdPMetadataParser.merge_settings(
+        settings_base, idp_data)
     app['saml_settings'] = settings
 
 
-# 
+#
 def init_saml_auth(saml_req, settings):
     auth = OneLogin_Saml2_Auth(saml_req, settings)
     return auth
@@ -85,9 +96,10 @@ async def prepare_saml_req(request):
 
 
 # Single Sign-on Service
-@saml_routes.get("/signin")
+@saml_routes.get('/signin')
 async def sso(request):
-    auth = init_saml_auth(await prepare_saml_req(request), request.app['saml_settings'])
+    auth = init_saml_auth(await prepare_saml_req(request),
+                          request.app['saml_settings'])
 
     # If AuthNRequest ID need to be stored in order to later validate it, do instead:
     # sso_built_url = auth.login()
@@ -100,7 +112,7 @@ async def sso(request):
 
 
 # Assertion Consumer Service
-@saml_routes.post("/signin")
+@saml_routes.post('/signin')
 async def acs(request):
     session = await get_session(request)
     post = await request.post()
@@ -130,9 +142,10 @@ async def acs(request):
 
 
 # Start Logout
-@saml_routes.get("/logout")
+@saml_routes.get('/logout')
 async def slo(request):
-    auth = init_saml_auth(await prepare_saml_req(request), request.app['saml_settings'])
+    auth = init_saml_auth(await prepare_saml_req(request),
+                          request.app['saml_settings'])
     name_id = session_index = name_id_format = name_id_nq = name_id_spnq = None
     if 'samlNameId' in session:
         name_id = session['samlNameId']
@@ -145,14 +158,20 @@ async def slo(request):
     if 'samlNameIdSPNameQualifier' in session:
         name_id_spnq = session['samlNameIdSPNameQualifier']
 
-    raise HTTPFound(auth.logout(name_id=name_id, session_index=session_index, nq=name_id_nq, name_id_format=name_id_format, spnq=name_id_spnq))
+    raise HTTPFound(
+        auth.logout(name_id=name_id,
+                    session_index=session_index,
+                    nq=name_id_nq,
+                    name_id_format=name_id_format,
+                    spnq=name_id_spnq))
 
 
 # Single Logout
-@saml_routes.get("/logoutfull")
+@saml_routes.get('/logoutfull')
 async def sls(request):
     session = await get_session(request)
-    auth = init_saml_auth(await prepare_saml_req(request), request.app['saml_settings'])
+    auth = init_saml_auth(await prepare_saml_req(request),
+                          request.app['saml_settings'])
 
     request_id = None
     if 'LogoutRequestID' in session:
@@ -172,7 +191,7 @@ async def sls(request):
 
 
 # Debug function for viewing attributes
-@saml_routes.get("/attrs")
+@saml_routes.get('/attrs')
 async def attrs(request):
     session = await get_session(request)
     if 'samlUserdata' in session:
@@ -188,7 +207,8 @@ async def attrs(request):
 # Metadata display function
 @saml_routes.get('/metadata')
 async def metadata(request):
-    auth = init_saml_auth(await prepare_saml_req(request), request.app['saml_settings'])
+    auth = init_saml_auth(await prepare_saml_req(request),
+                          request.app['saml_settings'])
     settings = auth.get_settings()
     metadata = settings.get_sp_metadata()
     errors = settings.validate_metadata(metadata)

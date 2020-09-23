@@ -88,10 +88,7 @@ def create_app(config_name=None, google_auth=None) -> Application:
 
     # Store a dict of health check urls for required services
     app.service_status_urls = app_config.get_service_urls_mapped_with_path(
-        path='/info',
-        excludes=[
-            'FSDR_SERVICE_URL'
-        ])
+        path='/info', excludes=['FSDR_SERVICE_URL'])
 
     # Monkey patch the check_services function as a method to the app object
     app.check_services = types.MethodType(check_services, app)
@@ -107,13 +104,13 @@ def create_app(config_name=None, google_auth=None) -> Application:
     negotiation.setup(app)
 
     # Setup jinja2 environment
-    aiohttp_jinja2.setup(
-        app,
-        loader=jinja2.PackageLoader('app', 'templates'),
-        context_processors=[
-            flash.context_processor, aiohttp_jinja2.request_processor,
-            domains.domain_processor
-        ])
+    aiohttp_jinja2.setup(app,
+                         loader=jinja2.PackageLoader('app', 'templates'),
+                         context_processors=[
+                             flash.context_processor,
+                             aiohttp_jinja2.request_processor,
+                             domains.domain_processor
+                         ])
 
     app.on_startup.append(on_startup)
     app.on_cleanup.append(on_cleanup)

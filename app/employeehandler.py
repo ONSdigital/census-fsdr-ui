@@ -9,6 +9,7 @@ from app.employee_view_router import get_employee_tabs
 from app.historytab import history_tab
 from app.tabutils import format_to_uk_dates
 from . import (NEED_TO_SIGN_IN_MSG, NO_EMPLOYEE_DATA)
+from . import saml
 from .flash import flash
 
 employee_routes = RouteTableDef()
@@ -21,173 +22,182 @@ class EmployeeInformation():
     async def get(self, request):
         employee_id = request.match_info['employee_id']
         session = await get_session(request)
+
+        await saml.ensure_logged_in(request)
+
         try:
             user_json = session['user_details']
             user_role = user_json['userRole']
         except:
-            flash(request, NEED_TO_SIGN_IN_MSG)
-            raise HTTPFound(
-                request.app.router['Login:get'].url_for())
+            saml.redirect_to_login(request)
 
-        if session.get('logged_in'):
-            try:
-                get_employee_info = get_employee_information(user_role, employee_id)
-                get_employee_devices = get_employee_device(employee_id)
-                get_employee_history = get_employee_history_information(user_role, employee_id)
-            except ClientResponseError as ex:
-                if ex.status == 500:
-                    logger.warn('Service is down',
-                                client_ip=request['client_ip'])
-                    return aiohttp_jinja2.render_template(
-                        'error500.html',
-                        request, {
-                            'page_title': 'FSDR - Server down',
-                            'include_nav': False
-                        })
-                else:
-                    raise ex
+        try:
+            get_employee_info = get_employee_information(
+                user_role, employee_id)
+            get_employee_devices = get_employee_device(employee_id)
+            get_employee_history = get_employee_history_information(
+                user_role, employee_id)
+        except ClientResponseError as ex:
+            if ex.status == 500:
+                logger.warn('Service is down', client_ip=request['client_ip'])
+                return aiohttp_jinja2.render_template(
+                    'error500.html', request, {
+                        'page_title': 'FSDR - Server down',
+                        'include_nav': False
+                    })
+            else:
+                raise ex
 
-            if get_employee_info.status_code == 200:
-                employee_info = get_employee_info.json()
-                employee_history = []
-                device_info = []
-                employee_name = employee_info['firstName'] + ' ' + employee_info['surname']
-                employee_status = employee_info['status']
-                if user_role != 'hr':
-                    employee_badge = employee_info['idBadgeNo']
-                else:
-                    employee_badge = ''
+        if get_employee_info.status_code == 200:
+            employee_info = get_employee_info.json()
+            employee_history = []
+            device_info = []
+            employee_name = employee_info['firstName'] + ' ' + employee_info[
+                'surname']
+            employee_status = employee_info['status']
+            if user_role != 'hr':
+                employee_badge = employee_info['idBadgeNo']
+            else:
+                employee_badge = ''
 
-                if user_role != 'logistics':
-                    if employee_info['ingestDate']:
-                        employee_info['ingestDate'] = format_to_uk_dates(employee_info['ingestDate'])
+            if user_role != 'logistics':
+                if employee_info['ingestDate']:
+                    employee_info['ingestDate'] = format_to_uk_dates(
+                        employee_info['ingestDate'])
 
-                if get_employee_history.status_code == 200:
-                    if get_employee_history.content != b'':
-                        employee_history_json = get_employee_history.json()
+            if get_employee_history.status_code == 200:
+                if get_employee_history.content != b'':
+                    employee_history_json = get_employee_history.json()
 
-                        for employee_history_dict in employee_history_json:
-                            if employee_history_dict['ingestDate']:
-                                employee_history_dict['ingestDate'] = format_to_uk_dates(
+                    for employee_history_dict in employee_history_json:
+                        if employee_history_dict['ingestDate']:
+                            employee_history_dict[
+                                'ingestDate'] = format_to_uk_dates(
                                     employee_history_dict['ingestDate'])
-                                employee_history.append(employee_history_dict.copy())
+                            employee_history.append(
+                                employee_history_dict.copy())
 
-                if get_employee_devices.status_code == 200:
-                    if get_employee_devices.content != b'':
-                        device_info_json = get_employee_devices.json()
-                        device_info.append(device_info_json.copy())
+            if get_employee_devices.status_code == 200:
+                if get_employee_devices.content != b'':
+                    device_info_json = get_employee_devices.json()
+                    device_info.append(device_info_json.copy())
 
-                last_job_role = employee_info['lastRoleId']
-                job_role_info = employee_info['jobRoles']
-                relevant_job_role = ''
+            last_job_role = employee_info['lastRoleId']
+            job_role_info = employee_info['jobRoles']
+            relevant_job_role = ''
 
+            for job_role in job_role_info:
+                if job_role['active']:
+                    relevant_job_role = job_role
+                else:
+                    job_role['contractStartDate'] = format_to_uk_dates(
+                        job_role['contractStartDate'])
+                    job_role['operationalEndDate'] = format_to_uk_dates(
+                        job_role['operationalEndDate'])
+
+            if relevant_job_role == '':
                 for job_role in job_role_info:
-                    if job_role['active']:
+                    if job_role['uniqueRoleId'] == last_job_role:
                         relevant_job_role = job_role
-                    else:
-                        job_role['contractStartDate'] = format_to_uk_dates(
-                            job_role['contractStartDate'])
-                        job_role['operationalEndDate'] = format_to_uk_dates(
-                            job_role['operationalEndDate'])
 
-                if relevant_job_role == '':
-                    for job_role in job_role_info:
-                        if job_role['uniqueRoleId'] == last_job_role:
-                            relevant_job_role = job_role
-
-                if relevant_job_role:
-                    if relevant_job_role['contractStartDate']:
-                        relevant_job_role['contractStartDate'] = format_to_uk_dates(
+            if relevant_job_role:
+                if relevant_job_role['contractStartDate']:
+                    relevant_job_role[
+                        'contractStartDate'] = format_to_uk_dates(
                             relevant_job_role['contractStartDate'])
-                    if relevant_job_role['contractEndDate']:
-                        relevant_job_role['contractEndDate'] = format_to_uk_dates(
-                            relevant_job_role['contractEndDate'])
-                    if relevant_job_role['operationalEndDate']:
-                        relevant_job_role['operationalEndDate'] = format_to_uk_dates(
+                if relevant_job_role['contractEndDate']:
+                    relevant_job_role['contractEndDate'] = format_to_uk_dates(
+                        relevant_job_role['contractEndDate'])
+                if relevant_job_role['operationalEndDate']:
+                    relevant_job_role[
+                        'operationalEndDate'] = format_to_uk_dates(
                             relevant_job_role['operationalEndDate'])
 
-                    employee_tabs = get_employee_tabs(user_role, employee_info, relevant_job_role, device_info)
+                employee_tabs = get_employee_tabs(user_role, employee_info,
+                                                  relevant_job_role,
+                                                  device_info)
 
-                    for tabs in employee_tabs:
-                        if 'all_info' in tabs:
-                            employee_info = tabs['all_info']
-                        else:
-                            for device_table in tabs:
-                                if 'headers' in device_table:
-                                    device_headers = device_table['headers']
-                                if 'tds' in device_table:
-                                    device_data = device_table['tds']
-
-                    employee_history_tabs = history_tab(user_role, employee_history, job_role_info)
-
-                    if user_role != 'hr' and user_role != 'logistics':
-
-                        for employee_history in employee_history_tabs[0]:
-                            if 'headers' in employee_history:
-                                history_header = employee_history['headers']
-                            if 'tds' in employee_history:
-                                    history_data = employee_history['tds']
-
-                        for employee_history in employee_history_tabs[1]:
-                            if 'headers' in employee_history:
-                                job_role_history_header = employee_history['headers']
-                            if 'tds' in employee_history:
-                                job_role_history_data = employee_history['tds']
-
-                        if user_role == 'rmt':
-                            device_headers = []
-                            device_data = []
+                for tabs in employee_tabs:
+                    if 'all_info' in tabs:
+                        employee_info = tabs['all_info']
                     else:
-                        for employee_history in employee_history_tabs[0]:
-                            if 'headers' in employee_history:
-                                history_header = employee_history['headers']
-                            if 'tds' in employee_history:
-                                history_data = employee_history['tds']
+                        for device_table in tabs:
+                            if 'headers' in device_table:
+                                device_headers = device_table['headers']
+                            if 'tds' in device_table:
+                                device_data = device_table['tds']
 
-                        job_role_history_header = []
-                        job_role_history_data = []
+                employee_history_tabs = history_tab(user_role,
+                                                    employee_history,
+                                                    job_role_info)
+
+                if user_role != 'hr' and user_role != 'logistics':
+
+                    for employee_history in employee_history_tabs[0]:
+                        if 'headers' in employee_history:
+                            history_header = employee_history['headers']
+                        if 'tds' in employee_history:
+                            history_data = employee_history['tds']
+
+                    for employee_history in employee_history_tabs[1]:
+                        if 'headers' in employee_history:
+                            job_role_history_header = employee_history[
+                                'headers']
+                        if 'tds' in employee_history:
+                            job_role_history_data = employee_history['tds']
+
+                    if user_role == 'rmt':
                         device_headers = []
                         device_data = []
-                    if user_role == 'hr':
-                        page_title = 'Employee: %s' % employee_name
-                    else:
-                        page_title = 'Employee: %s (%s)' % (employee_name, employee_badge)
+                else:
+                    for employee_history in employee_history_tabs[0]:
+                        if 'headers' in employee_history:
+                            history_header = employee_history['headers']
+                        if 'tds' in employee_history:
+                            history_data = employee_history['tds']
 
-                try:
-                    return {
-                        'user_role': user_role,
-                        'page_title': page_title,
-                        'device_headers': device_headers,
-                        'device_data': device_data,
-                        'employment_history_headers': history_header,
-                        'employment_history_data': history_data,
-                        'employee_job_role_history_header': job_role_history_header,
-                        'employee_job_role_history_data': job_role_history_data,
-                        'employee_history': employee_history,
-                        'employee_job_role': relevant_job_role,
-                        'employee_job_role_history': job_role_info,
-                        'employee_record': employee_info,
-                        'employee_status': employee_status
-                    }
-                except ValueError:
-                    return {
-                        'page_title': page_title,
-                        'employee_status': employee_status,
-                        'employee_record': employee_info,
-                        'employee_device': "No device"
-                    }
-            else:
-                logger.warn('Attempted to login with invalid user name and/or password',
-                            client_ip=request['client_ip'])
-                flash(request, NO_EMPLOYEE_DATA)
-                return aiohttp_jinja2.render_template(
-                    'signin.html',
-                    request, {
-                        'page_title': 'Sign in',
-                        'include_nav': False
-                },
-                    status=401)
+                    job_role_history_header = []
+                    job_role_history_data = []
+                    device_headers = []
+                    device_data = []
+                if user_role == 'hr':
+                    page_title = 'Employee: %s' % employee_name
+                else:
+                    page_title = 'Employee: %s (%s)' % (employee_name,
+                                                        employee_badge)
+
+            try:
+                return {
+                    'user_role': user_role,
+                    'page_title': page_title,
+                    'device_headers': device_headers,
+                    'device_data': device_data,
+                    'employment_history_headers': history_header,
+                    'employment_history_data': history_data,
+                    'employee_job_role_history_header':
+                    job_role_history_header,
+                    'employee_job_role_history_data': job_role_history_data,
+                    'employee_history': employee_history,
+                    'employee_job_role': relevant_job_role,
+                    'employee_job_role_history': job_role_info,
+                    'employee_record': employee_info,
+                    'employee_status': employee_status
+                }
+            except ValueError:
+                return {
+                    'page_title': page_title,
+                    'employee_status': employee_status,
+                    'employee_record': employee_info,
+                    'employee_device': "No device"
+                }
         else:
-            flash(request, NEED_TO_SIGN_IN_MSG)
-            raise HTTPFound(
-                request.app.router['Login:get'].url_for())
+            logger.warn(
+                'Attempted to login with invalid user name and/or password',
+                client_ip=request['client_ip'])
+            flash(request, NO_EMPLOYEE_DATA)
+            return aiohttp_jinja2.render_template('signin.html',
+                                                  request, {
+                                                      'page_title': 'Sign in',
+                                                      'include_nav': False
+                                                  },
+                                                  status=401)
