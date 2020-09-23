@@ -1,15 +1,17 @@
 from app.tabutils import table_generation, format_to_uk_dates
 
+from . import role_matchers
+
 
 def map_employee_history_table_headers(user_role, employee_history_table):
     employee_history_table_mapped = []
     for history in employee_history_table:
         employee_name = map_employee_name(history)
 
-        if user_role != 'hr':
+        if role_matchers.hr_regex.match(user_role):
             employee_emergency_contact_name = map_emergency_contact_name(history)
 
-        if user_role == 'fsss':
+        if role_matchers.fsss_regex.match(user_role):
             employee_history_table_mapping = {'Ingest Date': history.pop('ingestDate'),
                                               'ID': history.pop('uniqueEmployeeId'),
                                               'Name': employee_name,
@@ -28,7 +30,8 @@ def map_employee_history_table_headers(user_role, employee_history_table):
                                               'Mobility': history.pop('mobility'),
                                               'Mobile Staff': history.pop('mobileStaff')
                                               }
-        if user_role == 'hr':
+
+        if role_matchers.hr_regex.match(user_role):
             employee_history_table_mapping = {'Ingest Date': history.pop('ingestDate'),
                                               'ID': history.pop('uniqueEmployeeId'),
                                               'Name': employee_name,
@@ -40,7 +43,8 @@ def map_employee_history_table_headers(user_role, employee_history_table):
                                               'Country': history.pop('country'),
                                               'Date of Birth': history.pop('dob')
                                               }
-        if user_role == 'recruitment':
+
+        if role_matchers.recruit_regex.match(user_role):
             history['address'] = history['address1'] + ' ' + history['address2']
 
             employee_history_table_mapping = {'Ingest Date': history.pop('ingestDate'),

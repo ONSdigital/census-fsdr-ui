@@ -31,11 +31,8 @@ class Search:
         await saml.ensure_logged_in(request)
 
         await clear_stored_search_criteria(session)
-        try:
-            user_json = session['user_details']
-            user_role = user_json['userRole']
-        except:
-            saml.redirect_to_login(request)
+        user_role = await saml.get_role_id(request)
+
         try:
             get_job_roles = get_distinct_job_role_short()
             get_all_assignment_statuses = get_all_assignment_status()
@@ -73,11 +70,7 @@ class SecondaryPage:
         session = await get_session(request)
         data = await request.post()
 
-        try:
-            user_json = session['user_details']
-            user_role = user_json['userRole']
-        except ClientResponseError:
-            saml.redirect_to_login(request)
+        user_role = await saml.get_role_id(request)
 
         await saml.ensure_logged_in(request)
 
@@ -208,11 +201,7 @@ class SecondaryPage:
     async def get(self, request):
         session = await get_session(request)
 
-        try:
-            user_json = session['user_details']
-            user_role = user_json['userRole']
-        except:
-            saml.redirect_to_login(request)
+        user_role = await saml.get_role_id(request)
 
         await saml.ensure_logged_in(request)
 

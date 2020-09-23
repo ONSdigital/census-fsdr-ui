@@ -47,11 +47,8 @@ class MainPage:
         await clear_stored_search_criteria(session)
         setup_request(request)
         log_entry(request, 'start')
-        try:
-            user_json = session['user_details']
-            user_role = user_json['userRole']
-        except:
-            saml.redirect_to_login(request)
+
+        user_role = await saml.get_role_id(request)
 
         if 'page' in request.query:
             page_number = int(request.query['page'])

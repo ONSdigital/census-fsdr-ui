@@ -35,15 +35,12 @@ async def is_logged_in(request):
     return 'samlUserdata' in session
 
 
-# used to replace:
-#            user_json = session['user_details']
-#            user_role = user_json['userRole']
 async def get_role_id(request):
     session = await get_session(request)
     if not 'samlUserdata' in session:
         redirect_to_login(request)
     roleids = session['samlUserdata']['roleID']
-
+    # TODO extra checking here?
     return roleids[0]
 
 

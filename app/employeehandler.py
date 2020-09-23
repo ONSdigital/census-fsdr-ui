@@ -10,6 +10,7 @@ from app.historytab import history_tab
 from app.tabutils import format_to_uk_dates
 from . import (NEED_TO_SIGN_IN_MSG, NO_EMPLOYEE_DATA)
 from . import saml
+from . import role_matchers
 from .flash import flash
 
 employee_routes = RouteTableDef()
@@ -25,11 +26,7 @@ class EmployeeInformation():
 
         await saml.ensure_logged_in(request)
 
-        try:
-            user_json = session['user_details']
-            user_role = user_json['userRole']
-        except:
-            saml.redirect_to_login(request)
+        user_role = await saml.get_role_id(request)
 
         try:
             get_employee_info = get_employee_information(
@@ -55,12 +52,12 @@ class EmployeeInformation():
             employee_name = employee_info['firstName'] + ' ' + employee_info[
                 'surname']
             employee_status = employee_info['status']
-            if user_role != 'hr':
+            if role_matchers.hr_regex.match(user_role):
                 employee_badge = employee_info['idBadgeNo']
             else:
                 employee_badge = ''
 
-            if user_role != 'logistics':
+            if role_matchers.logi_regex.match(user_role):
                 if employee_info['ingestDate']:
                     employee_info['ingestDate'] = format_to_uk_dates(
                         employee_info['ingestDate'])
@@ -131,7 +128,8 @@ class EmployeeInformation():
                                                     employee_history,
                                                     job_role_info)
 
-                if user_role != 'hr' and user_role != 'logistics':
+                if (not role_matchers.hr_regex.match(user_role)
+                    ) and not (role_matchers.logi_regex.match(user_role)):
 
                     for employee_history in employee_history_tabs[0]:
                         if 'headers' in employee_history:
@@ -146,9 +144,10 @@ class EmployeeInformation():
                         if 'tds' in employee_history:
                             job_role_history_data = employee_history['tds']
 
-                    if user_role == 'rmt':
+                    if role_matchers.rmt_regex.match(user_role):
                         device_headers = []
                         device_data = []
+
                 else:
                     for employee_history in employee_history_tabs[0]:
                         if 'headers' in employee_history:
@@ -160,7 +159,8 @@ class EmployeeInformation():
                     job_role_history_data = []
                     device_headers = []
                     device_data = []
-                if user_role == 'hr':
+
+                if role_matchers.hr_regex.match(user_role):
                     page_title = 'Employee: %s' % employee_name
                 else:
                     page_title = 'Employee: %s (%s)' % (employee_name,
