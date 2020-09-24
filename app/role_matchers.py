@@ -4,7 +4,7 @@ import re
 from aiohttp.web import HTTPInternalServerError
 from structlog import get_logger
 
-import app.views
+from app import views
 
 
 logger = get_logger('fsdr-ui')

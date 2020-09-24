@@ -36,6 +36,7 @@ class EmployeeInformation():
                 user_role, employee_id)
         except ClientResponseError as ex:
             if ex.status == 500:
+                # TODO: IP is missing, what do?
                 logger.warn('Service is down', client_ip=request['client_ip'])
                 return aiohttp_jinja2.render_template(
                     'error500.html', request, {
