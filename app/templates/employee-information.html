@@ -3,7 +3,6 @@
 {% from "components/metadata/_macro.njk" import onsMetadata %}
 {% from "components/table/_macro.njk" import onsTable %}
 {% from "custom/tabs/_macro.njk" import onsTabs %}
-{% from . import role_matchers as rm %}
 
 
 {% set page_title_value = page_title %}
@@ -28,7 +27,7 @@
                         <h1>Status: {{ employee_status }}</h1>
                     </div>
                 </div>
-                {% if not rm.hr_regex.match(user_role) and not rm.rmt_regex.match(user_role) and not rm.logi_regex.match(user_role) %}
+                {% if extract_type != 'HR' and extract_type != 'RMT' and extract_type != 'LOGISTICS' %}
                     {{
                         onsTabs({
                             'tabs': [
