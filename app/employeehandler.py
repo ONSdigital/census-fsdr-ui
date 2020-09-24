@@ -82,8 +82,7 @@ class EmployeeInformation():
                         employee_history_dict[
                             'ingestDate'] = format_to_uk_dates(
                                 employee_history_dict['ingestDate'])
-                        employee_history.append(
-                            employee_history_dict.copy())
+                        employee_history.append(employee_history_dict.copy())
 
         if get_employee_devices.status_code == 200:
             if get_employee_devices.content != b'':
@@ -110,20 +109,17 @@ class EmployeeInformation():
 
         if relevant_job_role:
             if relevant_job_role['contractStartDate']:
-                relevant_job_role[
-                    'contractStartDate'] = format_to_uk_dates(
-                        relevant_job_role['contractStartDate'])
+                relevant_job_role['contractStartDate'] = format_to_uk_dates(
+                    relevant_job_role['contractStartDate'])
             if relevant_job_role['contractEndDate']:
                 relevant_job_role['contractEndDate'] = format_to_uk_dates(
                     relevant_job_role['contractEndDate'])
             if relevant_job_role['operationalEndDate']:
-                relevant_job_role[
-                    'operationalEndDate'] = format_to_uk_dates(
-                        relevant_job_role['operationalEndDate'])
+                relevant_job_role['operationalEndDate'] = format_to_uk_dates(
+                    relevant_job_role['operationalEndDate'])
 
             employee_tabs = get_employee_tabs(user_role, employee_info,
-                                                relevant_job_role,
-                                                device_info)
+                                              relevant_job_role, device_info)
 
             for tabs in employee_tabs:
                 if 'all_info' in tabs:
@@ -135,8 +131,7 @@ class EmployeeInformation():
                         if 'tds' in device_table:
                             device_data = device_table['tds']
 
-            employee_history_tabs = history_tab(user_role,
-                                                employee_history,
+            employee_history_tabs = history_tab(user_role, employee_history,
                                                 job_role_info)
 
             if (not role_matchers.hr_regex.match(user_role)
@@ -150,8 +145,7 @@ class EmployeeInformation():
 
                 for employee_history in employee_history_tabs[1]:
                     if 'headers' in employee_history:
-                        job_role_history_header = employee_history[
-                            'headers']
+                        job_role_history_header = employee_history['headers']
                     if 'tds' in employee_history:
                         job_role_history_data = employee_history['tds']
 
@@ -185,8 +179,7 @@ class EmployeeInformation():
                 'device_data': device_data,
                 'employment_history_headers': history_header,
                 'employment_history_data': history_data,
-                'employee_job_role_history_header':
-                job_role_history_header,
+                'employee_job_role_history_header': job_role_history_header,
                 'employee_job_role_history_data': job_role_history_data,
                 'employee_history': employee_history,
                 'employee_job_role': relevant_job_role,
