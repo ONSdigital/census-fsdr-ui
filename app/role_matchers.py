@@ -2,6 +2,7 @@
 
 import re
 from aiohttp.web import HTTPInternalServerError
+from structlog import get_logger
 
 import app.views
 
