@@ -9,7 +9,7 @@ def map_employee_history_table_headers(user_role, employee_history_table):
         employee_name = map_employee_name(history)
 
         if role_matchers.hr_regex.match(user_role):
-            employee_emergency_contact_name = map_emergency_contact_name(history)
+            employee_emergency_contact_name = history['emergencyContactFullName']
 
         if role_matchers.fsss_regex.match(user_role):
             employee_history_table_mapping = {'Ingest Date': history.pop('ingestDate'),
@@ -119,6 +119,3 @@ def map_employee_name(employee_table):
 
     return employee_name
 
-
-def map_emergency_contact_name(employee_table):
-    return emergency_contact['emergencyContactFullName']
