@@ -31,22 +31,9 @@ def get_employee_tabs(employee_information, current_job_role, device_information
                             'Personal Email Account': employee_information['personalEmailAddress']
                             }
 
-    emp_other_personal_details = {'Current Civil Servant': employee_information['currentCivilServant'],
-                                  'Previous Civil Servant': employee_information['previousCivilServant'],
-                                  'Civil Service Pension Recipient':
-                                      employee_information['civilServicePensionRecipient'],
-                                  'Date of Birth': employee_information['dob'],
-                                  'Driving Information': employee_information['drivingInformation']
-                                  }
+    emp_other_personal_details = {'Date of Birth': employee_information['dob']}
 
-    emp_diversity_information = {'Age': employee_information['age'],
-                                 'Ethnicity': employee_information['ethnicity'],
-                                 'Disability': employee_information['disability'],
-                                 'Nationality': employee_information['nationality'],
-                                 'Gender': employee_information['gender'],
-                                 'Sexual Orientation': employee_information['sexualOrientation'],
-                                 'Religion': employee_information['religion']
-                                 }
+    emp_diversity_information = {}
 
     tab_glance = tab_generation('At a Glance', employment_glance)
 

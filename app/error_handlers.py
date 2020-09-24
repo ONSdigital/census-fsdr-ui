@@ -5,6 +5,8 @@ from aiohttp.client_exceptions import (ClientResponseError,
                                        ClientConnectorError,
                                        ClientConnectionError, ContentTypeError)
 
+from . import saml
+
 from structlog import get_logger
 
 logger = get_logger('fsdr-ui')
@@ -18,10 +20,12 @@ def create_error_middleware(overrides):
             override = overrides.get(resp.status)
             return await override(request) if override else resp
         except web.HTTPNotFound:
-            index_resource = request.app.router['Login:get']
+            index_resource = request.app.router['sso']
             if request.path + '/' == index_resource.canonical:
                 logger.debug('redirecting to index', path=request.path)
-                raise web.HTTPMovedPermanently(index_resource.url_for())
+                # TODO restore this once all routes are fully set up
+                # raise web.HTTPMovedPermanently(index_resource.url_for())
+                raise web.HTTPFound(index_resource.url_for())
             return await not_found_error(request)
         except web.HTTPForbidden:
             return await forbidden(request)
@@ -40,32 +44,46 @@ def create_error_middleware(overrides):
 
 async def connection_error(request, message: str):
     logger.error('service connection error', exception=message)
-    return jinja.render_template('error500.html', request, {'page_title': 'FSDR - Server down',
-                                                            'include_nav': False
-                                                            }, status=500)
+    return jinja.render_template('error500.html',
+                                 request, {
+                                     'page_title': 'FSDR - Server down',
+                                     'include_nav': False
+                                 },
+                                 status=500)
 
 
 async def payload_error(request, url: str):
     logger.error('service failed to return expected json payload', url=url)
-    return jinja.render_template('error500.html', request, {'page_title': 'FSDR - Server down',
-                                                            'include_nav': False},
+    return jinja.render_template('error500.html',
+                                 request, {
+                                     'page_title': 'FSDR - Server down',
+                                     'include_nav': False
+                                 },
                                  status=500)
 
 
 async def response_error(request):
-    return jinja.render_template('error500.html', request, {'page_title': 'FSDR - Server down',
-                                                            'include_nav': False},
+    return jinja.render_template('error500.html',
+                                 request, {
+                                     'page_title': 'FSDR - Server down',
+                                     'include_nav': False
+                                 },
                                  status=500)
 
 
 async def not_found_error(request):
-    return jinja.render_template('error404.html', request,
-                                 {'request_path': request.path,
-                                  'include_nav': False}, status=404)
+    return jinja.render_template('error404.html',
+                                 request, {
+                                     'request_path': request.path,
+                                     'include_nav': False
+                                 },
+                                 status=404)
 
 
 async def forbidden(request):
-    return jinja.render_template('error403.html', request, {'include_nav': False}, status=403)
+    return jinja.render_template('error403.html',
+                                 request, {'include_nav': False},
+                                 status=403)
 
 
 def setup(app):
@@ -76,4 +94,3 @@ def setup(app):
     }
     error_middleware = create_error_middleware(overrides)
     app.middlewares.append(error_middleware)
-

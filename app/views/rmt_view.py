@@ -28,16 +28,6 @@ def get_employee_tabs(employee_information, current_job_role, device_information
     else:
         mobile_staff = 'No'
 
-    if employee_information['workRestrictions'] == '':
-        work_restrictions = 'None'
-    else:
-        work_restrictions = employee_information['workRestrictions']
-
-    if employee_information['reasonableAdjustments'] == '':
-        reasonable_adjustments = 'None'
-    else:
-        reasonable_adjustments = employee_information['reasonableAdjustments']
-
     emp_job_role = {'Job Role ID': current_job_role['uniqueRoleId'],
                     'Badge Number': employee_information['idBadgeNo'],
                     'Postcode': employee_information['postcode'],
@@ -46,10 +36,7 @@ def get_employee_tabs(employee_information, current_job_role, device_information
                     'Area Location': current_job_role['areaLocation'],
                     'Mobility': employee_information['mobility'],
                     'Mobile Staff': mobile_staff,
-                    'Weekly Hours': employee_information['weeklyHours'],
-                    'Work Restrictions': work_restrictions,
-                    'Reasonable Adjustments': reasonable_adjustments
-
+                    'Weekly Hours': employee_information['weeklyHours']
                     }
 
     emp_status = {'Assignment Status': current_job_role['assignmentStatus'],
@@ -58,15 +45,8 @@ def get_employee_tabs(employee_information, current_job_role, device_information
                   'Contract End Date': current_job_role['contractEndDate']
                   }
 
-    if employee_information['welshLanguageSpeaker']:
-        welsh_speaker = 'Yes'
-    else:
-        welsh_speaker = 'No'
-
     emp_personal_details = {'Personal Mobile Number': employee_information['telephoneNumberContact1'],
-                            'Personal Email Account': employee_information['personalEmailAddress'],
-                            'Welsh Speaker': welsh_speaker,
-                            'Any Languages Spoken': employee_information['anyLanguagesSpoken']
+                            'Personal Email Account': employee_information['personalEmailAddress']
                             }
 
     employee_information['dob'] = format_to_uk_dates(employee_information['dob'])

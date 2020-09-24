@@ -8,6 +8,7 @@ from aiohttp.client_exceptions import (ClientConnectionError,
                                        ClientResponseError)
 from aiohttp.web import Application
 from aiohttp_utils import negotiation, routing
+import aiohttp_remotes
 from structlog import get_logger
 
 from . import config
@@ -18,13 +19,16 @@ from . import routes
 from . import security
 from . import session
 from . import settings
+from . import saml
 from .app_logging import logger_initial_config
 
 logger = get_logger('fsdr-ui')
 
 
 async def on_startup(app):
+    await aiohttp_remotes.setup(app, aiohttp_remotes.XForwardedRelaxed())
     app.http_session_pool = ClientSession(timeout=ClientTimeout(total=30))
+    saml.fetch_settings(app)
 
 
 async def on_cleanup(app):
@@ -84,10 +88,7 @@ def create_app(config_name=None, google_auth=None) -> Application:
 
     # Store a dict of health check urls for required services
     app.service_status_urls = app_config.get_service_urls_mapped_with_path(
-        path='/info',
-        excludes=[
-            'FSDR_SERVICE_URL'
-        ])
+        path='/info', excludes=['FSDR_SERVICE_URL'])
 
     # Monkey patch the check_services function as a method to the app object
     app.check_services = types.MethodType(check_services, app)
@@ -103,13 +104,13 @@ def create_app(config_name=None, google_auth=None) -> Application:
     negotiation.setup(app)
 
     # Setup jinja2 environment
-    aiohttp_jinja2.setup(
-        app,
-        loader=jinja2.PackageLoader('app', 'templates'),
-        context_processors=[
-            flash.context_processor, aiohttp_jinja2.request_processor,
-            domains.domain_processor
-        ])
+    aiohttp_jinja2.setup(app,
+                         loader=jinja2.PackageLoader('app', 'templates'),
+                         context_processors=[
+                             flash.context_processor,
+                             aiohttp_jinja2.request_processor,
+                             domains.domain_processor
+                         ])
 
     app.on_startup.append(on_startup)
     app.on_cleanup.append(on_cleanup)

@@ -1,5 +1,5 @@
 from app.tabutils import tab_generation, table_generation, format_to_uk_dates
-from app.fieldmapping import map_employee_name, map_emergency_contact_name
+from app.fieldmapping import map_employee_name
 from app.employee_view_functions import device_details, format_line_manager
 
 
@@ -39,12 +39,6 @@ def get_employee_tabs(employee_information, current_job_role, device_information
                   'Operational End Date': current_job_role['operationalEndDate'],
                   'Ingest Date': employee_information['ingestDate']}
 
-    emergency_contacts = map_emergency_contact_name(employee_information)
-
-    emergency_contact_name_1 = emergency_contacts[0]
-
-    emergency_contact_name_2 = emergency_contacts[1]
-
     employee_information['address'] = employee_information['address1'] + ' ' + employee_information[
         'address2']
     employee_information['telephoneNumberContact2'] = ''
@@ -52,24 +46,15 @@ def get_employee_tabs(employee_information, current_job_role, device_information
     emp_personal_details = {'Address': employee_information['address'],
                             'Personal Mobile Number': employee_information['telephoneNumberContact1'],
                             'Personal Email Account': employee_information['personalEmailAddress'],
-                            'Emergency Contact 1 Name': emergency_contact_name_1,
-                            'Emergency Contact 1 Number': employee_information['emergencyContactMobileNo'],
-                            'Emergency Contact 2 Name': emergency_contact_name_2,
-                            'Emergency Contact 2 Number': employee_information['emergencyContactMobileNo2']
+                            'Emergency Contact Name': employee_information['emergencyContactFullName'],
+                            'Emergency Contact Number': employee_information['emergencyContactMobileNo']
                             }
 
     employee_information['dob'] = format_to_uk_dates(employee_information['dob'])
 
     emp_other_personal_details = {'Date of Birth': employee_information['dob']}
 
-    emp_diversity_information = {'Age': employee_information['age'],
-                                 'Ethnicity': employee_information['ethnicity'],
-                                 'Disability': employee_information['disability'],
-                                 'Nationality': employee_information['nationality'],
-                                 'Gender': employee_information['gender'],
-                                 'Sexual Orientation': employee_information['sexualOrientation'],
-                                 'Religion': employee_information['religion']
-                                 }
+    emp_diversity_information = {}
 
     tab_glance = tab_generation('At a Glance', employment_glance)
 

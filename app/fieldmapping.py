@@ -1,15 +1,14 @@
 from app.tabutils import table_generation, format_to_uk_dates
 
+from . import role_matchers
+
 
 def map_employee_history_table_headers(user_role, employee_history_table):
     employee_history_table_mapped = []
     for history in employee_history_table:
         employee_name = map_employee_name(history)
 
-        if user_role != 'hr':
-            employee_emergency_contact_name = map_emergency_contact_name(history)
-
-        if user_role == 'fsss':
+        if role_matchers.fsss_regex.match(user_role):
             employee_history_table_mapping = {'Ingest Date': history.pop('ingestDate'),
                                               'ID': history.pop('uniqueEmployeeId'),
                                               'Name': employee_name,
@@ -22,17 +21,14 @@ def map_employee_history_table_headers(user_role, employee_history_table):
                                               'Personal Email Address': history.pop('personalEmailAddress'),
                                               'Postcode': history.pop('postcode'),
                                               'Country': history.pop('country'),
-                                              'Emergency Contact 1 Name': employee_emergency_contact_name[0],
-                                              'Emergency Contact 1 Mobile Number': history.pop(
-                                                  'emergencyContactMobileNo'),
-                                              'Emergency Contact 2 Name': employee_emergency_contact_name[1],
-                                              'Emergency Contact 2 Mobile Number': history.pop(
-                                                  'emergencyContactMobileNo2'),
+                                              'Emergency Contact Name': history['emergencyContactFullName'],
+                                              'Emergency Contact Mobile Number': history.pop('emergencyContactMobileNo'),
                                               'Weekly Hours': history.pop('weeklyHours'),
                                               'Mobility': history.pop('mobility'),
                                               'Mobile Staff': history.pop('mobileStaff')
                                               }
-        if user_role == 'hr':
+
+        if role_matchers.hr_regex.match(user_role):
             employee_history_table_mapping = {'Ingest Date': history.pop('ingestDate'),
                                               'ID': history.pop('uniqueEmployeeId'),
                                               'Name': employee_name,
@@ -42,21 +38,10 @@ def map_employee_history_table_headers(user_role, employee_history_table):
                                               'Status': history.pop('status'),
                                               'Personal Email Address': history.pop('personalEmailAddress'),
                                               'Country': history.pop('country'),
-                                              'Date of Birth': history.pop('dob'),
-                                              'Age': history.pop('age'),
-                                              'Ethnicity': history.pop('ethnicity'),
-                                              'Nationality': history.pop('nationality'),
-                                              'Disability': history.pop('disability'),
-                                              'Gender': history.pop('gender'),
-                                              'Sexual Orientation': history.pop('sexualOrientation'),
-                                              'Religion': history.pop('religion'),
-                                              'Driving Information': history.pop('drivingInformation'),
-                                              'Civil Service Pension Recipient': history.pop(
-                                                  'civilServicePensionRecipient'),
-                                              'Current Civil Servant': history.pop('currentCivilServant'),
-                                              'Previous Civil Servant': history.pop('previousCivilServant')
+                                              'Date of Birth': history.pop('dob')
                                               }
-        if user_role == 'recruitment':
+
+        if role_matchers.recruit_regex.match(user_role):
             history['address'] = history['address1'] + ' ' + history['address2']
 
             employee_history_table_mapping = {'Ingest Date': history.pop('ingestDate'),
@@ -72,25 +57,10 @@ def map_employee_history_table_headers(user_role, employee_history_table):
                                               'County': history.pop('county'),
                                               'Postcode': history.pop('postcode'),
                                               'Country': history.pop('country'),
-                                              'Emergency Contact 1 Name': employee_emergency_contact_name[0],
-                                              'Emergency Contact 1 Mobile Number': history.pop(
-                                                  'emergencyContactMobileNo'),
-                                              'Emergency Contact 2 Name': employee_emergency_contact_name[1],
-                                              'Emergency Contact 2 Mobile Number': history.pop(
-                                                  'emergencyContactMobileNo2'),
+                                              'Emergency Contact Name': employee_emergency_contact_name,
+                                              'Emergency Contact Mobile Number': history.pop('emergencyContactMobileNo'),
                                               'Date of Birth': history.pop('dob'),
-                                              'Age': history.pop('age'),
-                                              'Ethnicity': history.pop('ethnicity'),
-                                              'Nationality': history.pop('nationality'),
-                                              'Disability': history.pop('disability'),
-                                              'Gender': history.pop('gender'),
-                                              'Sexual Orientation': history.pop('sexualOrientation'),
-                                              'Religion': history.pop('religion'),
-                                              'Welsh Language Speaker': history.pop('welshLanguageSpeaker'),
-                                              'Any Languages Spoken': history.pop('anyLanguagesSpoken'),
-                                              'Work Restrictions': history.pop('workRestrictions'),
                                               'Weekly Hours': history.pop('weeklyHours'),
-                                              'Reasonable Adjustments': history.pop('reasonableAdjustments'),
                                               'Mobility': history.pop('mobility'),
                                               'Mobile Staff': history.pop('mobileStaff')
                                               }
@@ -146,37 +116,3 @@ def map_employee_name(employee_table):
 
     return employee_name
 
-
-def map_emergency_contact_name(employee_table, both_required=True):
-    if employee_table['emergencyContactFirstName'] is None and employee_table['emergencyContactSurname'] is None:
-        emergency_contact_1 = '-'
-    elif employee_table['emergencyContactFirstName'] is None:
-        emergency_contact_1 = employee_table['emergencyContactSurname']
-    elif employee_table['emergencyContactSurname'] is None:
-        emergency_contact_1 = employee_table['emergencyContactFirstName']
-    else:
-        emergency_contact_1 = employee_table['emergencyContactFirstName'] + ' ' + \
-                              employee_table['emergencyContactSurname']
-
-    if emergency_contact_1 == '- -':
-        emergency_contact_1 = '-'
-
-    if both_required:
-        if employee_table['emergencyContactFirstName2'] is None and employee_table['emergencyContactSurname2'] is None:
-            emergency_contact_2 = '-'
-        elif employee_table['emergencyContactFirstName2'] is None:
-            emergency_contact_2 = employee_table['emergencyContactSurname2']
-        elif employee_table['emergencyContactSurname2'] is None:
-            emergency_contact_2 = employee_table['emergencyContactFirstName2']
-        else:
-            emergency_contact_2 = employee_table['emergencyContactFirstName2'] + ' ' + \
-                                  employee_table['emergencyContactSurname2']
-
-        if emergency_contact_2 == '- -':
-            emergency_contact_2 = '-'
-
-        emergency_contacts = [emergency_contact_1, emergency_contact_2]
-    else:
-        emergency_contacts = [emergency_contact_1]
-
-    return emergency_contacts

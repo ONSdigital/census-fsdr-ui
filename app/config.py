@@ -1,5 +1,7 @@
 from envparse import Env, ConfigurationError
 
+import os
+
 
 class Config(dict):
     def from_object(self, obj):
@@ -60,6 +62,11 @@ class BaseConfig:
     # FN_CLIENT_ID = env('705755761858-n1vinsandkq3n7borr3bdplkj6cghv2b.apps.googleusercontent.com')
     # FN_CLIENT_SECRET = env('mej--fVERcHXiOeezGkBz13p')
 
+    SECRET_KEY = 'examplesecretkey'
+    sso_config_folder_default = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'saml')
+    SSO_CONFIG_FOLDER = env('SSO_CONFIG_FOLDER', default=os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'saml'))
+
+
 class ProductionConfig(BaseConfig):
     pass
 
@@ -86,6 +93,9 @@ class DevelopmentConfig:
 
     URL_PATH_PREFIX = env('URL_PATH_PREFIX', default='')
 
+    SECRET_KEY = 'examplesecretkey'
+    SSO_CONFIG_FOLDER = env('SSO_CONFIG_FOLDER', default=os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'saml'))
+
 
 class TestingConfig:
     HOST = '0.0.0.0'
@@ -109,3 +119,6 @@ class TestingConfig:
     URL_PATH_PREFIX = ''
 
     SESSION_AGE = ''
+
+    SECRET_KEY = 'examplesecretkey'
+    SSO_CONFIG_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'test_saml')

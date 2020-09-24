@@ -14,6 +14,7 @@ from app.searchfunctions import get_employee_records, \
 from structlog import get_logger
 
 from . import (NEED_TO_SIGN_IN_MSG, NO_EMPLOYEE_DATA, SERVICE_DOWN_MSG)
+from . import saml
 from .flash import flash
 
 logger = get_logger('fsdr-ui')
@@ -41,76 +42,64 @@ class MainPage:
     async def get(self, request):
         session = await get_session(request)
 
-        if session.get('logged_in'):
-            await clear_stored_search_criteria(session)
-            setup_request(request)
-            log_entry(request, 'start')
-            try:
-                user_json = session['user_details']
-                user_role = user_json['userRole']
-            except:
-                flash(request, NEED_TO_SIGN_IN_MSG)
-                raise HTTPFound(request.app.router['Login:get'].url_for())
+        await saml.ensure_logged_in(request)
 
-            if 'page' in request.query:
-                page_number = int(request.query['page'])
-            else:
-                page_number = 1
+        await clear_stored_search_criteria(session)
+        setup_request(request)
+        log_entry(request, 'start')
 
-            try:
-                employee_count = get_employee_count()
-                max_page = (int(employee_count.text) / 50) - 1
-                if page_number >= max_page > 1:
-                    page_number = int(math.floor(max_page))
-                else:
-                    if max_page < 1:
-                        max_page = 1
-                    if page_number > 1:
-                        low_value = 50 * page_number
-                        high_value = low_value + 50
-                    else:
-                        low_value = page_number
-                        high_value = 50
+        user_role = await saml.get_role_id(request)
 
-                    search_range = {'rangeHigh': high_value, 'rangeLow': low_value}
-
-                    get_employee_info = get_employee_records(search_range)
-                    get_job_roles = get_distinct_job_role_short()
-            except ClientResponseError as ex:
-                if ex.status == 503:
-                    logger.warn('Server is unavailable',
-                                client_ip=request['client_ip'])
-                    flash(request, SERVICE_DOWN_MSG)
-                    return aiohttp_jinja2.render_template(
-                        'error503.html',
-                        request, {
-                            'include_nav': False
-                        })
-                else:
-                    raise ex
-
-            if get_employee_info.status_code == 200:
-                table_headers = employee_table_headers()
-
-                employee_records = employee_record_table(get_employee_info.json())
-
-                job_role_json = retrieve_job_roles(get_job_roles, '')
-
-                return {
-                    'page_title': f'Field Force view for: {user_role}',
-                    'table_headers': table_headers,
-                    'employee_records': employee_records,
-                    'page_number': page_number,
-                    'last_page_number': int(math.floor(max_page)),
-                    'distinct_job_roles': job_role_json,
-                }
-            else:
-                logger.warn('Database is down',
-                            client_ip=request['client_ip'])
-                flash(request, NO_EMPLOYEE_DATA)
-                raise HTTPFound(
-                    request.app.router['MainPage:get'].url_for())
-
+        if 'page' in request.query:
+            page_number = int(request.query['page'])
         else:
-            flash(request, NEED_TO_SIGN_IN_MSG)
-            raise HTTPFound(request.app.router['Login:get'].url_for())
+            page_number = 1
+
+        try:
+            employee_count = get_employee_count()
+            max_page = (int(employee_count.text) / 50) - 1
+            if page_number >= max_page > 1:
+                page_number = int(math.floor(max_page))
+            else:
+                if max_page < 1:
+                    max_page = 1
+                if page_number > 1:
+                    low_value = 50 * page_number
+                    high_value = low_value + 50
+                else:
+                    low_value = page_number
+                    high_value = 50
+
+                search_range = {'rangeHigh': high_value, 'rangeLow': low_value}
+
+                get_employee_info = get_employee_records(search_range)
+                get_job_roles = get_distinct_job_role_short()
+        except ClientResponseError as ex:
+            if ex.status == 503:
+                ip = request['client_ip']
+                logger.warn('Server is unavailable', client_ip=ip)
+                flash(request, SERVICE_DOWN_MSG)
+                return aiohttp_jinja2.render_template('error503.html', request,
+                                                      {'include_nav': False})
+            else:
+                raise ex
+
+        if get_employee_info.status_code == 200:
+            table_headers = employee_table_headers()
+
+            employee_records = employee_record_table(get_employee_info.json())
+
+            job_role_json = retrieve_job_roles(get_job_roles, '')
+
+            return {
+                'page_title': f'Field Force view for: {user_role}',
+                'table_headers': table_headers,
+                'employee_records': employee_records,
+                'page_number': page_number,
+                'last_page_number': int(math.floor(max_page)),
+                'distinct_job_roles': job_role_json,
+            }
+        else:
+            logger.warn('Database is down', client_ip=request['client_ip'])
+            flash(request, NO_EMPLOYEE_DATA)
+            raise HTTPFound(request.app.router['MainPage:get'].url_for())
