@@ -30,7 +30,6 @@ google-auth = "*"
 OneLogin = "*"
 python3-saml = "*"
 
-
 [dev-packages]
 codecov = "*"
 coverage = "*"
@@ -40,7 +39,6 @@ pytest-aiohttp = "*"
 pytest-cov = "*"
 aiohttp-devtools = "*"
 aioresponses = "*"
-requests = "*"
 retrying = "*"
 
 [requires]

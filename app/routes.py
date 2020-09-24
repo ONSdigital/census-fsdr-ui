@@ -1,6 +1,5 @@
 from aiohttp_utils.routing import add_resource_context, add_route_context
 
-from .credentialhandler import credential_routes
 from .employeehandler import employee_routes
 from .indexhandler import index_route
 from .handler import static_routes

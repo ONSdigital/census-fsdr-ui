@@ -38,7 +38,7 @@ def role_id_to_extract_type(role_id):
     # FSSS
     elif fsss_regex.match(role_id):
         return 'FSSS'
-    # Recruitiment
+    # Recruitment
     elif recruit_regex.match(role_id):
         return 'RECRUITMENT'
     # Failed to match
