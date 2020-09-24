@@ -2,6 +2,7 @@ import requests
 from requests.auth import HTTPBasicAuth
 
 from app.utils import FSDR_URL, FSDR_USER, FSDR_PASS
+from . import role_matchers
 
 
 def get_current_job_role(current_job_role):
@@ -75,12 +76,14 @@ def get_employee_device(employee_id):
 
 
 def get_employee_information(user_role, employee_id):
-    return requests.get(FSDR_URL + f'/fieldforce/byId/{user_role}/{employee_id}',
+    extract_type = role_matchers.role_id_to_extract_type(user_role)
+    return requests.get(FSDR_URL + f'/fieldforce/byId/{extract_type}/{employee_id}',
                         verify=False,
                         auth=HTTPBasicAuth(FSDR_USER, FSDR_PASS))
 
 
 def get_employee_history_information(user_role, employee_id):
-    return requests.get(FSDR_URL + f'/fieldforce/historyById/{user_role}/{employee_id}',
+    extract_type = role_matchers.role_id_to_extract_type(user_role)
+    return requests.get(FSDR_URL + f'/fieldforce/historyById/{extract_type}/{employee_id}',
                         verify=False,
                         auth=HTTPBasicAuth(FSDR_USER, FSDR_PASS))
