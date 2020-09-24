@@ -1,7 +1,7 @@
 
 
 import re
-import aiohttp.web.HTTPInternalServerError
+from aiohttp.web import HTTPInternalServerError
 
 import app.views
 
@@ -17,7 +17,7 @@ logi_regex = re.compile('LT-LOG.-..-..')
 
 def invalid_role_id(role_id):
     logger.warn('Invalid RoleID', client_ip=request['client_ip'])
-    raise HTTPInternalServerError()
+    raise HTTPInternalServerError('Invalid role ID')
 
 
 def role_id_to_extract_type(role_id):

@@ -52,7 +52,8 @@ def redirect_to_login(request):
 
 # Ensure the user is logged in, and redirect them to the login screen if they are not
 async def ensure_logged_in(request):
-    if is_logged_in(request):
+    logged_in = await is_logged_in(request)
+    if logged_in:
         return
     else:
         redirect_to_login(request)
