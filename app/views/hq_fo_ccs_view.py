@@ -1,6 +1,6 @@
 from app.employee_view_functions import device_details, format_line_manager
 from app.tabutils import tab_generation, table_generation
-from app.fieldmapping import map_employee_name, map_emergency_contact_name
+from app.fieldmapping import map_employee_name
 
 
 def get_employee_tabs(employee_information, current_job_role, device_information):
@@ -44,15 +44,11 @@ def get_employee_tabs(employee_information, current_job_role, device_information
                   'Contract End Date': current_job_role['contractEndDate']
                   }
 
-    emergency_contacts = map_emergency_contact_name(employee_information)
-
-    emergency_contact_name_1 = emergency_contacts[0]
-
     emp_personal_details = {'Address': employee_information['address'],
                             'Personal Mobile Number': employee_information['telephoneNumberContact1'],
                             'Home Phone Number': employee_information['telephoneNumberContact2'],
                             'Personal Email Account': employee_information['personalEmailAddress'],
-                            'Emergency Contact 1 Name': emergency_contact_name_1,
+                            'Emergency Contact 1 Name': employee_information['emergencyContactFullName'],
                             'Emergency Contact 1 Number': employee_information['emergencyContactMobileNo']
                             }
 

@@ -8,9 +8,6 @@ def map_employee_history_table_headers(user_role, employee_history_table):
     for history in employee_history_table:
         employee_name = map_employee_name(history)
 
-        if role_matchers.hr_regex.match(user_role):
-            employee_emergency_contact_name = history['emergencyContactFullName']
-
         if role_matchers.fsss_regex.match(user_role):
             employee_history_table_mapping = {'Ingest Date': history.pop('ingestDate'),
                                               'ID': history.pop('uniqueEmployeeId'),
@@ -24,7 +21,7 @@ def map_employee_history_table_headers(user_role, employee_history_table):
                                               'Personal Email Address': history.pop('personalEmailAddress'),
                                               'Postcode': history.pop('postcode'),
                                               'Country': history.pop('country'),
-                                              'Emergency Contact Name': employee_emergency_contact_name,
+                                              'Emergency Contact Name': history['emergencyContactFullName'],
                                               'Emergency Contact Mobile Number': history.pop('emergencyContactMobileNo'),
                                               'Weekly Hours': history.pop('weeklyHours'),
                                               'Mobility': history.pop('mobility'),
