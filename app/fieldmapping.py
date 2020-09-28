@@ -30,7 +30,9 @@ def map_employee_history_table_headers(user_role, employee_history_table):
                 'Mobile Staff': history.pop('mobileStaff')
             }
 
-        if role_matchers.hr_regex.match(user_role):
+            mapping_entries.append(mapping)
+
+        elif role_matchers.hr_regex.match(user_role):
             mapping = {
                 'Ingest Date': history.pop('ingestDate'),
                 'ID': history.pop('uniqueEmployeeId'),
@@ -44,7 +46,9 @@ def map_employee_history_table_headers(user_role, employee_history_table):
                 'Date of Birth': history.pop('dob')
             }
 
-        if role_matchers.recruit_regex.match(user_role):
+            mapping_entries.append(mapping)
+
+        elif role_matchers.recruit_regex.match(user_role):
             history['address'] = history['address1'] + ' ' + history['address2']
 
             mapping = {
@@ -69,7 +73,7 @@ def map_employee_history_table_headers(user_role, employee_history_table):
                 'Mobile Staff': history.pop('mobileStaff')
             }
 
-        mapping_entries.append(mapping)
+            mapping_entries.append(mapping)
 
     return table_generation(mapping_entries)
 
