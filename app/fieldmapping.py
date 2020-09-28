@@ -4,72 +4,74 @@ from . import role_matchers
 
 
 def map_employee_history_table_headers(user_role, employee_history_table):
-    employee_history_table_mapped = []
+    mapping_entries = []
+
     for history in employee_history_table:
         employee_name = map_employee_name(history)
 
         if role_matchers.fsss_regex.match(user_role):
-            employee_history_table_mapping = {'Ingest Date': history.pop('ingestDate'),
-                                              'ID': history.pop('uniqueEmployeeId'),
-                                              'Name': employee_name,
-                                              'Preferred Name': history.pop('preferredName'),
-                                              'ONS ID': history.pop('onsId'),
-                                              'Personal Mobile Number': history.pop('telephoneNumberContact1'),
-                                              'Home Phone Number': history.pop('telephoneNumberContact2'),
-                                              'Status': history.pop('status'),
-                                              'Badge ID': history.pop('idBadgeNo'),
-                                              'Personal Email Address': history.pop('personalEmailAddress'),
-                                              'Postcode': history.pop('postcode'),
-                                              'Country': history.pop('country'),
-                                              'Emergency Contact Name': history['emergencyContactFullName'],
-                                              'Emergency Contact Mobile Number': history.pop('emergencyContactMobileNo'),
-                                              'Weekly Hours': history.pop('weeklyHours'),
-                                              'Mobility': history.pop('mobility'),
-                                              'Mobile Staff': history.pop('mobileStaff')
-                                              }
+            mapping = {
+                'Ingest Date': history.pop('ingestDate'),
+                'ID': history.pop('uniqueEmployeeId'),
+                'Name': employee_name,
+                'Preferred Name': history.pop('preferredName'),
+                'ONS ID': history.pop('onsId'),
+                'Personal Mobile Number': history.pop('telephoneNumberContact1'),
+                'Home Phone Number': history.pop('telephoneNumberContact2'),
+                'Status': history.pop('status'),
+                'Badge ID': history.pop('idBadgeNo'),
+                'Personal Email Address': history.pop('personalEmailAddress'),
+                'Postcode': history.pop('postcode'),
+                'Country': history.pop('country'),
+                'Emergency Contact Name': history['emergencyContactFullName'],
+                'Emergency Contact Mobile Number': history.pop('emergencyContactMobileNo'),
+                'Weekly Hours': history.pop('weeklyHours'),
+                'Mobility': history.pop('mobility'),
+                'Mobile Staff': history.pop('mobileStaff')
+            }
 
         if role_matchers.hr_regex.match(user_role):
-            employee_history_table_mapping = {'Ingest Date': history.pop('ingestDate'),
-                                              'ID': history.pop('uniqueEmployeeId'),
-                                              'Name': employee_name,
-                                              'Preferred Name': history.pop('preferredName'),
-                                              'ONS ID': history.pop('onsId'),
-                                              'Personal Mobile Number': history.pop('telephoneNumberContact1'),
-                                              'Status': history.pop('status'),
-                                              'Personal Email Address': history.pop('personalEmailAddress'),
-                                              'Country': history.pop('country'),
-                                              'Date of Birth': history.pop('dob')
-                                              }
+            mapping = {
+                'Ingest Date': history.pop('ingestDate'),
+                'ID': history.pop('uniqueEmployeeId'),
+                'Name': employee_name,
+                'Preferred Name': history.pop('preferredName'),
+                'ONS ID': history.pop('onsId'),
+                'Personal Mobile Number': history.pop('telephoneNumberContact1'),
+                'Status': history.pop('status'),
+                'Personal Email Address': history.pop('personalEmailAddress'),
+                'Country': history.pop('country'),
+                'Date of Birth': history.pop('dob')
+            }
 
         if role_matchers.recruit_regex.match(user_role):
             history['address'] = history['address1'] + ' ' + history['address2']
 
-            employee_history_table_mapping = {'Ingest Date': history.pop('ingestDate'),
-                                              'ID': history.pop('uniqueEmployeeId'),
-                                              'Name': employee_name,
-                                              'Preferred Name': history.pop('preferredName'),
-                                              'ONS ID': history.pop('onsId'),
-                                              'Personal Mobile Number': history.pop('telephoneNumberContact1'),
-                                              'Status': history.pop('status'),
-                                              'Badge ID': history.pop('idBadgeNo'),
-                                              'Personal Email Address': history.pop('personalEmailAddress'),
-                                              'Address': history.pop('address'),
-                                              'County': history.pop('county'),
-                                              'Postcode': history.pop('postcode'),
-                                              'Country': history.pop('country'),
-                                              'Emergency Contact Name': employee_emergency_contact_name,
-                                              'Emergency Contact Mobile Number': history.pop('emergencyContactMobileNo'),
-                                              'Date of Birth': history.pop('dob'),
-                                              'Weekly Hours': history.pop('weeklyHours'),
-                                              'Mobility': history.pop('mobility'),
-                                              'Mobile Staff': history.pop('mobileStaff')
-                                              }
+            mapping = {
+                'Ingest Date': history.pop('ingestDate'),
+                'ID': history.pop('uniqueEmployeeId'),
+                'Name': employee_name,
+                'Preferred Name': history.pop('preferredName'),
+                'ONS ID': history.pop('onsId'),
+                'Personal Mobile Number': history.pop('telephoneNumberContact1'),
+                'Status': history.pop('status'),
+                'Badge ID': history.pop('idBadgeNo'),
+                'Personal Email Address': history.pop('personalEmailAddress'),
+                'Address': history.pop('address'),
+                'County': history.pop('county'),
+                'Postcode': history.pop('postcode'),
+                'Country': history.pop('country'),
+                'Emergency Contact Name': employee_emergency_contact_name,
+                'Emergency Contact Mobile Number': history.pop('emergencyContactMobileNo'),
+                'Date of Birth': history.pop('dob'),
+                'Weekly Hours': history.pop('weeklyHours'),
+                'Mobility': history.pop('mobility'),
+                'Mobile Staff': history.pop('mobileStaff')
+            }
 
-        employee_history_table_mapped.append(employee_history_table_mapping)
+        mapping_entries.append(mapping)
 
-    full_table = table_generation(employee_history_table_mapped)
-
-    return full_table
+    return table_generation(mapping_entries)
 
 
 def map_employee_history_job_role_table_headers(employee_history_job_role_table):
