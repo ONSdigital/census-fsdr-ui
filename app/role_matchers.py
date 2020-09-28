@@ -10,7 +10,7 @@ from app import views
 logger = get_logger('fsdr-ui')
 
 
-rmt_regex = re.compile('R.-....-..-..')
+rmt_regex = re.compile('R.-....(-..(-..)?)?')
 hq_fo_ccs_regex = re.compile('F.-....-..-..')
 recruit_regex = re.compile('PT-FP[RP].-..-..')
 hr_regex = re.compile('PT-FPH.-..-..')
