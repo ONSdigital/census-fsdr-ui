@@ -25,5 +25,4 @@ COPY . .
 
 USER fsdrui
 EXPOSE 9293
-ENTRYPOINT ["python3"]
-CMD ["run.py"]
+CMD ["python3", "run.py"]

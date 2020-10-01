@@ -39,6 +39,7 @@ async def get_role_id(request):
     session = await get_session(request)
     if not 'samlUserdata' in session:
         redirect_to_login(request)
+    logger.warn(session['samlUserdata'])
     roleids = session['samlUserdata']['roleID']
     # TODO extra checking here?
     return roleids[0]
@@ -71,6 +72,7 @@ def fetch_settings(app):
     idp_data_file.close()
     settings = OneLogin_Saml2_IdPMetadataParser.merge_settings(
         settings_base, idp_data)
+    logger.warn(settings)
     app['saml_settings'] = settings
 
 
