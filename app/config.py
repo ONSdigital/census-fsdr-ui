@@ -63,8 +63,8 @@ class BaseConfig:
     # FN_CLIENT_SECRET = env('mej--fVERcHXiOeezGkBz13p')
 
     SECRET_KEY = 'examplesecretkey'
-    sso_config_folder_default = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'saml')
-    SSO_CONFIG_FOLDER = env('SSO_CONFIG_FOLDER', default=os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'saml'))
+    sso_config_folder_default = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..' , 'local-sso-config')
+    SSO_CONFIG_FOLDER = env('SSO_CONFIG_FOLDER', default=os.path.join(os.path.dirname(os.path.abspath(__file__)), '..' , 'local-sso-config'))
 
 
 class ProductionConfig(BaseConfig):
@@ -94,7 +94,7 @@ class DevelopmentConfig:
     URL_PATH_PREFIX = env('URL_PATH_PREFIX', default='')
 
     SECRET_KEY = 'examplesecretkey'
-    SSO_CONFIG_FOLDER = env('SSO_CONFIG_FOLDER', default=os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'saml'))
+    SSO_CONFIG_FOLDER = env('SSO_CONFIG_FOLDER', default=os.path.join(os.path.dirname(os.path.abspath(__file__)), '..' , 'local-sso-config'))
 
 
 class TestingConfig:
@@ -121,4 +121,4 @@ class TestingConfig:
     SESSION_AGE = ''
 
     SECRET_KEY = 'examplesecretkey'
-    SSO_CONFIG_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'test_saml')
+    SSO_CONFIG_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..' , 'local-sso-config')
