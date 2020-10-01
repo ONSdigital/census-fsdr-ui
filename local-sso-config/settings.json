@@ -1,1 +1,19 @@
- 
+{
+  "strict": true,
+  "debug": true,
+  "sp": {
+    "entityId": "http://localhost:8080/simplesaml/shib13/idp/metadata.php",
+    "assertionConsumerService": {
+      "url": "http://localhost:9293/signin",
+      "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+    },
+    "singleLogoutService": {
+      "url": "http://localhost:9293/logout",
+      "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+    },
+    "NameIDFormat": "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified",
+    "x509cert": "",
+    "privateKey": ""
+  }
+}
+
