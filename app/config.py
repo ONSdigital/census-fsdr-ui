@@ -64,7 +64,7 @@ class BaseConfig:
 
     SECRET_KEY = 'examplesecretkey'
 
-    SSO_CONFIG_FOLDER = env('SSO_CONFIG_FOLDER')
+ #   SSO_CONFIG_FOLDER = env('SSO_CONFIG_FOLDER')
 
 
 
@@ -96,7 +96,7 @@ class DevelopmentConfig:
 
     SECRET_KEY = 'examplesecretkey'
 
-    SSO_CONFIG_FOLDER = env('SSO_CONFIG_FOLDER', default=Path(__file__).resolve().parent.join('local-sso-config'))
+    SSO_CONFIG_FOLDER = env('SSO_CONFIG_FOLDER', default=str(Path(__file__).resolve().parent / '../local-sso-config'))
 
 
 class TestingConfig:
@@ -124,4 +124,4 @@ class TestingConfig:
 
     SECRET_KEY = 'examplesecretkey'
 
-    SSO_CONFIG_FOLDER = Path(__file__).resolve().parent.join('local-sso-config')
+    SSO_CONFIG_FOLDER =  str(Path(__file__).resolve().parent / '../local-sso-config')
