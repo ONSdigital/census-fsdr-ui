@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 aiohttp = "*"
 aiohttp-utils = "*"
+aiohttp-remotes = "*"
 envparse = "*"
 "aiohttp-jinja2" = "*"
 structlog = "*"
@@ -29,7 +30,6 @@ google-auth = "*"
 OneLogin = "*"
 python3-saml = "*"
 
-
 [dev-packages]
 codecov = "*"
 coverage = "*"
@@ -39,7 +39,6 @@ pytest-aiohttp = "*"
 pytest-cov = "*"
 aiohttp-devtools = "*"
 aioresponses = "*"
-requests = "*"
 retrying = "*"
 
 [requires]

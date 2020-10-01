@@ -1,6 +1,6 @@
-from envparse import Env, ConfigurationError
-
 import os
+from pathlib import Path
+from envparse import Env, ConfigurationError
 
 
 class Config(dict):
@@ -63,8 +63,9 @@ class BaseConfig:
     # FN_CLIENT_SECRET = env('mej--fVERcHXiOeezGkBz13p')
 
     SECRET_KEY = 'examplesecretkey'
-    sso_config_folder_default = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..' , 'local-sso-config')
-    SSO_CONFIG_FOLDER = env('SSO_CONFIG_FOLDER', default=os.path.join(os.path.dirname(os.path.abspath(__file__)), '..' , 'local-sso-config'))
+
+    SSO_CONFIG_FOLDER = env('SSO_CONFIG_FOLDER')
+
 
 
 class ProductionConfig(BaseConfig):
@@ -94,7 +95,8 @@ class DevelopmentConfig:
     URL_PATH_PREFIX = env('URL_PATH_PREFIX', default='')
 
     SECRET_KEY = 'examplesecretkey'
-    SSO_CONFIG_FOLDER = env('SSO_CONFIG_FOLDER', default=os.path.join(os.path.dirname(os.path.abspath(__file__)), '..' , 'local-sso-config'))
+
+    SSO_CONFIG_FOLDER = env('SSO_CONFIG_FOLDER', default=Path(__file__).resolve().parent.join('local-sso-config'))
 
 
 class TestingConfig:
@@ -121,4 +123,5 @@ class TestingConfig:
     SESSION_AGE = ''
 
     SECRET_KEY = 'examplesecretkey'
-    SSO_CONFIG_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..' , 'local-sso-config')
+
+    SSO_CONFIG_FOLDER = Path(__file__).resolve().parent.join('local-sso-config')
