@@ -136,3 +136,6 @@ app/saml/
 
 # IDEA IDE files
 .idea/
+
+# Mac hidden files
+.DS_Store
