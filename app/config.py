@@ -1,6 +1,6 @@
-from envparse import Env, ConfigurationError
-
 import os
+from pathlib import Path
+from envparse import Env, ConfigurationError
 
 
 class Config(dict):
@@ -47,7 +47,8 @@ class BaseConfig:
     FSDR_SERVICE_URL = env('FSDR_SERVICE_URL', default='localhost:5678')
     FSDR_SERVICE_USER = env('FSDR_SERVICE_USER', default='user')
     FSDR_SERVICE_PASS = env('FSDR_SERVICE_PASS', default='pass')
-    FSDR_SERVICE_URL_AUTH = (env('FSDR_SERVICE_USER', default='user'), env('FSDR_SERVICE_PASS', default='pass'))
+    FSDR_SERVICE_URL_AUTH = (env('FSDR_SERVICE_USER', default='user'),
+                             env('FSDR_SERVICE_PASS', default='pass'))
 
     REDIS_SERVER = env('REDIS_SERVER', default='localhost')
 
@@ -63,8 +64,8 @@ class BaseConfig:
     # FN_CLIENT_SECRET = env('mej--fVERcHXiOeezGkBz13p')
 
     SECRET_KEY = 'examplesecretkey'
-    sso_config_folder_default = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'saml')
-    SSO_CONFIG_FOLDER = env('SSO_CONFIG_FOLDER', default=os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'saml'))
+
+#   SSO_CONFIG_FOLDER = env('SSO_CONFIG_FOLDER')
 
 
 class ProductionConfig(BaseConfig):
@@ -81,7 +82,8 @@ class DevelopmentConfig:
     DOMAIN_URL_PROTOCOL = 'http://'
     DOMAIN_URL = env.str('DOMAIN_URL', default='localhost:9293')
 
-    FSDR_SERVICE_URL = env.str('FSDR_SERVICE_URL', default='http://localhost:5678')
+    FSDR_SERVICE_URL = env.str('FSDR_SERVICE_URL',
+                               default='http://localhost:5678')
     FSDR_SERVICE_PASS = env.str('FSDR_SERVICE_PASSWORD', default='pass')
     FSDR_SERVICE_USER = env.str('FSDR_SERVICE_USERNAME', default='user')
 
@@ -94,7 +96,11 @@ class DevelopmentConfig:
     URL_PATH_PREFIX = env('URL_PATH_PREFIX', default='')
 
     SECRET_KEY = 'examplesecretkey'
-    SSO_CONFIG_FOLDER = env('SSO_CONFIG_FOLDER', default=os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'saml'))
+
+    SSO_CONFIG_FOLDER = env('SSO_CONFIG_FOLDER',
+                            default=str(
+                                Path(__file__).resolve().parent.parent /
+                                'local-sso-config'))
 
 
 class TestingConfig:
@@ -121,4 +127,6 @@ class TestingConfig:
     SESSION_AGE = ''
 
     SECRET_KEY = 'examplesecretkey'
-    SSO_CONFIG_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'test_saml')
+
+    SSO_CONFIG_FOLDER = str(
+        Path(__file__).resolve().parent.parent / 'local-sso-config')
