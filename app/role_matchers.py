@@ -16,6 +16,10 @@ recruit_regex = re.compile('PT-FP[RP].-..-..')
 hr_regex = re.compile('PT-FPH.-..-..')
 fsss_regex = re.compile('(ZT-HSA.-.|LT-CFS1-Z|DT-SUP.-.).-..')
 logi_regex = re.compile('LT-LOG.-..-..')
+cfods_regex = re.compile('DT-....-..-..')
+cfots_regex = re.compile('FT-FSD.-..-..')
+logi_combined_regex = re.compile('({}|{}|{})'.format(*[n for n in (logi_regex, cfods_regex, cfots_regex)]))
+
 
 
 def invalid_role_id(role_id):
@@ -30,7 +34,7 @@ def role_id_to_extract_type(role_id):
     elif False:
         return 'HQ'
     # Logistics
-    elif logi_regex.match(role_id):
+    elif logi_combined_regex.match(role_id):
         return 'LOGISTICS'
     # HR
     elif hr_regex.match(role_id):
@@ -53,7 +57,7 @@ def role_id_to_view_router(role_id):
     elif False:
         return views.hq_fo_ccs_view.get_employee_tabs
     # Logistics
-    elif logi_regex.match(role_id):
+    elif logi_combined_regex.match(role_id):
         return views.logistics_view.get_employee_tabs
     # HR
     elif hr_regex.match(role_id):
