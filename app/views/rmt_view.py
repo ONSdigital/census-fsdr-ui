@@ -46,7 +46,9 @@ def get_employee_tabs(employee_information, current_job_role, device_information
                   }
 
     emp_personal_details = {'Personal Mobile Number': employee_information['telephoneNumberContact1'],
-                            'Personal Email Account': employee_information['personalEmailAddress']
+                            'Personal Email Account': employee_information['personalEmailAddress'],
+                            'Emergency Contact Name': employee_information['emergencyContactFullName'],
+                            'Emergency Contact Number': employee_information['emergencyContactMobileNo'],
                             }
 
     employee_information['dob'] = format_to_uk_dates(employee_information['dob'])
