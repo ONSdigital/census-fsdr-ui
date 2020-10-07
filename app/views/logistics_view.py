@@ -1,4 +1,4 @@
-from app.employee_view_functions import device_details
+from app.employee_view_functions import device_details, format_line_manager
 from app.tabutils import tab_generation
 from app.fieldmapping import map_employee_name
 
@@ -6,6 +6,8 @@ from app.fieldmapping import map_employee_name
 def get_employee_tabs(employee_information, current_job_role, device_information):
 
     employee_devices, device_number = device_details(device_information)
+
+    line_manager = format_line_manager(current_job_role)
 
     employee_name = map_employee_name(employee_information)
 
@@ -24,7 +26,9 @@ def get_employee_tabs(employee_information, current_job_role, device_information
     emp_job_role = {'Job Role ID': current_job_role['uniqueRoleId'],
                     'Job Title': current_job_role['jobRole'],
                     'Badge Number': employee_information['idBadgeNo'],
-                    'Postcode': employee_information['postcode']
+                    'Postcode': employee_information['postcode'],
+                    'Job Role Short': current_job_role['jobRoleShort'],
+                    'Line Manager': line_manager,
                     }
 
     emp_status = {'Assignment Status': current_job_role['assignmentStatus'],
