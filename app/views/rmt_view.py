@@ -32,6 +32,7 @@ def get_employee_tabs(employee_information, current_job_role, device_information
                     'Badge Number': employee_information['idBadgeNo'],
                     'Postcode': employee_information['postcode'],
                     'Job Role Short': current_job_role['jobRoleShort'],
+                    'Job Role Type': current_job_role['jobRoleType'],
                     'Line Manager': line_manager,
                     'Area Location': current_job_role['areaLocation'],
                     'Mobility': employee_information['mobility'],
@@ -46,7 +47,9 @@ def get_employee_tabs(employee_information, current_job_role, device_information
                   }
 
     emp_personal_details = {'Personal Mobile Number': employee_information['telephoneNumberContact1'],
-                            'Personal Email Account': employee_information['personalEmailAddress']
+                            'Personal Email Account': employee_information['personalEmailAddress'],
+                            'Emergency Contact Name': employee_information['emergencyContactFullName'],
+                            'Emergency Contact Number': employee_information['emergencyContactMobileNo'],
                             }
 
     employee_information['dob'] = format_to_uk_dates(employee_information['dob'])
