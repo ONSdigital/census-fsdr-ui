@@ -27,7 +27,7 @@ def role_id_to_extract_type(role_id):
     if rmt_regex.match(role_id):
         return 'RMT'
     # HQ, FO, CCS
-    elif hq_fo_ccs_regex.match(role_id):
+    elif False:
         return 'HQ'
     # Logistics
     elif logi_regex.match(role_id):
@@ -50,7 +50,7 @@ def role_id_to_view_router(role_id):
     if rmt_regex.match(role_id):
         return views.rmt_view.get_employee_tabs
     # HQ, FO, CCS
-    elif hq_fo_ccs_regex.match(role_id):
+    elif False:
         return views.hq_fo_ccs_view.get_employee_tabs
     # Logistics
     elif logi_regex.match(role_id):
