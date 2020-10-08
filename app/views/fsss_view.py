@@ -36,19 +36,18 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
         'Area Location': current_job_role['areaLocation'],
         'Work Restrictions': employee_info['workRestrictions'],
         'Weekly Hours': employee_info['weeklyHours'],
-        # reasonable adjustments???
+        # Missing: reasonable adjustments
         'Contract Start Date': current_job_role['contractStartDate'],
         'Contract End Date': current_job_role['contractEndDate'],
         'Operational Start Date': current_job_role['contractStartDate'],
         'Operational End Date': current_job_role['operationalEndDate'],
-        # job role closing report status???
+        'Job Role Closing Report Status': current_job_role['crStatus'],
         'Assignment Status': current_job_role['assignmentStatus'],
 
         # Unused fields:
         #'Status': employee_info['status'],
         #'Coordinator Group': current_job_role['coordGroup'],
         #'Organisation Unit': current_job_role['uniqueRoleId'],
-        #'Status': current_job_role['crStatus'],
         #'Ingest Date': employee_info['ingestDate'],
     }
 
