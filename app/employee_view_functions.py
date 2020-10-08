@@ -1,3 +1,4 @@
+from aiohttp.web import HTTPInternalServerError
 import requests
 from requests.auth import HTTPBasicAuth
 
@@ -9,8 +10,7 @@ def map_false_to_dash(dict):
     return {k: (v if v else '-') for (k, v) in dict.items()}
 
 
-# receives a list of 'devices information sources' that contain a list of 'devices'.
-# a 'device' is a hash of fields.
+# receives a list of devices. a device is a hash of fields.
 def process_device_details(initial_devices):
     def map_device(device):
         return {
@@ -23,10 +23,29 @@ def process_device_details(initial_devices):
         map_device(map_false_to_dash(device)) for device in initial_devices
     ]
 
+    # TODO remove this once all views have migrated to extract_device_* methods
     device_numbers = [(device['fieldDevicePhoneNumber'] or None)
                       for device in initial_devices]
 
     return devices, device_numbers
+
+
+def extract_device(devices, type):
+    ds = [d for d in devices if d['Device Type'] == type]
+    if len(ds) > 1:
+        raise HTTPInternalServerError('Two devices of same type')
+    elif len(ds) == 1:
+        return ds[0]
+    else:
+        return None
+
+
+def extract_device_phone(devices):
+    return extract_device(devices, 'PHONE')
+
+
+def extract_device_chromebook(devices):
+    return extract_device(devices, 'CHROMEBOOK')
 
 
 def process_employee_information(employee_information):

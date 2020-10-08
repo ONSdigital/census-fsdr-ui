@@ -5,8 +5,9 @@ from app.fieldmapping import map_employee_name
 
 def get_employee_tabs(employee_info, current_job_role, device_information):
 
-    employee_devices, device_numbers = process_device_details(
-        device_information)
+    devices, device_numbers = process_device_details(device_information)
+    phone = extract_device_phone(devices)
+    chr_book = extract_device_chromebook(devices)
 
     line_manager = format_line_manager(current_job_role)
 
@@ -52,10 +53,10 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
 
     other_data = {
         'ONS ID': employee_info['onsId'],
-        'Mobile Asset ID': device_information[0]['Device ID'],
-        # Missing: chromebook asset id
-        'Device Type': device_information[0]['Device Type'],
-        'ONS Mobile Number': device_numbers[0] or '',
+        'Mobile Asset ID': (phone and phone['Device ID']) or None,
+        'Chromebook Asset ID': (chr_book and chr_book['Device ID']) or None,
+        # 'Device Type': device_information[0]['Device Type'], # This doesn't make any sense
+        'ONS Mobile Number': (phone and phone['Device Phone Number']) or '',
     }
 
     tab_employee_data = tab_generation('Employee Data', employee_data)
