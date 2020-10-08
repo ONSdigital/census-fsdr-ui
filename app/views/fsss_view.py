@@ -36,7 +36,6 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
         'Area Location': current_job_role['areaLocation'],
         'Work Restrictions': employee_info['workRestrictions'],
         'Weekly Hours': employee_info['weeklyHours'],
-        # Missing: reasonable adjustments
         'Contract Start Date': current_job_role['contractStartDate'],
         'Contract End Date': current_job_role['contractEndDate'],
         'Operational Start Date': current_job_role['contractStartDate'],
