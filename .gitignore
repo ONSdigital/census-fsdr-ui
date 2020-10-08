@@ -140,5 +140,5 @@ app/saml/
 # Mac hidden files
 .DS_Store
 
-# tags files
+# CTags tags file
 tags

@@ -58,18 +58,10 @@ def process_employee_information(employee_information):
 
 
 def format_line_manager(current_job_role):
-    if current_job_role['lineManagerFirstName'] == '-' and current_job_role[
-            'lineManagerSurname'] == '-':
-        line_manager = '-'
-    elif current_job_role['lineManagerFirstName'] == '-':
-        line_manager = current_job_role['lineManagerSurname']
-    elif current_job_role['lineManagerSurname'] == '-':
-        line_manager = current_job_role['lineManagerFirstName']
-    else:
-        line_manager = current_job_role[
-            'lineManagerFirstName'] + ' ' + current_job_role[
-                'lineManagerSurname']
-    return line_manager
+    maybe_names = (current_job_role['lineManagerFirstName'],
+            current_job_role['lineManagerSurname'])
+    names = (n for n in maybe_names if n != '-')
+    return ' '.join(name) or '-'
 
 
 def get_employee_device(employee_id):
