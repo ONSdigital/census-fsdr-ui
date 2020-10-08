@@ -13,7 +13,8 @@ logger = get_logger('fsdr-ui')
 rmt_regex = re.compile('R.-....(-..(-..)?)?')
 hq_fo_ccs_regex = re.compile('F.-....-..-..')
 payroll_regex = re.compile('PT-FPP.-..-..') # unused, see below
-recruit_regex = re.compile('PT-FP[RP].-..-..')
+recruit_regex = re.compile('PT-FPR.-..-..') # unused, see below
+recruit_combined_regex = re.compile('PT-FP[RP].-..-..')
 hr_regex = re.compile('PT-FPH.-..-..')
 fsss_regex = re.compile('(ZT-HSA.-.|LT-CFS1-Z|DT-SUP.-.).-..')
 logi_regex = re.compile('LT-LOG.-..-..')
@@ -40,7 +41,7 @@ def role_id_to_extract_type(role_id):
     elif fsss_regex.match(role_id):
         return 'FSSS'
     # Recruitment
-    elif recruit_regex.match(role_id):
+    elif recruit_combined_regex.match(role_id):
         return 'RECRUITMENT'
     # Failed to match
     else:
@@ -63,7 +64,7 @@ def role_id_to_view_router(role_id):
     elif fsss_regex.match(role_id):
         return views.fsss_view.get_employee_tabs
     # Recruitiment
-    elif recruit_regex.match(role_id):
+    elif recruit_combined_regex.match(role_id):
         return views.recruitment_view.get_employee_tabs
     # Failed to match
     else:
