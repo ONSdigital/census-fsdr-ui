@@ -1,11 +1,11 @@
-from app.employee_view_functions import device_details
+from app.employee_view_functions import process_device_details
 from app.tabutils import tab_generation
 from app.fieldmapping import map_employee_name
 
 
 def get_employee_tabs(employee_information, current_job_role, device_information):
 
-    employee_devices, device_number = device_details(device_information)
+    employee_devices, device_numbers = process_device_details(device_information)
 
     employee_name = map_employee_name(employee_information)
 
@@ -18,8 +18,9 @@ def get_employee_tabs(employee_information, current_job_role, device_information
                          'Name': employee_name,
                          'Preferred Name': preferred_name,
                          'ONS Email': employee_information['onsId'],
-                         'ONS Mobile Number': device_number,
-                         'Status': employee_information['status']}
+                         'ONS Mobile Number':device_numbers[0] or '' ,
+                         'Status': employee_information['status'],
+    }
 
     emp_status = {'Assignment Status': current_job_role['assignmentStatus'],
                   'Status': current_job_role['crStatus'],

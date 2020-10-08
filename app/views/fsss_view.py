@@ -1,20 +1,25 @@
-from app.employee_view_functions import device_details, format_line_manager
+from app.employee_view_functions import process_device_details, format_line_manager
 from app.tabutils import tab_generation, table_generation
 from app.fieldmapping import map_employee_name
 
 
 def get_employee_tabs(employee_information, current_job_role, device_information):
 
-    employee_devices, device_number = device_details(device_information)
+    employee_devices, device_numbers = process_device_details(device_information)
 
     line_manager = format_line_manager(current_job_role)
 
     employee_name = map_employee_name(employee_information)
 
+    preferred_name = employee_information['preferredName'] or 'None'
+
     employment_glance = {'Name': employee_name,
-                         'ONS Email Address': employee_information['onsId'],
-                         'ONS Mobile Number': device_number,
-                         'Status': employee_information['status']}
+                         'Preferred Name': preferred_name,
+                         'ONS ID': employee_information['onsId'],
+                         'ONS Mobile Number': device_numbers[0] or '',
+                         'Status': employee_information['status'],
+                         'Unique Employee ID': employee_information['uniqueEmployeeId'],
+    }
 
     emp_job_role = {'Job Role ID': current_job_role['uniqueRoleId'],
                     'Badge Number': employee_information['idBadgeNo'],
@@ -37,15 +42,18 @@ def get_employee_tabs(employee_information, current_job_role, device_information
                   'Contract End Date': current_job_role['contractEndDate'],
                   'Operational Start Date': current_job_role['contractStartDate'],
                   'Operational End Date': current_job_role['operationalEndDate'],
-                  'Ingest Date': employee_information['ingestDate']}
+                  'Ingest Date': employee_information['ingestDate'],
+    }
 
     emp_personal_details = {'Address': employee_information['address'],
                             'Personal Mobile Number': employee_information['telephoneNumberContact1'],
                             'Home Phone Number': employee_information['telephoneNumberContact2'],
                             'Personal Email Account': employee_information['personalEmailAddress'],
                             'Emergency Contact Name': employee_information['emergencyContactFullName'],
-                            'Emergency Contact Number': employee_information['emergencyContactMobileNo']
+                            'Emergency Contact Number': employee_information['emergencyContactMobileNo'],
                             }
+
+    emp_other_personal_details = {'Date of Birth': employee_information['dob']}
 
     tab_glance = tab_generation('At a Glance', employment_glance)
 
@@ -55,10 +63,13 @@ def get_employee_tabs(employee_information, current_job_role, device_information
 
     tab_employee_personal_details = tab_generation('Employee Personal Details', emp_personal_details)
 
+    tab_other_employee_personal_details = tab_generation('Other Personal Details', emp_other_personal_details)
+
     tab_employee_device_details = table_generation(employee_devices)
 
     all_employee_information = {
-        'all_info': tab_glance + tab_job_role + tab_employment_status + tab_employee_personal_details}
+        'all_info': tab_glance + tab_job_role + tab_employment_status + tab_employee_personal_details +
+        tab_other_employee_personal_details}
 
     all_employee_tabs = [all_employee_information, tab_employee_device_details]
 
