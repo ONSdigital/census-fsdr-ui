@@ -54,7 +54,7 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
     other_data = {
         'ONS ID': employee_info['onsId'],
         'Mobile Asset ID': device_information[0]['Device ID'],
-        # chromebook asset id???
+        # Missing: chromebook asset id
         'Device Type': device_information[0]['Device Type'],
         'ONS Mobile Number': device_numbers[0] or '',
     }
