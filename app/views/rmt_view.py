@@ -32,6 +32,7 @@ def get_employee_tabs(employee_information, current_job_role, device_information
                     'Badge Number': employee_information['idBadgeNo'],
                     'Postcode': employee_information['postcode'],
                     'Job Role Short': current_job_role['jobRoleShort'],
+                    'Job Role Type': current_job_role['jobRoleType'],
                     'Line Manager': line_manager,
                     'Area Location': current_job_role['areaLocation'],
                     'Mobility': employee_information['mobility'],
