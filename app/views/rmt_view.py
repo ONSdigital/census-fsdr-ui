@@ -50,9 +50,6 @@ def get_employee_tabs(employee_information, current_job_role, device_information
                             'Emergency Contact Name': employee_information['emergencyContactFullName'],
                             'Emergency Contact Number': employee_information['emergencyContactMobileNo'],
                             }
-
-    employee_information['dob'] = format_to_uk_dates(employee_information['dob'])
-    emp_other_personal_details = {'Date of Birth': employee_information['dob']}
     tab_other_employee_personal_details = tab_generation('Other Personal Details', emp_other_personal_details)
 
     tab_glance = tab_generation('At a Glance', employment_glance)
@@ -65,7 +62,7 @@ def get_employee_tabs(employee_information, current_job_role, device_information
 
     all_employee_information = {
         'all_info': tab_glance + tab_job_role + tab_employment_status + tab_employee_personal_details
-                    + tab_other_employee_personal_details}
+                    }
 
     all_employee_tabs = [all_employee_information]
 
