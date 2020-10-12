@@ -23,7 +23,7 @@ def get_employee_tabs(employee_information, current_job_role, device_information
                          'ONS Mobile Number': device_number,
                          'Status': employee_information['status']}
 
-    if employee_information['mobileStaff']:
+    if employee_information[4:7] == "MOB":
         mobile_staff = 'Yes'
     else:
         mobile_staff = 'No'
