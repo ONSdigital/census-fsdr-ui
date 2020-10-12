@@ -50,7 +50,6 @@ def get_employee_tabs(employee_information, current_job_role, device_information
                             'Emergency Contact Name': employee_information['emergencyContactFullName'],
                             'Emergency Contact Number': employee_information['emergencyContactMobileNo'],
                             }
-    tab_other_employee_personal_details = tab_generation('Other Personal Details', emp_other_personal_details)
 
     tab_glance = tab_generation('At a Glance', employment_glance)
 
