@@ -23,10 +23,10 @@ def get_employee_tabs(employee_information, current_job_role, device_information
                          'ONS Mobile Number': device_number
                          }
 
-    if employee_information['mobileStaff']:
-        mobile_staff = 'Yes'
+    if str(current_job_role['uniqueRoleId'])[3:6] == "MOB":
+        mobile_staff = "Yes"
     else:
-        mobile_staff = 'No'
+        mobile_staff = "No"
 
     emp_job_role = {'Job Role ID': current_job_role['uniqueRoleId'],
                     'Badge Number': employee_information['idBadgeNo'],

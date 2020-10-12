@@ -11,7 +11,14 @@ def get_employee_tabs(employee_information, current_job_role, device_information
 
     employee_name = map_employee_name(employee_information)
 
-    employment_glance = {'Name': employee_name,
+    #To Add: Firstname, surname, prefered name
+    employee_information['preferredName'] 
+
+    #Address (to investigate which fields are inside)
+    employee_information['address']
+
+
+    employment_glance = {'Name': employee_name, #Gives first name or surname if either is blank
                          'ONS Email Address': employee_information['onsId'],
                          'ONS Mobile Number': device_number,
                          'Status': employee_information['status']}
@@ -23,7 +30,6 @@ def get_employee_tabs(employee_information, current_job_role, device_information
                     'Job Role': current_job_role['jobRole'],
                     'Job Role Type': current_job_role['jobRoleType'],
                     'Line Manager': line_manager,
-                    'Area Location': current_job_role['areaLocation'],
                     'Mobility': employee_information['mobility'],
                     'Mobile Staff': employee_information['mobileStaff'],
                     'Weekly Hours': employee_information['weeklyHours'],
