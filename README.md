@@ -2,6 +2,7 @@
 
 ## Prerequisites
 
+Test
 Ensure that both redis and postgres to be installed locally. 
 
 The FSDR-Service needs to be running locally before running the UI. You also need to insert data into the FSDR_Service 
