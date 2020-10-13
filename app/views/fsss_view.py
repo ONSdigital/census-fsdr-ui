@@ -20,7 +20,7 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
         'Preferred Name': preferred_name,
         # Gender refferenced here in GUI designs, but not in required excell spreadsheet, therefore ignored
         'ONS Mobile Number': (phone and phone['Device Phone Number']) or '',
-        # ONS email address refferenced in GUI 
+        'ONS ID': employee_info['onsId'], #This is Email address
     }
 
     employment_status = {
@@ -82,7 +82,6 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
         #'Organisation Unit': current_job_role['uniqueRoleId'],
         #'Ingest Date': employee_info['ingestDate'],
 
-        'ONS ID': employee_info['onsId'],
         'Chromebook Asset ID': (chr_book and chr_book['Device ID']) or None,
         # 'Device Type': device_information[0]['Device Type'], # This doesn't make any sense
     }
