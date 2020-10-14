@@ -65,7 +65,7 @@ def map_employee_history_table_headers(user_role, employee_history_table):
                 'County': history.pop('county'),
                 'Postcode': history.pop('postcode'),
                 'Country': history.pop('country'),
-                'Emergency Contact Name': employee_emergency_contact_name,
+                'Emergency Contact Name': history['emergencyContactFullName'],
                 'Emergency Contact Mobile Number': history.pop('emergencyContactMobileNo'),
                 'Date of Birth': history.pop('dob'),
                 'Weekly Hours': history.pop('weeklyHours'),
