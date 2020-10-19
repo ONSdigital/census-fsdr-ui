@@ -1,3 +1,4 @@
+from aiohttp.web import HTTPInternalServerError
 import requests
 from requests.auth import HTTPBasicAuth
 
@@ -5,77 +6,83 @@ from app.utils import FSDR_URL, FSDR_USER, FSDR_PASS
 from . import role_matchers
 
 
-def get_current_job_role(current_job_role):
-    for current_role in current_job_role:
-        if current_job_role[current_role] is None:
-            current_job_role[current_role] = '-'
-
-    return current_job_role
+def map_false_to_dash(dict):
+    return {k: (v if v else '-') for (k, v) in dict.items()}
 
 
-def device_details(device_information):
-    device_number = ''
-    employee_devices = []
+# receives a list of devices. a device is a hash of fields.
+def process_device_details(initial_devices):
+    def map_device(device):
+        return {
+            'Device ID': device['deviceId'],
+            'Device Phone Number': device['fieldDevicePhoneNumber'],
+            'Device Type': device['deviceType']
+        }
 
-    # TODO: There are never more than one of these. Simplify.
-    for devices in device_information:
-        for device in devices:
-            for field in device:
-                if device[field] is None:
-                    device[field] = '-'
-            if 'fieldDevicePhoneNumber' in device and device['fieldDevicePhoneNumber'] != '-':
-                device_number = device['fieldDevicePhoneNumber']
+    devices = [
+        map_device(map_false_to_dash(device)) for device in initial_devices
+    ]
 
-            employee_devices.append({
-                'Device ID': device['deviceId'],
-                'Device Phone Number': device['fieldDevicePhoneNumber'],
-                'Device Type': device['deviceType']
-            })
+    # TODO remove this once all views have migrated to extract_device_* methods
+    device_numbers = [(device['fieldDevicePhoneNumber'] or None)
+                      for device in initial_devices]
 
-    return employee_devices, device_number
+    return devices, device_numbers
 
 
-def process_job_roles(job_roles):
-    for role in job_roles:
-        if job_roles[role] is None:
-            job_roles[role] = '-'
+def extract_device(devices, type):
+    ds = [d for d in devices if d['Device Type'] == type]
+    if len(ds) > 1:
+        raise HTTPInternalServerError('Two devices of same type')
+    elif len(ds) == 1:
+        return ds[0]
+    else:
+        return None
 
-    return job_roles
+
+def extract_device_phone(devices):
+    return extract_device(devices, 'PHONE')
+
+
+def extract_device_chromebook(devices):
+    return extract_device(devices, 'CHROMEBOOK')
 
 
 def process_employee_information(employee_information):
-    for emp_info in employee_information:
-        if employee_information[emp_info] is '' or employee_information[
-                emp_info] is None:
-            if emp_info == 'mobility':
-                employee_information[emp_info] = 'No'
-            elif emp_info == 'workRestrictions':
-                employee_information[emp_info] = 'None'
-            else:
-                employee_information[emp_info] = '-'
+    def handle_blank(key):
+        if key == 'mobility':
+            return 'No'
+        elif key == 'workRestrictions':
+            return 'None'
+        else:
+            return '-'
 
-    return employee_information
+    return {
+        k: (v if v else handle_blank(k))
+        for (k, v) in employee_information.items()
+    }
 
 
 def format_line_manager(current_job_role):
     maybe_names = (current_job_role['lineManagerFirstName'],
-            current_job_role['lineManagerSurname'])
-    names = (n for n in maybe_names if n != '-')
+                   current_job_role['lineManagerSurname'])
+    names = (n for n in maybe_names if n and n != '-')
     return ' '.join(name) or '-'
 
 
 def get_employee_device(employee_id):
-    return requests.get(FSDR_URL + f'/devices/byEmployee/{employee_id}',
-                        verify=False,
-                        auth=HTTPBasicAuth(FSDR_USER, FSDR_PASS))
+    return requests.get(
+        FSDR_URL + f'/devices/byEmployee/{employee_id}',
+        verify=False,
+        auth=HTTPBasicAuth(FSDR_USER, FSDR_PASS))
 
 
 def get_employee_information(user_role, employee_id):
     extract_type = role_matchers.role_id_to_extract_type(user_role)
-    return requests.get(FSDR_URL +
-                        f'/fieldforce/byId/{extract_type}/{employee_id}',
-                        verify=False,
-                        auth=HTTPBasicAuth(FSDR_USER, FSDR_PASS))
+    return requests.get(
+        FSDR_URL + f'/fieldforce/byId/{extract_type}/{employee_id}',
+        verify=False,
+        auth=HTTPBasicAuth(FSDR_USER, FSDR_PASS))
 
 
 def get_employee_history_information(user_role, employee_id):

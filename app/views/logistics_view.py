@@ -1,11 +1,11 @@
-from app.employee_view_functions import device_details, format_line_manager
+from app.employee_view_functions import process_device_details, format_line_manager
 from app.tabutils import tab_generation
 from app.fieldmapping import map_employee_name
 
 
 def get_employee_tabs(employee_information, current_job_role, device_information):
 
-    employee_devices, device_number = device_details(device_information)
+    employee_devices, device_numbers = process_device_details(device_information)
 
     line_manager = format_line_manager(current_job_role)
 
@@ -20,7 +20,7 @@ def get_employee_tabs(employee_information, current_job_role, device_information
                          'Name': employee_name,
                          'Preferred Name': preferred_name,
                          'ONS Email': employee_information['onsId'],
-                         'ONS Mobile Number': device_number
+                         'ONS Mobile Number':device_numbers[0] or '',
                          }
 
     emp_job_role = {'Job Role ID': current_job_role['uniqueRoleId'],
