@@ -82,8 +82,8 @@ def map_employee_history_job_role_table_headers(employee_history_job_role_table)
     employee_history_job_role_table_mapped = []
 
     for job_roles in employee_history_job_role_table:
-        employee_history_job_role_table_mapping = {'Operational Start Date': job_roles.pop('contractStartDate'),
-                                                   'Operational End Date': job_roles.pop('operationalEndDate'),
+        employee_history_job_role_table_mapping = {'Operational Start Date': format_to_uk_dates(job_roles.pop('contractStartDate')) ,
+                                                   'Operational End Date': format_to_uk_dates(job_roles.pop('operationalEndDate')),
                                                    'Job Role ID': job_roles.pop('uniqueRoleId'),
                                                    'Job Role': job_roles.pop('jobRole'),
                                                    'Area Location': job_roles.pop('areaLocation'),
