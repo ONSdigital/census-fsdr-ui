@@ -9,11 +9,11 @@ def get_employee_tabs(employee_information, current_job_role, device_information
     phone = extract_device_phone(devices)
     chr_book = extract_device_chromebook(devices)
 
-    # line_manager = format_line_manager(current_job_role)
-
     employee_name = map_employee_name(employee_information)
 
     preferred_name = employee_info['preferredName'] or 'None'
+
+    line_manager = format_line_manager(current_job_role)
 
     glance_data = {
         'Unique Employee ID': employee_info['uniqueEmployeeId'],

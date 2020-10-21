@@ -23,10 +23,10 @@ def get_employee_tabs(employee_information, current_job_role, device_information
                          'ONS Mobile Number': device_numbers[0] or '',
                          'Status': employee_information['status']}
 
-    if employee_information['mobileStaff']:
-        mobile_staff = 'Yes'
+    if str(current_job_role['uniqueRoleId'])[3:6] == "MOB":
+        mobile_staff = "Yes"
     else:
-        mobile_staff = 'No'
+        mobile_staff = "No"
 
     emp_job_role = {'Job Role ID': current_job_role['uniqueRoleId'],
                     'Badge Number': employee_information['idBadgeNo'],
@@ -42,8 +42,8 @@ def get_employee_tabs(employee_information, current_job_role, device_information
 
     emp_status = {'Assignment Status': current_job_role['assignmentStatus'],
                   'Status': current_job_role['crStatus'],
-                  'Contract Start Date': current_job_role['contractStartDate'],
-                  'Contract End Date': current_job_role['contractEndDate']
+                  'Contract Start Date': format_to_uk_dates(current_job_role['contractStartDate']),
+                  'Contract End Date': format_to_uk_dates(current_job_role['contractEndDate']),
                   }
 
     emp_personal_details = {'Personal Mobile Number': employee_information['telephoneNumberContact1'],
@@ -51,10 +51,6 @@ def get_employee_tabs(employee_information, current_job_role, device_information
                             'Emergency Contact Name': employee_information['emergencyContactFullName'],
                             'Emergency Contact Number': employee_information['emergencyContactMobileNo'],
                             }
-
-    employee_information['dob'] = format_to_uk_dates(employee_information['dob'])
-    emp_other_personal_details = {'Date of Birth': employee_information['dob']}
-    tab_other_employee_personal_details = tab_generation('Other Personal Details', emp_other_personal_details)
 
     tab_glance = tab_generation('At a Glance', employment_glance)
 
@@ -65,8 +61,7 @@ def get_employee_tabs(employee_information, current_job_role, device_information
     tab_employee_personal_details = tab_generation('Employee Personal Details', emp_personal_details)
 
     all_employee_information = {
-        'all_info': tab_glance + tab_job_role + tab_employment_status + tab_employee_personal_details
-                    + tab_other_employee_personal_details}
+        'all_info': tab_glance + tab_job_role + tab_employment_status + tab_employee_personal_details}
 
     all_employee_tabs = [all_employee_information]
 
