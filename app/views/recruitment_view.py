@@ -1,6 +1,6 @@
 from app.tabutils import tab_generation, table_generation, format_to_uk_dates
 from app.fieldmapping import map_employee_name
-from app.employee_view_functions import device_details, format_line_manager
+from app.employee_view_functions import process_device_details, format_line_manager
 
 
 def get_employee_tabs(employee_information, current_job_role, device_information):
@@ -9,12 +9,13 @@ def get_employee_tabs(employee_information, current_job_role, device_information
 
     employee_name = map_employee_name(employee_information)
 
-    employee_devices, device_number = device_details(device_information)
+    employee_devices, device_numbers = process_device_details(device_information)
 
     employment_glance = {'Name': employee_name,
                          'ONS Email Address': employee_information['onsId'],
-                         'ONS Mobile Number': device_number,
-                         'Status': employee_information['status']}
+                         'ONS Mobile Number':device_numbers[0] or '',
+                         'Status': employee_information['status'],
+    }
 
     emp_job_role = {'Job Role ID': current_job_role['uniqueRoleId'],
                     'Badge Number': employee_information['idBadgeNo'],

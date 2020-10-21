@@ -65,7 +65,7 @@ class BaseConfig:
 
     SECRET_KEY = 'examplesecretkey'
 
-    SSO_CONFIG_FOLDER = env('SSO_CONFIG_FOLDER')
+    SSO_CONFIG_FOLDER = env('SSO_CONFIG_FOLDER', default='')
 
 
 class ProductionConfig(BaseConfig):

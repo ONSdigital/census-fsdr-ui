@@ -108,17 +108,7 @@ def map_employee_history_job_role_table_headers(employee_history_job_role_table)
 
 
 def map_employee_name(employee_table):
-    if employee_table['firstName'] is None and employee_table['surname'] is None:
-        employee_name = '-'
-    elif employee_table['firstName'] is None:
-        employee_name = employee_table['surname']
-    elif employee_table['surname'] is None:
-        employee_name = employee_table['firstName']
-    else:
-        employee_name = employee_table['firstName'] + ' ' + employee_table['surname']
-
-    if employee_name == '- -':
-        employee_name = '-'
-
-    return employee_name
+    maybe_names = (employee_table['firstName'], employee_table['surname'])
+    names = (n for n in maybe_names if n and n != '-')
+    return ' '.join(names)
 
