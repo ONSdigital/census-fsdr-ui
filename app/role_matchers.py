@@ -61,23 +61,18 @@ def role_id_to_extract_type(role_id):
         invalid_role_id(role_id)
 
 
-        # TODO remove views.hq_fo_ccs_view.get_employee_tabs
 def role_id_to_view_router(role_id):
     if rmt_combined_regex.match(role_id):
         return views.rmt_view.get_employee_tabs
     # Logistics
     elif logi_combined_regex.match(role_id):
         return views.logistics_view.get_employee_tabs
-    # HR
-    elif hr_regex.match(role_id):
-        return views.hr_view.get_employee_tabs
-    # HQ, FO, CCS
-    # FSSS
+    # HQ, FO, CCS, FSSS
     elif fsss_combined_regex.match(role_id):
         return views.fsss_view.get_employee_tabs
-    # Recruitiment
-    elif recruit_combined_regex.match(role_id):
-        return views.recruitment_view.get_employee_tabs
+    # HR, Payroll, Recruitiment
+    elif hr_combined_regex.match(role_id):
+        return views.hr_view.get_employee_tabs
     # Failed to match
     else:
         invalid_role_id(role_id)

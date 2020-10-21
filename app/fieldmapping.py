@@ -65,7 +65,7 @@ def map_employee_history_table_headers(user_role, employee_history_table):
                 'County': history.pop('county'),
                 'Postcode': history.pop('postcode'),
                 'Country': history.pop('country'),
-                'Emergency Contact Name': employee_emergency_contact_name,
+                'Emergency Contact Name': history['emergencyContactFullName'],
                 'Emergency Contact Mobile Number': history.pop('emergencyContactMobileNo'),
                 'Date of Birth': history.pop('dob'),
                 'Weekly Hours': history.pop('weeklyHours'),
@@ -82,13 +82,15 @@ def map_employee_history_job_role_table_headers(employee_history_job_role_table)
     employee_history_job_role_table_mapped = []
 
     for job_roles in employee_history_job_role_table:
-        employee_history_job_role_table_mapping = {'Operational Start Date': job_roles.pop('contractStartDate'),
-                                                   'Operational End Date': job_roles.pop('operationalEndDate'),
-                                                   'Job Role ID': job_roles.pop('uniqueRoleId'),
-                                                   'Job Role': job_roles.pop('jobRole'),
-                                                   'Area Location': job_roles.pop('areaLocation'),
-                                                   'Assignment Status': job_roles.pop('assignmentStatus'),
-                                                   'Active Job': job_roles.pop('active')}
+        employee_history_job_role_table_mapping = {
+            'Operational Start Date': format_to_uk_dates(job_roles.pop('contractStartDate')),
+            'Operational End Date': format_to_uk_dates(job_roles.pop('operationalEndDate')),
+            'Job Role ID': job_roles.pop('uniqueRoleId'),
+            'Job Role': job_roles.pop('jobRole'),
+            'Area Location': job_roles.pop('areaLocation'),
+            'Assignment Status': job_roles.pop('assignmentStatus'),
+            'Active Job': job_roles.pop('active'),
+        }
 
         employee_history_job_role_table_mapping['Operational Start Date'] = format_to_uk_dates(
             employee_history_job_role_table_mapping['Operational Start Date'])

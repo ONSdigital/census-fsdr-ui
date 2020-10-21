@@ -1,5 +1,5 @@
 from app.employee_view_functions import process_device_details, format_line_manager
-from app.tabutils import tab_generation, table_generation
+from app.tabutils import tab_generation, table_generation, format_to_uk_dates
 from app.fieldmapping import map_employee_name
 
 
@@ -37,10 +37,10 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
         'Area Location': current_job_role['areaLocation'],
         'Work Restrictions': employee_info['workRestrictions'],
         'Weekly Hours': employee_info['weeklyHours'],
-        'Contract Start Date': current_job_role['contractStartDate'],
-        'Contract End Date': current_job_role['contractEndDate'],
-        'Operational Start Date': current_job_role['contractStartDate'],
-        'Operational End Date': current_job_role['operationalEndDate'],
+        'Contract Start Date': format_to_uk_dates(current_job_role['contractStartDate']),
+        'Contract End Date': format_to_uk_dates(current_job_role['contractEndDate']),
+        'Operational Start Date': format_to_uk_dates(current_job_role['contractStartDate']),
+        'Operational End Date': format_to_uk_dates(current_job_role['operationalEndDate']),
         'Job Role Closing Report Status': current_job_role['crStatus'],
         'Assignment Status': current_job_role['assignmentStatus'],
 

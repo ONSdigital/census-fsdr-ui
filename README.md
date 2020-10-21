@@ -4,9 +4,7 @@
 
 Ensure that both redis and postgres to be installed locally. 
 
-The FSDR-Service needs to be running locally before running the UI. You also need to insert data into the FSDR_Service 
-database. Once added, you will also need to add a username and password into the 'user_authentication' table in 
-order to access the UI.
+The FSDR-Service needs to be running locally before running the UI. You also need to insert data into the FSDR\_Service database. Once added, you will also need to add a username and password into the 'user_authentication' table in order to access the UI.
 
 ## Running
 

@@ -1,5 +1,5 @@
 from app.employee_view_functions import process_device_details
-from app.tabutils import tab_generation
+from app.tabutils import tab_generation, format_to_uk_dates
 from app.fieldmapping import map_employee_name
 
 
@@ -11,7 +11,7 @@ def get_employee_tabs(employee_information, current_job_role, device_information
 
     # line_manager = format_line_manager(current_job_role)
 
-    employee_name = map_employee_name(employee_info)
+    employee_name = map_employee_name(employee_information)
 
     preferred_name = employee_info['preferredName'] or 'None'
 
@@ -47,10 +47,10 @@ def get_employee_tabs(employee_information, current_job_role, device_information
         'Country': employee_information['country'], # this needs to go in fsss
         'Work Restrictions': employee_info['workRestrictions'],
         'Weekly Hours': employee_info['weeklyHours'],
-        'Contract Start Date': current_job_role['contractStartDate'],
-        'Contract End Date': current_job_role['contractEndDate'],
-        # 'Operational Start Date': current_job_role['contractStartDate'],
-        # 'Operational End Date': current_job_role['operationalEndDate'],
+        'Contract Start Date': format_to_uk_dates(current_job_role['contractStartDate']),
+        'Contract End Date': format_to_uk_dates(current_job_role['contractEndDate']),
+        # 'Operational Start Date': format_to_uk_dates(current_job_role['contractStartDate']),
+        # 'Operational End Date': format_to_uk_dates(current_job_role['operationalEndDate']),
         # 'Job Role Closing Report Status': current_job_role['crStatus'],
         'Assignment Status': current_job_role['assignmentStatus'],
         'Date of Birth': employee_information['dob'],
@@ -59,40 +59,6 @@ def get_employee_tabs(employee_information, current_job_role, device_information
     }
     tab_employment_status = tab_generation('Employment Status', employee_data)
 
-    tab_employee_personal_details = tab_generation('Employee Personal Details', emp_personal_details)
-
-    tab_other_employee_personal_details = tab_generation('Other Personal Details', emp_other_personal_details)
-
-    tab_employee_diversity_information = tab_generation('Diversity Information', emp_diversity_information)
-
-    all_tabs = [{
-        'all_info': tab_glance + tab_employment_status + tab_employee_personal_details
-        + tab_other_employee_personal_details + tab_employee_diversity_information}]
+    all_tabs = [{'all_info': tab_glance + tab_employment_status}]
 
     return all_tabs
-
-    # old code below
-
-    employment_glance = {'Unique Employee ID': employee_information['uniqueEmployeeId'],
-                         'Name': employee_name,
-                         'Preferred Name': preferred_name,
-                         'ONS Email': employee_information['onsId'],
-                         'ONS Mobile Number':device_numbers[0] or '' ,
-                         'Status': employee_information['status'],
-    }
-
-    emp_status = {'Assignment Status': current_job_role['assignmentStatus'],
-                  'Status': current_job_role['crStatus'],
-                  'Operational Start Date': current_job_role['contractStartDate'],
-                  'Operational End Date': current_job_role['operationalEndDate'],
-                  'Ingest Date': employee_information['ingestDate']}
-
-    emp_personal_details = {'Personal Mobile Number': employee_information['telephoneNumberContact1'],
-                            'Personal Email Account': employee_information['personalEmailAddress']
-                            }
-
-    emp_other_personal_details = {'Date of Birth': employee_information['dob']}
-
-    emp_diversity_information = {}
-
-    return all_employee_tabs
