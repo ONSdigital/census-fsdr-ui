@@ -24,8 +24,8 @@ def get_employee_tabs(employee_information, current_job_role, device_information
 
     emp_status = {'Assignment Status': current_job_role['assignmentStatus'],
                   'Status': current_job_role['crStatus'],
-                  'Operational Start Date': current_job_role['contractStartDate'],
-                  'Operational End Date': current_job_role['operationalEndDate'],
+                  'Operational Start Date': format_to_uk_dates(current_job_role['contractStartDate']),
+                  'Operational End Date': format_to_uk_dates(current_job_role['operationalEndDate']),
                   'Ingest Date': employee_information['ingestDate']}
 
     emp_personal_details = {'Personal Mobile Number': employee_information['telephoneNumberContact1'],

@@ -34,10 +34,10 @@ def get_employee_tabs(employee_information, current_job_role, device_information
 
     emp_status = {'Assignment Status': current_job_role['assignmentStatus'],
                   'Status': current_job_role['crStatus'],
-                  'Contract Start Date': current_job_role['contractStartDate'],
-                  'Contract End Date': current_job_role['contractEndDate'],
-                  'Operational Start Date': current_job_role['contractStartDate'],
-                  'Operational End Date': current_job_role['operationalEndDate'],
+                  'Contract Start Date': format_to_uk_dates(current_job_role['contractStartDate']),
+                  'Contract End Date': format_to_uk_dates(current_job_role['contractEndDate']),
+                  'Operational Start Date': format_to_uk_dates(current_job_role['contractStartDate']),
+                  'Operational End Date': format_to_uk_dates(current_job_role['operationalEndDate']),
                   'Ingest Date': employee_information['ingestDate']}
 
     employee_information['address'] = employee_information['address1'] + ' ' + employee_information[
