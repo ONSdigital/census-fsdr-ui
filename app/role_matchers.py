@@ -16,24 +16,27 @@ rmt_combined_regex = re.compile('({}|{}|{}|{}|{})'.format(*[
         rmt_regex, non_com_regex, self_help_regex, msg_service_regex,
         health_safety_regex
     ]
-]))
+]))  # keep up to date with above
 
+hr_regex = re.compile('PT-FPH.-..-..')  # unused, see below
 payroll_regex = re.compile('PT-FPP.-..-..')  # unused, see below
 recruit_regex = re.compile('PT-FPR.-..-..')  # unused, see below
-recruit_combined_regex = re.compile('PT-FP[RP].-..-..')
+hr_combined_regex = re.compile(
+    'PT-FP[HPR].-..-..')  # keep up to date with above
 
-hr_regex = re.compile('PT-FPH.-..-..')
-
-hq_fo_ccs_regex = re.compile('F.-....-..-..')
-fsss_regex = re.compile('(ZT-HSA.-.|LT-CFS1-Z|DT-SUP.-.).-..')
+hq_fo_ccs_regex = re.compile('F.-....-..-..')  # unused, see below
+fsss_regex = re.compile(
+    '(ZT-HSA.-.|LT-CFS1-Z|DT-SUP.-.).-..')  # unused, see below
 fsss_combined_regex = re.compile(
-    '(ZT-HSA.-.|LT-CFS1-Z|DT-SUP.-.|F.-....-.).-..')
+    '(ZT-HSA.-.|LT-CFS1-Z|DT-SUP.-.|F.-....-.).-..'
+)  # keep up to date with above
 
 logi_regex = re.compile('LT-LOG.-..-..')
 cfods_regex = re.compile('DT-....-..-..')
 cfots_regex = re.compile('FT-FSD.-..-..')
 logi_combined_regex = re.compile(
-    '({}|{}|{})'.format(*[n for n in (logi_regex, cfods_regex, cfots_regex)]))
+    '({}|{}|{})'.format(*[n for n in (
+        logi_regex, cfods_regex, cfots_regex)]))  # keep up to date with above
 
 
 def invalid_role_id(role_id):
@@ -47,38 +50,29 @@ def role_id_to_extract_type(role_id):
     # Logistics
     elif logi_combined_regex.match(role_id):
         return 'LOGISTICS'
-    # HR
-    elif hr_regex.match(role_id):
-        return 'HR'
-    # HQ, FO, CCS
-    # FSSS
+    # HQ, FO, CCS, FSSS
     elif fsss_combined_regex.match(role_id):
         return 'FSSS'
-    # Recruitment
-    elif recruit_combined_regex.match(role_id):
-        return 'RECRUITMENT'
+    # HR, Payroll, Recruitment
+    elif hr_combined_regex.match(role_id):
+        return 'HR'
     # Failed to match
     else:
         invalid_role_id(role_id)
 
 
-        # TODO remove views.hq_fo_ccs_view.get_employee_tabs
 def role_id_to_view_router(role_id):
     if rmt_combined_regex.match(role_id):
         return views.rmt_view.get_employee_tabs
     # Logistics
     elif logi_combined_regex.match(role_id):
         return views.logistics_view.get_employee_tabs
-    # HR
-    elif hr_regex.match(role_id):
-        return views.hr_view.get_employee_tabs
-    # HQ, FO, CCS
-    # FSSS
+    # HQ, FO, CCS, FSSS
     elif fsss_combined_regex.match(role_id):
         return views.fsss_view.get_employee_tabs
-    # Recruitiment
-    elif recruit_combined_regex.match(role_id):
-        return views.recruitment_view.get_employee_tabs
+    # HR, Payroll, Recruitiment
+    elif hr_combined_regex.match(role_id):
+        return views.hr_view.get_employee_tabs
     # Failed to match
     else:
         invalid_role_id(role_id)

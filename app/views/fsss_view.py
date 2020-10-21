@@ -26,10 +26,10 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
     employment_status = {
         'Assignment Status': current_job_role['assignmentStatus'],
         # "Status" in GUI here
-        'Contract Start Date': current_job_role['contractStartDate'],
-        'Contract End Date': current_job_role['contractEndDate'],
-        'Operational Start Date': current_job_role['contractStartDate'],
-        'Operational End Date': current_job_role['operationalEndDate'],
+        'Contract Start Date': format_to_uk_dates(current_job_role['contractStartDate']),
+        'Contract End Date': format_to_uk_dates(current_job_role['contractEndDate']),
+        'Operational Start Date': format_to_uk_dates(current_job_role['contractStartDate']),
+        'Operational End Date': format_to_uk_dates(current_job_role['operationalEndDate']),
         # "Ingest date" in GUI here
     }
 
