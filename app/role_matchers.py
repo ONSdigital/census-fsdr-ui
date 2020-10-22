@@ -1,8 +1,28 @@
 import re
+from enum import Enum, auto
+
 from aiohttp.web import HTTPInternalServerError
 from structlog import get_logger
 
 logger = get_logger('fsdr-ui')
+
+
+# keep the following locations up to date with this Enum:
+#  app.employee_view_router.role_id_to_router
+class RoleEnum(Enum):
+    # RMT
+    RMT = auto()
+    # Logistics
+    LOGISTICS = auto()
+    # HQ, FO, CCS, FSSS
+    FSSS = auto()
+    # HR, Payroll, Recruitment
+    HR = auto()
+
+    @property
+    def extract_type(self):
+        return self.name
+
 
 rmt_regex = re.compile('R.-....(-..(-..)?)?')
 non_com_regex = re.compile('FT-NCP.-Z.-..')  # Non-Compliance in HQ
@@ -42,37 +62,19 @@ def invalid_role_id(role_id):
     raise HTTPInternalServerError('Invalid role ID')
 
 
-def role_id_to_extract_type(role_id):
+def get_role(role_id):
     if rmt_combined_regex.match(role_id):
-        return 'RMT'
+        return RoleEnum.RMT
     # Logistics
     elif logi_combined_regex.match(role_id):
-        return 'LOGISTICS'
+        return RoleEnum.LOGISTICS
     # HQ, FO, CCS, FSSS
     elif fsss_combined_regex.match(role_id):
-        return 'FSSS'
+        return RoleEnum.FSSS
     # HR, Payroll, Recruitment
     elif hr_combined_regex.match(role_id):
-        return 'HR'
+        return RoleEnum.HR
     # Failed to match
     else:
         invalid_role_id(role_id)
 
-
-def role_id_to_view_router(role_id):
-    from app import views
-
-    if rmt_combined_regex.match(role_id):
-        return views.rmt_view.get_employee_tabs
-    # Logistics
-    elif logi_combined_regex.match(role_id):
-        return views.logistics_view.get_employee_tabs
-    # HQ, FO, CCS, FSSS
-    elif fsss_combined_regex.match(role_id):
-        return views.fsss_view.get_employee_tabs
-    # HR, Payroll, Recruitiment
-    elif hr_combined_regex.match(role_id):
-        return views.hr_view.get_employee_tabs
-    # Failed to match
-    else:
-        invalid_role_id(role_id)

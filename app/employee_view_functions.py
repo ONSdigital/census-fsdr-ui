@@ -77,16 +77,16 @@ def get_employee_device(employee_id):
         auth=HTTPBasicAuth(FSDR_USER, FSDR_PASS))
 
 
-def get_employee_information(user_role, employee_id):
-    extract_type = role_matchers.role_id_to_extract_type(user_role)
+def get_employee_information(role, employee_id):
+    extract_type = role.extract_type
     return requests.get(
         FSDR_URL + f'/fieldforce/byId/{extract_type}/{employee_id}',
         verify=False,
         auth=HTTPBasicAuth(FSDR_USER, FSDR_PASS))
 
 
-def get_employee_history_information(user_role, employee_id):
-    extract_type = role_matchers.role_id_to_extract_type(user_role)
+def get_employee_history_information(role, employee_id):
+    extract_type = role.extract_type
     return requests.get(
         FSDR_URL + f'/fieldforce/historyById/{extract_type}/{employee_id}',
         verify=False,

@@ -26,14 +26,14 @@ class EmployeeInformation():
 
         await saml.ensure_logged_in(request)
 
-        user_role = await saml.get_role_id(request)
+        role_id = await saml.get_role_id(request)
+        role = role_matchers.get_role(role_id)
 
         try:
-            get_employee_info = get_employee_information(
-                user_role, employee_id)
+            get_employee_info = get_employee_information(role, employee_id)
             get_employee_devices = get_employee_device(employee_id)
             get_employee_history = get_employee_history_information(
-                user_role, employee_id)
+                role, employee_id)
         except ClientResponseError as ex:
             if ex.status == 500:
                 # TODO: IP is missing, what do?
@@ -51,12 +51,13 @@ class EmployeeInformation():
                 'Attempted to login with invalid user name and/or password',
                 client_ip=request['client_ip'])
             flash(request, NO_EMPLOYEE_DATA)
-            return aiohttp_jinja2.render_template('signin.html',
-                                                  request, {
-                                                      'page_title': 'Sign in',
-                                                      'include_nav': False
-                                                  },
-                                                  status=401)
+            return aiohttp_jinja2.render_template(
+                'signin.html',
+                request, {
+                    'page_title': 'Sign in',
+                    'include_nav': False
+                },
+                status=401)
 
         employee_info = get_employee_info.json()
         employee_history = []
@@ -64,12 +65,12 @@ class EmployeeInformation():
         employee_name = employee_info['firstName'] + ' ' + employee_info[
             'surname']
         employee_status = employee_info['status']
-        if role_matchers.hr_regex.match(user_role):
+        if role_matchers.hr_regex.match(role_id):
             employee_badge = employee_info['idBadgeNo']
         else:
             employee_badge = ''
 
-        if role_matchers.logi_regex.match(user_role):
+        if role_matchers.logi_regex.match(role_id):
             if employee_info['ingestDate']:
                 employee_info['ingestDate'] = format_to_uk_dates(
                     employee_info['ingestDate'])
@@ -119,7 +120,7 @@ class EmployeeInformation():
                 relevant_job_role['operationalEndDate'] = format_to_uk_dates(
                     relevant_job_role['operationalEndDate'])
 
-            employee_tabs = get_employee_tabs(user_role, employee_info,
+            employee_tabs = get_employee_tabs(role_id, employee_info,
                                               relevant_job_role, device_info)
 
             for tabs in employee_tabs:
@@ -132,11 +133,11 @@ class EmployeeInformation():
                         if 'tds' in device_table:
                             device_data = device_table['tds']
 
-            employee_history_tabs = history_tab(user_role, employee_history,
+            employee_history_tabs = history_tab(role_id, employee_history,
                                                 job_role_info)
 
-            if (not role_matchers.hr_regex.match(user_role)
-                ) and not (role_matchers.logi_regex.match(user_role)):
+            if (not role_matchers.hr_regex.match(role_id)
+                ) and not (role_matchers.logi_regex.match(role_id)):
 
                 for employee_history in employee_history_tabs[0]:
                     if 'headers' in employee_history:
@@ -150,7 +151,7 @@ class EmployeeInformation():
                     if 'tds' in employee_history:
                         job_role_history_data = employee_history['tds']
 
-                if role_matchers.rmt_regex.match(user_role):
+                if role_matchers.rmt_regex.match(role_id):
                     device_headers = []
                     device_data = []
 
@@ -166,17 +167,17 @@ class EmployeeInformation():
                 device_headers = []
                 device_data = []
 
-            if role_matchers.hr_regex.match(user_role):
+            if role_matchers.hr_regex.match(role_id):
                 page_title = 'Employee: %s' % employee_name
             else:
                 page_title = 'Employee: %s (%s)' % (employee_name,
                                                     employee_badge)
 
-        extract_type = role_matchers.role_id_to_extract_type(user_role)
+        extract_type = role_matchers.role_id_to_extract_type(role_id)
 
         try:
             return {
-                'user_role': user_role,
+                'user_role': role_id,
                 'extract_type': extract_type,
                 'page_title': page_title,
                 'device_headers': device_headers,
