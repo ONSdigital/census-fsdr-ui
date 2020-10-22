@@ -1,4 +1,4 @@
-from app.employee_view_functions import process_device_details, format_line_manager
+from app.employee_view_functions import process_device_details, format_line_manager, extract_device_phone, extract_device_chromebook
 from app.tabutils import tab_generation, table_generation, format_to_uk_dates
 from app.fieldmapping import map_employee_name
 
