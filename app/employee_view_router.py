@@ -21,6 +21,6 @@ def get_employee_tabs(role_id, employee_info, current_job_role, device_info):
 
     cur_job_role = map_false_to_dash(current_job_role)
 
-    get_employee_tabs = role_to_router(role)
+    router = role_to_router(role)
 
-    return get_employee_tabs(employee_info, cur_job_role, device_info)
+    return router.get_employee_tabs(employee_info, cur_job_role, device_info)
