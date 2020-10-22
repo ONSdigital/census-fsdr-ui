@@ -2,8 +2,6 @@ import re
 from aiohttp.web import HTTPInternalServerError
 from structlog import get_logger
 
-from app import views
-
 logger = get_logger('fsdr-ui')
 
 rmt_regex = re.compile('R.-....(-..(-..)?)?')
@@ -62,6 +60,8 @@ def role_id_to_extract_type(role_id):
 
 
 def role_id_to_view_router(role_id):
+    from app import views
+
     if rmt_combined_regex.match(role_id):
         return views.rmt_view.get_employee_tabs
     # Logistics
