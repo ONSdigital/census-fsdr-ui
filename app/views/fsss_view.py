@@ -74,7 +74,6 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
     other_data = {
         'Job Role Type': current_job_role['jobRoleType'],
         'Badge Number': employee_info['idBadgeNo'],
-        'Work Restrictions': employee_info['workRestrictions'],
         'Job Role Closing Report Status': current_job_role['crStatus'],
 
         # Unused fields:
