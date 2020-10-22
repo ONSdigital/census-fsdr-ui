@@ -20,16 +20,21 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
         'Preferred Name': preferred_name,
         # Gender refferenced here in GUI designs, but not in required excell spreadsheet, therefore ignored
         'ONS Mobile Number': (phone and phone['Device Phone Number']) or '',
-        'ONS ID': employee_info['onsId'], #This is Email address
+        'ONS ID': employee_info['onsId'],  #This is Email address
     }
 
     employment_status = {
-        'Assignment Status': current_job_role['assignmentStatus'],
+        'Assignment Status':
+        current_job_role['assignmentStatus'],
         # "Status" in GUI here
-        'Contract Start Date': format_to_uk_dates(current_job_role['contractStartDate']),
-        'Contract End Date': format_to_uk_dates(current_job_role['contractEndDate']),
-        'Operational Start Date': format_to_uk_dates(current_job_role['contractStartDate']),
-        'Operational End Date': format_to_uk_dates(current_job_role['operationalEndDate']),
+        'Contract Start Date':
+        format_to_uk_dates(current_job_role['contractStartDate']),
+        'Contract End Date':
+        format_to_uk_dates(current_job_role['contractEndDate']),
+        'Operational Start Date':
+        format_to_uk_dates(current_job_role['contractStartDate']),
+        'Operational End Date':
+        format_to_uk_dates(current_job_role['operationalEndDate']),
         # "Ingest date" in GUI here
     }
 
@@ -77,27 +82,38 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
         #'Coordinator Group': current_job_role['coordGroup'],
         #'Organisation Unit': current_job_role['uniqueRoleId'],
         #'Ingest Date': employee_info['ingestDate'],
-
         'Chromebook Asset ID': (chr_book and chr_book['Device ID']) or None,
         # 'Device Type': device_information[0]['Device Type'], # This doesn't make any sense
     }
 
-    tab_details_for_field_worker = tab_generation('Details for Field Worker', details_for_field_worker)
+    tab_details_for_field_worker = tab_generation('Details for Field Worker',
+                                                  details_for_field_worker)
 
-    tab_employment_status = tab_generation('Employment Status', employment_status)
+    tab_employment_status = tab_generation('Employment Status',
+                                           employment_status)
 
-    tab_job_role_for_field_worker = tab_generation('Job Role for Field Worker', job_role_for_field_worker)
+    tab_job_role_for_field_worker = tab_generation('Job Role for Field Worker',
+                                                   job_role_for_field_worker)
 
-    tab_personal_contact_details = tab_generation('Personal Contact Details', personal_contact_details)
+    tab_personal_contact_details = tab_generation('Personal Contact Details',
+                                                  personal_contact_details)
 
-    tab_devices_for_field_worker = tab_generation('Devices for Field Worker', devices_for_field_worker)
+    tab_devices_for_field_worker = tab_generation('Devices for Field Worker',
+                                                  devices_for_field_worker)
 
     tab_other_data = tab_generation('Other Data', other_data)
 
-    all_employee_information =  {'all_info':  tab_employment_status + tab_details_for_field_worker + tab_job_role_for_field_worker + tab_personal_contact_details + tab_devices_for_field_worker + tab_other_data }
+    all_employee_information = {
+        'all_info':
+        tab_employment_status + tab_details_for_field_worker +
+        tab_job_role_for_field_worker + tab_personal_contact_details +
+        tab_devices_for_field_worker + tab_other_data
+    }
 
     all_employee_tabs = [
-        tab_details_for_field_worker, tab_employment_status, tab_job_role_for_field_worker, tab_personal_contact_details, tab_devices_for_field_worker, tab_other_data
+        tab_details_for_field_worker, tab_employment_status,
+        tab_job_role_for_field_worker, tab_personal_contact_details,
+        tab_devices_for_field_worker, tab_other_data
     ]
 
     return all_employee_tabs
