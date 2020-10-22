@@ -67,7 +67,7 @@ def format_line_manager(current_job_role):
     maybe_names = (current_job_role['lineManagerFirstName'],
                    current_job_role['lineManagerSurname'])
     names = (n for n in maybe_names if n and n != '-')
-    return ' '.join(name) or '-'
+    return ' '.join(names) or '-'
 
 
 def get_employee_device(employee_id):
