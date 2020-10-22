@@ -45,7 +45,6 @@ def get_employee_tabs(employee_information, current_job_role, device_information
         'Badge Number': employee_info['idBadgeNo'],
         'Area Location': current_job_role['areaLocation'],
         'Country': employee_information['country'], # this needs to go in fsss
-        'Work Restrictions': employee_info['workRestrictions'],
         'Weekly Hours': employee_info['weeklyHours'],
         'Contract Start Date': format_to_uk_dates(current_job_role['contractStartDate']),
         'Contract End Date': format_to_uk_dates(current_job_role['contractEndDate']),

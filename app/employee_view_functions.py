@@ -52,8 +52,6 @@ def process_employee_information(employee_information):
     def handle_blank(key):
         if key == 'mobility':
             return 'No'
-        elif key == 'workRestrictions':
-            return 'None'
         else:
             return '-'
 
