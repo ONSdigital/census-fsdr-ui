@@ -27,7 +27,6 @@ def get_employee_tabs(employee_information, current_job_role, device_information
                     'Mobility': employee_information['mobility'],
                     'Mobile Staff': employee_information['mobileStaff'],
                     'Weekly Hours': employee_information['weeklyHours'],
-                    'Coordinator Group': current_job_role['coordGroup'],
                     'Organisation Unit': current_job_role['uniqueRoleId']
                     }
 
