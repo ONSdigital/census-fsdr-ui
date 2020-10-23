@@ -49,7 +49,7 @@ def map_employee_history_table_headers(user_role, employee_history_table):
             mapping_entries.append(mapping)
 
         elif role_matchers.recruit_regex.match(user_role):
-            history['address'] = history['address1'] + ' ' + history['address2']
+            history['address'] = ' '.join(v for v in (history['address1'], history['address2']) if v is not None)
 
             mapping = {
                 'Ingest Date': history.pop('ingestDate'),
