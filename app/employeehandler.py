@@ -173,7 +173,7 @@ class EmployeeInformation():
                 page_title = 'Employee: %s (%s)' % (employee_name,
                                                     employee_badge)
 
-        extract_type = role_matchers.role_id_to_extract_type(role_id)
+        extract_type = get_role(role_id).extract_type
 
         try:
             return {
