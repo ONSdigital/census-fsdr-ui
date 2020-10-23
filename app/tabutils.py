@@ -1,4 +1,4 @@
-from dateutil import parser
+from dateutil import parser as date_parser
 
 
 def tab_generation(tab_name, tab_data):
@@ -50,6 +50,8 @@ def table_generation(tab_data):
 
 
 def format_to_uk_dates(date):
-    date_to_format = parser.parse(date).date()
-    formatted_date = date_to_format.strftime('%d/%m/%Y')
-    return formatted_date
+    try:
+        return date_parser.parse(date).date().strftime('%d/%m/%Y')
+    except date_parser.ParserError:
+        # If it is not a date (such as '-'), return as-is
+        return date
