@@ -3,7 +3,7 @@ from app.tabutils import tab_generation, format_to_uk_dates
 from app.fieldmapping import map_employee_name
 
 
-def get_employee_tabs(employee_information, current_job_role, device_information):
+def get_employee_tabs(employee_info, current_job_role, device_information):
 
     devices, device_numbers = process_device_details(device_information)
     phone = extract_device_phone(devices)
