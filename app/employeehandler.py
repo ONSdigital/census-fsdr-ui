@@ -65,12 +65,12 @@ class EmployeeInformation():
         employee_name = employee_info['firstName'] + ' ' + employee_info[
             'surname']
         employee_status = employee_info['status']
-        if role_matchers.hr_regex.match(role_id):
+        if role_matchers.hr_combined_regex.match(role_id):
             employee_badge = employee_info['idBadgeNo']
         else:
             employee_badge = ''
 
-        if role_matchers.logi_regex.match(role_id):
+        if role_matchers.logi_combined_regex.match(role_id):
             if employee_info['ingestDate']:
                 employee_info['ingestDate'] = format_to_uk_dates(
                     employee_info['ingestDate'])
@@ -123,6 +123,9 @@ class EmployeeInformation():
             employee_tabs = get_employee_tabs(role_id, employee_info,
                                               relevant_job_role, device_info)
 
+            device_headers = []
+            device_data = []
+
             for tabs in employee_tabs:
                 if 'all_info' in tabs:
                     employee_info = tabs['all_info']
@@ -136,8 +139,8 @@ class EmployeeInformation():
             employee_history_tabs = history_tab(role_id, employee_history,
                                                 job_role_info)
 
-            if (not role_matchers.hr_regex.match(role_id)
-                ) and not (role_matchers.logi_regex.match(role_id)):
+            if (not role_matchers.hr_combined_regex.match(role_id)
+                ) and not (role_matchers.logi_combined_regex.match(role_id)):
 
                 for employee_history in employee_history_tabs[0]:
                     if 'headers' in employee_history:
@@ -151,10 +154,6 @@ class EmployeeInformation():
                     if 'tds' in employee_history:
                         job_role_history_data = employee_history['tds']
 
-                if role_matchers.rmt_regex.match(role_id):
-                    device_headers = []
-                    device_data = []
-
             else:
                 for employee_history in employee_history_tabs[0]:
                     if 'headers' in employee_history:
@@ -164,10 +163,8 @@ class EmployeeInformation():
 
                 job_role_history_header = []
                 job_role_history_data = []
-                device_headers = []
-                device_data = []
 
-            if role_matchers.hr_regex.match(role_id):
+            if role_matchers.hr_combined_regex.match(role_id):
                 page_title = 'Employee: %s' % employee_name
             else:
                 page_title = 'Employee: %s (%s)' % (employee_name,
