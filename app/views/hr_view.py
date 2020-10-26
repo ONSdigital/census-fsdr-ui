@@ -9,7 +9,7 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
     phone = extract_device_phone(devices)
     chr_book = extract_device_chromebook(devices)
 
-    employee_name = map_employee_name(employee_information)
+    employee_name = map_employee_name(employee_info)
 
     preferred_name = employee_info['preferredName'] or 'None'
 
@@ -44,7 +44,7 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
         'Line Manager': line_manager,
         'Badge Number': employee_info['idBadgeNo'],
         'Area Location': current_job_role['areaLocation'],
-        'Country': employee_information['country'], # this needs to go in fsss
+        'Country': employee_info['country'], # this needs to go in fsss
         'Weekly Hours': employee_info['weeklyHours'],
         'Contract Start Date': format_to_uk_dates(current_job_role['contractStartDate']),
         'Contract End Date': format_to_uk_dates(current_job_role['contractEndDate']),
@@ -52,7 +52,7 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
         # 'Operational End Date': format_to_uk_dates(current_job_role['operationalEndDate']),
         # 'Job Role Closing Report Status': current_job_role['crStatus'],
         'Assignment Status': current_job_role['assignmentStatus'],
-        'Date of Birth': employee_information['dob'],
+        'Date of Birth': employee_info['dob'],
         'ONS ID': employee_info['onsId'],
         'ONS Mobile Number': (phone and phone['Device Phone Number']) or '',
     }
