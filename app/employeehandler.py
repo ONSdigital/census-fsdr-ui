@@ -70,6 +70,10 @@ class EmployeeInformation():
         else:
             employee_badge = ''
 
+        employee_info['address'] = ' '.join(
+            v for v in (employee_info['address1'], employee_info['address2'])
+            if v is not None)
+
         if role_matchers.logi_combined_regex.match(role_id):
             if employee_info['ingestDate']:
                 employee_info['ingestDate'] = format_to_uk_dates(

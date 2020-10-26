@@ -33,6 +33,7 @@ def map_employee_history_table_headers(user_role, employee_history_table):
             mapping_entries.append(mapping)
 
         elif role_matchers.hr_combined_regex.match(user_role):
+            # TODO this may be a duplicate
             history['address'] = ' '.join(v for v in (history['address1'], history['address2']) if v is not None)
 
             mapping = {
