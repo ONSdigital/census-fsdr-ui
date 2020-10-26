@@ -71,8 +71,8 @@ class EmployeeInformation():
             employee_badge = ''
 
         employee_info['address'] = ' '.join(
-            v for v in (employee_info['address1'], employee_info['address2'])
-            if v is not None)
+            v for v in (employee_info.get('address1', None),
+                        employee_info.get('address2', None)) if v is not None)
 
         if role_matchers.logi_combined_regex.match(role_id):
             if employee_info['ingestDate']:
