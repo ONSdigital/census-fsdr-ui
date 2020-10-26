@@ -9,7 +9,7 @@ def map_employee_history_table_headers(user_role, employee_history_table):
     for history in employee_history_table:
         employee_name = map_employee_name(history)
 
-        if role_matchers.fsss_regex.match(user_role):
+        if role_matchers.fsss_combined_regex.match(user_role):
             mapping = {
                 'Ingest Date': history.pop('ingestDate'),
                 'ID': history.pop('uniqueEmployeeId'),
@@ -32,23 +32,7 @@ def map_employee_history_table_headers(user_role, employee_history_table):
 
             mapping_entries.append(mapping)
 
-        elif role_matchers.hr_regex.match(user_role):
-            mapping = {
-                'Ingest Date': history.pop('ingestDate'),
-                'ID': history.pop('uniqueEmployeeId'),
-                'Name': employee_name,
-                'Preferred Name': history.pop('preferredName'),
-                'ONS ID': history.pop('onsId'),
-                'Personal Mobile Number': history.pop('telephoneNumberContact1'),
-                'Status': history.pop('status'),
-                'Personal Email Address': history.pop('personalEmailAddress'),
-                'Country': history.pop('country'),
-                'Date of Birth': history.pop('dob')
-            }
-
-            mapping_entries.append(mapping)
-
-        elif role_matchers.recruit_regex.match(user_role):
+        elif role_matchers.hr_combined_regex.match(user_role):
             history['address'] = ' '.join(v for v in (history['address1'], history['address2']) if v is not None)
 
             mapping = {
