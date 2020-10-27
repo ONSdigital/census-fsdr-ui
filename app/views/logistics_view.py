@@ -3,7 +3,16 @@ from app.tabutils import tab_generation
 from app.fieldmapping import map_employee_name
 
 
-def get_employee_tabs(employee_information, current_job_role, device_information):
+
+def get_employee_tabs(employee_info, current_job_role, device_information):
+    def get_emp_info(name, on_false={}, on_missing='Unspecified'):
+        # This first line is odd, but basically triggers whenever the
+        # user did not supply a value for on_false
+        if on_false is get_emp_info.__defaults__[0]:
+            return employee_info.get(name, on_missing)
+        else:
+            return employee_info.get(name, on_missing) or on_false
+
 
     employee_devices, device_numbers = process_device_details(device_information)
 
@@ -11,21 +20,18 @@ def get_employee_tabs(employee_information, current_job_role, device_information
 
     employee_name = map_employee_name(employee_information)
 
-    if employee_information['preferredName'] != '':
-        preferred_name = 'None'
-    else:
-        preferred_name = employee_information['preferredName']
+    preferred_name = get_emp_info('preferredName', on_false='None')
 
-    employment_glance = {'Unique Employee ID': employee_information['uniqueEmployeeId'],
+    employment_glance = {'Unique Employee ID': get_emp_info('uniqueEmployeeId'),
                          'Name': employee_name,
                          'Preferred Name': preferred_name,
-                         'ONS Email': employee_information['onsId'],
+                         'ONS Email': get_emp_info('onsId'),
                          'ONS Mobile Number':device_numbers[0] or '',
                          }
 
     emp_job_role = {'Job Role ID': current_job_role['uniqueRoleId'],
                     'Job Role': current_job_role['jobRole'],
-                    'Badge Number': employee_information['idBadgeNo'],
+                    'Badge Number': get_emp_info('idBadgeNo'),
                     'Job Role Short': current_job_role['jobRoleShort'],
                     'Line Manager': line_manager,
                     }
@@ -35,10 +41,10 @@ def get_employee_tabs(employee_information, current_job_role, device_information
                   'Contract End Date': format_to_uk_dates(current_job_role['contractEndDate']),
                   }
 
-    emp_personal_details = {'Address': employee_information['address'],
-                            'Country': employee_information['country'],
-                            'Personal Mobile Number': employee_information['telephoneNumberContact1'],
-                            'Personal Email Account': employee_information['personalEmailAddress']
+    emp_personal_details = {'Address': get_emp_info('address'),
+                            'Country': get_emp_info('country'),
+                            'Personal Mobile Number': get_emp_info('telephoneNumberContact1'),
+                            'Personal Email Account': get_emp_info('personalEmailAddress')
                             }
 
     tab_glance = tab_generation('At a Glance', employment_glance)
