@@ -22,8 +22,6 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
 
     line_manager = format_line_manager(current_job_role)
 
-    q = cwget_emp_infowcs[)B
-
     glance_data = {
         'Unique Employee ID': get_emp_info('uniqueEmployeeId'),
         'Name': employee_name,

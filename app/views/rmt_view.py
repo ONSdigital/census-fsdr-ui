@@ -22,12 +22,14 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
 
     preferred_name = get_emp_info('preferredName', on_false='None')
 
-    employment_glance = {'Unique Employee ID': get_emp_info('uniqueEmployeeId'),
-                         'Name': employee_name,
-                         'Preferred Name': preferred_name,
-                         'ONS Email': get_emp_info('onsId'),
-                         'ONS Mobile Number': device_numbers[0] or '',
-                         'Status': get_emp_info('status')}
+    employment_glance = {
+         'Unique Employee ID': get_emp_info('uniqueEmployeeId'),
+         'Name': employee_name,
+         'Preferred Name': preferred_name,
+         'ONS Email': get_emp_info('onsId'),
+         'ONS Mobile Number': device_numbers[0] or '',
+         'Status': get_emp_info('status'),
+     }
 
     is_mobile_staff = str(current_job_role['uniqueRoleId'])[3:6] == 'MOB'
     mobile_staff = 'Yes' if is_mobile_staff else 'No'
