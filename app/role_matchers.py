@@ -53,7 +53,7 @@ logi_regex = re.compile('LT-LOG.-..-..')
 cfods_regex = re.compile('DT-....-..-..')
 cfots_regex = re.compile('FT-FSD.-..-..')
 logi_combined_regex = re.compile(
-    '({}|{}|{})'.format(*[n for n in (
+    '({}|{}|{})'.format(*[n.pattern for n in (
         logi_regex, cfods_regex, cfots_regex)]))  # keep up to date with above
 
 
