@@ -24,15 +24,16 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
 
     preferred_name = get_emp_info('preferredName', on_false='None')
 
-    details_for_field_worker = {
+    data_detail = {
         'Name': employee_name,
         'Preferred Name': preferred_name,
         # Gender refferenced here in GUI designs, but not in required excell spreadsheet, therefore ignored
         'ONS Mobile Number': (phone and phone['Device Phone Number']) or '',
         'ONS ID': get_emp_info('onsId'),  #This is Email address
     }
+    tab_detail = tab_generation('Details for Field Worker', data_detail)
 
-    employment_status = {
+    data_employment = {
         'Assignment Status':
         current_job_role['assignmentStatus'],
         # "Status" in GUI here
@@ -46,8 +47,9 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
         format_to_uk_dates(current_job_role['operationalEndDate']),
         # "Ingest date" in GUI here
     }
+    tab_employment = tab_generation('Employment Status', data_employment)
 
-    job_role_for_field_worker = {
+    data_job_role = {
         'Job Role ID': current_job_role['uniqueRoleId'],
         # badge number
         'Postcode': get_emp_info('postcode'),
@@ -63,8 +65,9 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
         # Coordinator group
         # Organisation unit
     }
+    tab_job_role = tab_generation('Job Role for Field Worker', data_job_role)
 
-    personal_contact_details = {
+    data_contact = {
         'Address': get_emp_info('address'),
         'Personal Mobile Number': get_emp_info('telephoneNumberContact1'),
         'Home Phone Number': get_emp_info('telephoneNumberContact2'),
@@ -72,15 +75,17 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
         'Emergency Contact Name': get_emp_info('emergencyContactFullName'),
         'Emergency Contact Number': get_emp_info('emergencyContactMobileNo'),
     }
+    tab_contact = tab_generation('Personal Contact Details', data_contact)
 
-    devices_for_field_worker = {
+    data_devices = {
         'Mobile Asset ID': (phone and phone['Device ID']) or None,
         # Device phone number
         'Unique Employee ID': get_emp_info('uniqueEmployeeId'),
         # Device Type
     }
+    tab_devices = tab_generation('Devices for Field Worker', data_devices)
 
-    other_data = {
+    data_other = {
         'Job Role Type': current_job_role['jobRoleType'],
         'Badge Number': get_emp_info('idBadgeNo'),
         'Job Role Closing Report Status': current_job_role['crStatus'],
@@ -93,35 +98,10 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
         'Chromebook Asset ID': (chr_book and chr_book['Device ID']) or None,
         # 'Device Type': device_information[0]['Device Type'], # This doesn't make any sense
     }
+    tab_other = tab_generation('Other Data', data_other)
 
-    tab_details_for_field_worker = tab_generation('Details for Field Worker',
-                                                  details_for_field_worker)
-
-    tab_employment_status = tab_generation('Employment Status',
-                                           employment_status)
-
-    tab_job_role_for_field_worker = tab_generation('Job Role for Field Worker',
-                                                   job_role_for_field_worker)
-
-    tab_personal_contact_details = tab_generation('Personal Contact Details',
-                                                  personal_contact_details)
-
-    tab_devices_for_field_worker = tab_generation('Devices for Field Worker',
-                                                  devices_for_field_worker)
-
-    tab_other_data = tab_generation('Other Data', other_data)
-
-    all_employee_information = {
-        'all_info':
-        tab_employment_status + tab_details_for_field_worker +
-        tab_job_role_for_field_worker + tab_personal_contact_details +
-        tab_devices_for_field_worker + tab_other_data
+    tabs_all = {
+        'all_info': tab_detail + tab_employment + tab_job_role + tab_contact + tab_devices + tab_other
     }
 
-    all_employee_tabs = [
-        tab_details_for_field_worker, tab_employment_status,
-        tab_job_role_for_field_worker, tab_personal_contact_details,
-        tab_devices_for_field_worker, tab_other_data
-    ]
-
-    return all_employee_tabs
+    return tabs_all
