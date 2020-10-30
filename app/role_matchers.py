@@ -58,8 +58,9 @@ logi_combined_regex = re.compile(
 
 
 def invalid_role_id(role_id):
-    logger.warn('Invalid role ID', role_id=role_id)
-    raise HTTPInternalServerError('Invalid role ID')
+    msg = 'Invalid role ID: {}'.format(role_id)
+    logger.warn(msg, role_id=role_id)
+    raise HTTPInternalServerError(reason=msg)
 
 
 def get_role(role_id):
