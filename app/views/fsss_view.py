@@ -100,8 +100,7 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
     }
     tab_other = tab_generation('Other Data', data_other)
 
-    tabs_all = {
+    tabs_all = [{
         'all_info': tab_detail + tab_employment + tab_job_role + tab_contact + tab_devices + tab_other
-    }
-
+    }]
     return tabs_all
