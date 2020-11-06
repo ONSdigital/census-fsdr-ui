@@ -125,6 +125,10 @@ class SecondaryPage:
                 previous_jobid = data.get('filter_jobid')
                 search_criteria['jobRoleId'] = previous_jobid
 
+            if data.get('filter_email'):
+                previous_email = data.get('filter_email')
+                search_criteria['email'] = previous_email
+
             if search_criteria:
                 await store_search_criteria(request, search_criteria)
 
