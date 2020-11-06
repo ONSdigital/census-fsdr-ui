@@ -61,7 +61,6 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
         'Line Manager': line_manager,
         # Area Location
         'Mobility': get_emp_info('mobility'),
-        'Mobile Staff': get_emp_info('mobileStaff'),
         'Weekly Hours': get_emp_info('weeklyHours'),
         # Area group
         # Coordinator group
