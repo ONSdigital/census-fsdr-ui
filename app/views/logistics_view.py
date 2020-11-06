@@ -2,10 +2,6 @@ from app.employee_view_functions import process_device_details, format_line_mana
 from app.tabutils import tab_generation, format_to_uk_dates
 from app.fieldmapping import map_employee_name
 
-
-
-
-
 def get_employee_tabs(employee_info, current_job_role, device_information):
     def get_emp_info(name, on_false={}, on_missing='Unspecified'):
         # This first line is odd, but basically triggers whenever the
@@ -33,8 +29,9 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
 
     emp_job_role = {'Job Role ID': current_job_role['uniqueRoleId'],
                     'Job Role': current_job_role['jobRole'],
-                    'Badge Number': get_emp_info('idBadgeNo'),
+                    'Job Role Type': current_job_role['jobRoleType'],
                     'Job Role Short': current_job_role['jobRoleShort'],
+                    'Badge Number': get_emp_info('idBadgeNo'),
                     'Line Manager': line_manager,
                     }
 

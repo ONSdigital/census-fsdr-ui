@@ -52,8 +52,9 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
 
     data_job_role = {
         'Job Role ID': current_job_role['uniqueRoleId'],
-        # badge number
+        'Badge Number': get_emp_info('idBadgeNo'),
         'Postcode': get_emp_info('postcode'),
+        'Country': get_emp_info('country'),
         'Job Role Short': current_job_role['jobRoleShort'],
         'Job Role': current_job_role['jobRole'],
         # device build
