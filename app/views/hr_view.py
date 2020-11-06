@@ -43,7 +43,6 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
         'Emergency Contact Name': get_emp_info('emergencyContactFullName'),
         'Emergency Contact Number': get_emp_info('emergencyContactMobileNo'),
         'Mobility': get_emp_info('mobility'),
-        'Mobile Staff': get_emp_info('mobileStaff'),
         # 'Job Role Type': current_job_role['jobRoleType'],
         'Job Role': current_job_role['jobRole'],
         'Job Role ID': current_job_role['uniqueRoleId'],

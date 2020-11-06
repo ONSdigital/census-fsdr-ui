@@ -3,7 +3,6 @@ from app.tabutils import tab_generation, format_to_uk_dates
 from app.fieldmapping import map_employee_name
 
 
-
 def get_employee_tabs(employee_info, current_job_role, device_information):
     def get_emp_info(name, on_false={}, on_missing='Unspecified'):
         # This first line is odd, but basically triggers whenever the
@@ -23,40 +22,39 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
     preferred_name = get_emp_info('preferredName', on_false='None')
 
     employment_glance = {
-         'Unique Employee ID': get_emp_info('uniqueEmployeeId'),
-         'Name': employee_name,
-         'Preferred Name': preferred_name,
-         'ONS Email': get_emp_info('onsId'),
-         'ONS Mobile Number': device_numbers[0] or '',
-         'Status': get_emp_info('status'),
+            'Unique Employee ID': get_emp_info('uniqueEmployeeId'),
+            'Name': employee_name,
+            'Preferred Name': preferred_name,
+            'ONS Email': get_emp_info('onsId'),
+            'ONS Mobile Number': device_numbers[0] or '',
+            'Status': get_emp_info('status'),
      }
 
-    is_mobile_staff = str(current_job_role['uniqueRoleId'])[3:6] == 'MOB'
-    mobile_staff = 'Yes' if is_mobile_staff else 'No'
+    emp_job_role = {
+            'Job Role ID': current_job_role['uniqueRoleId'],
+            'Badge Number': get_emp_info('idBadgeNo'),
+            'Postcode': get_emp_info('postcode'),
+            'Job Role Short': current_job_role['jobRoleShort'],
+            'Job Role Type': current_job_role['jobRoleType'],
+            'Line Manager': line_manager,
+            'Area Location': current_job_role['areaLocation'],
+            'Mobility': get_emp_info('mobility'),
+            'Weekly Hours': get_emp_info('weeklyHours')
+    }
 
-    emp_job_role = {'Job Role ID': current_job_role['uniqueRoleId'],
-                    'Badge Number': get_emp_info('idBadgeNo'),
-                    'Postcode': get_emp_info('postcode'),
-                    'Job Role Short': current_job_role['jobRoleShort'],
-                    'Job Role Type': current_job_role['jobRoleType'],
-                    'Line Manager': line_manager,
-                    'Area Location': current_job_role['areaLocation'],
-                    'Mobility': get_emp_info('mobility'),
-                    'Mobile Staff': mobile_staff,
-                    'Weekly Hours': get_emp_info('weeklyHours')
-                    }
+    emp_status = {
+            'Assignment Status': current_job_role['assignmentStatus'],
+            'Status': current_job_role['crStatus'],
+            'Contract Start Date': format_to_uk_dates(current_job_role['contractStartDate']),
+            'Contract End Date': format_to_uk_dates(current_job_role['contractEndDate']),
+    }
 
-    emp_status = {'Assignment Status': current_job_role['assignmentStatus'],
-                  'Status': current_job_role['crStatus'],
-                  'Contract Start Date': format_to_uk_dates(current_job_role['contractStartDate']),
-                  'Contract End Date': format_to_uk_dates(current_job_role['contractEndDate']),
-                  }
-
-    emp_personal_details = {'Personal Mobile Number': get_emp_info('telephoneNumberContact1'),
-                            'Personal Email Account': get_emp_info('personalEmailAddress'),
-                            'Emergency Contact Name': get_emp_info('emergencyContactFullName'),
-                            'Emergency Contact Number': get_emp_info('emergencyContactMobileNo'),
-                            }
+    emp_personal_details = {
+            'Personal Mobile Number': get_emp_info('telephoneNumberContact1'),
+            'Personal Email Account': get_emp_info('personalEmailAddress'),
+            'Emergency Contact Name': get_emp_info('emergencyContactFullName'),
+            'Emergency Contact Number': get_emp_info('emergencyContactMobileNo'),
+    }
 
     tab_glance = tab_generation('At a Glance', employment_glance)
 

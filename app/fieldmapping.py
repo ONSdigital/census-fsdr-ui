@@ -27,7 +27,6 @@ def map_employee_history_table_headers(user_role, employee_history_table):
                 'Emergency Contact Mobile Number': history.pop('emergencyContactMobileNo'),
                 'Weekly Hours': history.pop('weeklyHours'),
                 'Mobility': history.pop('mobility'),
-                'Mobile Staff': history.pop('mobileStaff')
             }
 
             mapping_entries.append(mapping)
@@ -55,7 +54,6 @@ def map_employee_history_table_headers(user_role, employee_history_table):
                 'Date of Birth': history.pop('dob'),
                 'Weekly Hours': history.pop('weeklyHours'),
                 'Mobility': history.pop('mobility'),
-                'Mobile Staff': history.pop('mobileStaff')
             }
 
             mapping_entries.append(mapping)
