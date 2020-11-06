@@ -27,7 +27,7 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
     data_detail = {
         'Unique Employee ID': get_emp_info('uniqueEmployeeId'),
         'Name': employee_name,
-        'Preferred Name': preferred_name,   # Asked to be added in FWMT-2681 but already present
+        'Preferred Name': preferred_name,   
         # Gender refferenced here in GUI designs, but not in required excell spreadsheet, therefore ignored
         'ONS Mobile Number': (phone and phone['Device Phone Number']) or '',
         'ONS ID': get_emp_info('onsId'),  #This is Email address
@@ -52,7 +52,6 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
 
     data_job_role = {
         'Job Role ID': current_job_role['uniqueRoleId'],
-        'Badge Number': get_emp_info('idBadgeNo'),
         'Postcode': get_emp_info('postcode'),
         'Country': get_emp_info('country'),
         'Job Role Short': current_job_role['jobRoleShort'],
@@ -89,9 +88,8 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
 
     data_other = {
         'Job Role Type': current_job_role['jobRoleType'],
-        #'Badge Number': get_emp_info('idBadgeNo'),
+        'Badge Number': get_emp_info('idBadgeNo'),
         'Job Role Closing Report Status': current_job_role['crStatus'],
-
         # Unused fields:
         #'Status': get_emp_info('status'),
         #'Coordinator Group': current_job_role['coordGroup'],

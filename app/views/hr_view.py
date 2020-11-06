@@ -38,6 +38,7 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
         'Address': get_emp_info('address'),
         'Postcode': get_emp_info('postcode'),
         'Country': get_emp_info('country'),
+        'County': get_emp_info('county'),
         'Personal Email Account': get_emp_info('personalEmailAddress'),
         'Personal Mobile Number': get_emp_info('telephoneNumberContact1'),
         # 'Home Phone Number': employee_info['telephoneNumberContact2'],
