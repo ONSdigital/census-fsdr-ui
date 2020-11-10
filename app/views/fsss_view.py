@@ -88,7 +88,6 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
     data_other = {
         'Job Role Type': current_job_role['jobRoleType'],
         'Badge Number': get_emp_info('idBadgeNo'),
-        'Job Role Closing Report Status': current_job_role['crStatus'],
         # Unused fields:
         #'Status': get_emp_info('status'),
         #'Coordinator Group': current_job_role['coordGroup'],
