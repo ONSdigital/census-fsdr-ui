@@ -20,7 +20,7 @@ from . import security
 from . import session
 from . import settings
 from . import saml
-from .app_logging import logger_initial_config
+from .logging import logger_initial_config
 
 logger = get_logger('fsdr-ui')
 

@@ -1,4 +1,4 @@
-FROM python:3.6
+FROM python:3.8
 
 # user setup
 RUN groupadd -g 984 fsdrui && \
@@ -11,17 +11,14 @@ RUN apt-get update \
 RUN pip3 install pipenv
 
 # infrequently-changed scripts
-RUN mkdir /opt/ui
-WORKDIR /opt/ui
-RUN mkdir /opt/ui/scripts
-COPY ./scripts ./scripts
-RUN ls
-RUN mkdir -p app/templates
-RUN ./scripts/load_templates.sh
+RUN mkdir -p /opt/app
+WORKDIR /opt/app
+COPY ./scripts/load_templates.sh .
+RUN ./load_templates.sh
 COPY Pipfile* ./
 RUN pipenv install --deploy --system
 
-COPY . .
+COPY ./fsdr-ui .
 
 USER fsdrui
 EXPOSE 9293

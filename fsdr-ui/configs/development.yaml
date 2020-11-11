@@ -1,0 +1,29 @@
+net:
+  host: '0.0.0.0'
+  port: 9293
+  session_age: 300
+  url_path_prefix: ''
+  domain_url_protocol: 'http://'
+  domain_url: 'localhost:9293'
+
+security:
+  secret_key: 'examplesecretkey'
+
+logging:
+  internal_level: 'INFO'
+  external_level: 'WARN'
+
+services:
+
+  service:
+    url: 'http://localhost:5678'
+    username: 'user'
+    password: 'pass'
+
+  redis:
+    url: 'localhost'
+    port: 6379
+
+  sso:
+    config_folder: '../mocks/sso-config'
+

@@ -20,7 +20,6 @@ aioredis = "*"
 python-json-logger = "*"
 requests = "*"
 idna_ssl = "*"
-flask = "*"
 jsonify = "*"
 python-dateutil = "*"
 authlib = "*"
@@ -42,5 +41,5 @@ aioresponses = "*"
 retrying = "*"
 
 [requires]
-python_version = "3.6.9"
+python_version = "3.8.6"
 

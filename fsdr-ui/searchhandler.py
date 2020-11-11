@@ -15,11 +15,9 @@ from app.searchfunctions import get_all_assignment_status, get_employee_records,
 from . import (NEED_TO_SIGN_IN_MSG, NO_EMPLOYEE_DATA, SERVICE_DOWN_MSG)
 from . import saml
 from .flash import flash
-from flask import Flask
 
 logger = get_logger('fsdr-ui')
 search_routes = RouteTableDef()
-app = Flask(__name__)
 
 
 @search_routes.view('/search')

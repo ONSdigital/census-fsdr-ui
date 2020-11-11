@@ -19,14 +19,14 @@ services:
     environment:
       POSTGRES_PASSWORD: 'password'
   idp:
-    build: './local-idp-config'
+    build: './mocks/idp-config'
     ports:
     - '0.0.0.0:8080:80'
     volumes:
-    - ./local-idp-config/config_config.php:/var/simplesamlphp/config/config.php
-    - ./local-idp-config/config_authsources.php:/var/simplesamlphp/config/authsources.php
-    - ./local-idp-config/metadata_saml20-idp-hosted.php:/var/simplesamlphp/metadata/saml20-idp-hosted.php
-    - ./local-idp-config/metadata_saml20-sp-remote.php:/var/simplesamlphp/metadata/saml20-sp-remote.php
-    - ./local-idp-config/idp.crt:/var/simplesamlphp/cert/idp.crt
-    - ./local-idp-config/idp.pem:/var/simplesamlphp/cert/idp.pem
+    - ./mocks/idp-config/config_config.php:/var/simplesamlphp/config/config.php
+    - ./mocks/idp-config/config_authsources.php:/var/simplesamlphp/config/authsources.php
+    - ./mocks/idp-config/metadata_saml20-idp-hosted.php:/var/simplesamlphp/metadata/saml20-idp-hosted.php
+    - ./mocks/idp-config/metadata_saml20-sp-remote.php:/var/simplesamlphp/metadata/saml20-sp-remote.php
+    - ./mocks/idp-config/idp.crt:/var/simplesamlphp/cert/idp.crt
+    - ./mocks/idp-config/idp.pem:/var/simplesamlphp/cert/idp.pem
  

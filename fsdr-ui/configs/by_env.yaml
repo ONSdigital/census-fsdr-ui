@@ -1,0 +1,30 @@
+# defines the environment variables used to resolve configuration options
+
+net:
+  host: 'HOST'
+  port: 'PORT'
+  session_age: 'SESSION_AGE'
+  url_path_prefix: 'URL_PATH_PREFIX'
+  domain_url_protocol: 'DOMAIN_URL_PROTOCOL'
+  domain_url: 'DOMAIN_URL'
+
+security:
+  secret_key: 'SECRET_KEY'
+
+logging:
+  internal_level: 'LOG_LEVEL'
+  external_level: 'EXT_LOG_LEVEL'
+
+services:
+
+  service:
+    url: 'FSDR_SERVICE_URL'
+    username: 'FSDR_SERVICE_USER'
+    password: 'FSDR_SERVICE_PASS'
+
+  redis:
+    url: 'REDIS_SERVER'
+    port: 'REDIS_PORT'
+
+  sso:
+    config_folder: 'SSO_CONFIG_FOLDER'
