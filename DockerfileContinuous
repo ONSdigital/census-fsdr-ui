@@ -19,7 +19,7 @@ COPY Pipfile* ./
 RUN pipenv install --deploy --system
 
 #  COPY ./fsdr-ui .
-#  Get latest  dist and run script 
+#  Get latest dist and run script 
 COPY ./scripts/get_and_run_latest_dist.sh .
 
 USER fsdrui
