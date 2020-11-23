@@ -20,11 +20,13 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
 
     preferred_name = get_emp_info('preferredName', on_false='None')
 
+    mob_number = device_numbers[0] if len(device_numbers) > 0 else ''
+
     employment_glance = {'Unique Employee ID': get_emp_info('uniqueEmployeeId'),
                          'Name': employee_name,
                          'Preferred Name': preferred_name,
                          'ONS Email': get_emp_info('onsId'),
-                         'ONS Mobile Number':device_numbers[0] or '',
+                         'ONS Mobile Number': mob_number,
                          }
 
     emp_job_role = {'Job Role ID': current_job_role['uniqueRoleId'],
