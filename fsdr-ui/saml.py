@@ -29,11 +29,10 @@ saml_routes = RouteTableDef()
 logger = get_logger('fsdr-ui')
 
 
-# Check if the user is logged in
+'''# Check if the user is logged in
 async def is_logged_in(request):
     session = await get_session(request)
     return 'samlUserdata' in session
-
 
 async def get_role_id(request):
     session = await get_session(request)
@@ -43,6 +42,16 @@ async def get_role_id(request):
     # TODO extra checking here?
     return roleids[0]
 
+Temporarily  removed so that no IDP is required and local testing  can occur
+
+'''
+
+# Remove Below on Deployment
+
+async def is_logged_in(request):                
+    return true            
+async def get_role_id(request):                 
+    return '...'
 
 # Direct the user to the login screen
 def redirect_to_login(request):
