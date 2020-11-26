@@ -11,15 +11,4 @@ SERVICE_DOWN_MSG = {'text': 'Service is temporarily down', 'level': 'ERROR', 'ty
 SOMETHING_WENT_WRONG = {'text': 'Something went wrong. Please try again.', 'level': 'ERROR', 'type': 'SOMETHING_WENT_WRONG'}
 VALIDATION_FAILURE_MSG = {'text': 'Session timed out or permission denied', 'level': 'ERROR', 'type': 'VALIDATION_FAILURE_MSG', 'field': 'uac'}
 
-import os
-
-from aiohttp import web
-
-if not os.getenv('APP_SETTINGS'):
-    os.environ['APP_SETTINGS'] = 'DevelopmentConfig'
-
-if __name__ == '__main__':
-    from app.app import create_app
-    app = create_app()
-    web.run_app(app, port=app['PORT'])
 
