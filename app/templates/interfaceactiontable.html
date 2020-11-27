@@ -1,14 +1,8 @@
 {% extends 'base.html' %}
 
+{% from "custom/pagination/_macro.njk" import onsPagination %}
+{% from "components/table/_macro.njk" import onsTable %}
 {% from "custom/fsdrsearch/_macro.njk" import fsdrSearch %}
-{% from 'components/radios/_macro.njk' import onsRadios %}
-{% from "components/select/_macro.njk" import onsSelect %}
-{% from 'components/question/_macro.njk' import onsQuestion %}
-{% from "components/input/_macro.njk" import onsInput %}
-{% from 'components/button/_macro.njk' import onsButton %}
-{% from 'components/panel/_macro.njk' import onsPanel %}
-
-
 
 {% set page_title_value = page_title %}
 {% set index_url = "/interfaceactiontable" %}
@@ -16,52 +10,72 @@
 {% set form =  {
     'method': 'POST',
     'attributes': {
-        'action': url('SecondaryPage:post')
+            'action': url('SecondaryPage:post')
     }
 } %}
+{%  block page %}
+    {% block preMain %}
+    {% endblock %}
+    {% block pageContent %}
+        {% if messages_dict %}
+            {% include 'partials/messages.html' with context %}
+        {% endif %}
+        <div class="grid">
+            <div class="grid__col col-2@m"></div>
+            <div class="grid__col col-8@m">
+                <div class="table-scrollable__content">
+                    <br>
+                    <h1>{{ page_title_value }}</h1>
+                    {{ fsdrSearch({
+                            'distinct_job_roles': distinct_job_roles,
+                            'previous_select': previous_select,
+                            'previous_jobrole_selected': previous_jobrole_selected,
+                            'previous_area': previous_area,
+                            'previous_surname_filter': previous_surname_filter,
+                            'index_search': True
+                    }) }}
+                    {{ onsButton({
+                        'text': 'Filter THIS SHOWS DIFFERENCE',
+                        'classes': 'btn--small',
+                        'submitType': "loader",
+                        'name': 'action[submit]'
+                    }) }}
+                    {{ onsButton({
+                        'text': 'Clear THIS SHOWS DIFFERENCE',
+                        'type': 'reset',
+                        'classes': 'btn--small',
+                        'submitType': "loader",
+                        'url': url('MainPage:get')
+                    }) }}
+                    <br>
+                    <br>
+                    {{  onsTable({
+                        "sortable": true,
+                        "table_class": " table--sortable",
+                        "caption": "Field Workers",
+                        "sort_by": "Sort by",
+                        "aria_asc": "ascending",
+                        "aria_desc": "descending",
+                        "ths": table_headers,
+                        "trs": employee_records
+                        })
+                    }}
 
-{% block pageContent %}
-    {% block main %}
-        <div class="page__container container">
-            <div class="grid">
-                <div class="grid__col col-2@m"></div>
-                <div class="grid__col col-8@m">
-                    <main id="main-content" class="page__main">
-                        <div class="search">
-                            <h1>{{ page_title_value }}</h1>
-                            {% if no_search_criteria == "True" %}
-                                {% call onsPanel({
-                                        "title": "No Search criteria",
-                                        "titleTag": "h1",
-                                        "type": "error"
-                                }) %}
-                                <p>Please include search criteria</p>
-                                {% endcall %}
-                            {% endif %}
-                            {{ fsdrSearch({
-                                    'distinct_job_roles': distinct_job_roles,
-                                    'all_assignment_statuses': all_assignment_statuses,
-                                    'index_search': False
-
-                            }) }}
-
-                            {{ onsButton({
-                                'text': 'Submit THIS  SHOWS THE CORRECT PAGE LOAD',
-                                'classes': 'btn--small',
-                                'submitType': "loader",
-                                'name': 'action[submit]'
-                            }) }}
-                            {{ onsButton({
-                                'text': 'Clear THIS  SHOWS THE CORRECT PAGE LOAD',
-                                'classes': 'btn--small',
-                                'submitType': "loader",
-                                'url': '/search'
-                            }) }}
-                        </div>
-                    </main>
+                    <div class="page_numbering" align="center">
+                        {{
+                            onsPagination({
+                                "called_from_index": True,
+                                "previous": "Previous",
+                                "next": "Next",
+                                "last_page_number": last_page_number,
+                                "page_number": page_number,
+                                "link_url": 'MainPage:get'
+                            })
+                        }}
+                    </div>
                 </div>
-                <div class="grid__col col-2@m"></div>
             </div>
+            <div class="grid__col col-2@m"></div>
         </div>
     {% endblock %}
 {% endblock %}
