@@ -28,19 +28,10 @@ from .flash import flash
 saml_routes = RouteTableDef()
 logger = get_logger('fsdr-ui')
 
-async def is_logged_in(request):                
-    return true            
-async def get_role_id(request):                 
-    return '...'
-
-'''
-Removed for  testing, above takes over
-
 # Check if the user is logged in
 async def is_logged_in(request):
     session = await get_session(request)
     return 'samlUserdata' in session
-
 
 async def get_role_id(request):
     session = await get_session(request)
@@ -49,7 +40,6 @@ async def get_role_id(request):
     roleids = session['samlUserdata']['roleID']
     # TODO extra checking here?
     return roleids[0]
-'''
 
 # Direct the user to the login screen
 def redirect_to_login(request):
