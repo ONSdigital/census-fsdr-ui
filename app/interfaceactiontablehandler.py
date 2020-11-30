@@ -36,8 +36,8 @@ def log_entry(request, endpoint):
                 path=request.path)
 
 
-@interface_action_handler_table_routes('/interfaceactiontable')
-class MainPage:
+@interface_action_handler_table_routes.view('/interfaceactiontable')
+class InterfaceActionTable:
     @aiohttp_jinja2.template('interfaceactiontable.html')
     async def get(self, request):
         session = await get_session(request)
