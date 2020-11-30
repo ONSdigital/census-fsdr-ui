@@ -6,7 +6,7 @@ from .indexhandler import index_route
 from .handler import static_routes
 from .saml import saml_routes
 from .searchhandler import search_routes
-
+from .interfaceactiontablehandler import interface_action_handler_table_route
 
 extra_routes = RouteTableDef()
 
