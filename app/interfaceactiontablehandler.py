@@ -18,7 +18,7 @@ from . import saml
 from .flash import flash
 
 logger = get_logger('fsdr-ui')
-interface_action_handler_table_route = RouteTableDef()
+interface_action_handler_table_routes = RouteTableDef()
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
