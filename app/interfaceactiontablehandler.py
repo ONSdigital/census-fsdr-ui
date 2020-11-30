@@ -93,7 +93,7 @@ class InterfaceActionTable:
 
             return {
                 'page_title': f'Field Force view for: {user_role}',
-                'table_headers': iat_table_headers,
+                'table_headers': table_headers,
                 'employee_records': employee_records,
                 'page_number': page_number,
                 'last_page_number': int(math.floor(max_page)),
