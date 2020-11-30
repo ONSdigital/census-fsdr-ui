@@ -10,7 +10,7 @@ from aiohttp_session import get_session
 
 from app.searchcriteria import retrieve_job_roles, clear_stored_search_criteria
 from app.searchfunctions import get_employee_records, \
-    get_employee_count, employee_record_table, employee_table_headers, get_distinct_job_role_short
+    get_employee_count, iat_employee_record_table, iat_employee_table_headers, get_distinct_job_role_short
 from structlog import get_logger
 
 from . import (NEED_TO_SIGN_IN_MSG, NO_EMPLOYEE_DATA, SERVICE_DOWN_MSG)
@@ -85,15 +85,15 @@ class InterfaceActionTable:
                 raise ex
 
         if get_employee_info.status_code == 200:
-            table_headers = employee_table_headers()
+            table_headers = iat_employee_table_headers()
 
-            employee_records = employee_record_table(get_employee_info.json())
+            employee_records = iat_employee_record_table(get_employee_info.json())
 
             job_role_json = retrieve_job_roles(get_job_roles, '')
 
             return {
                 'page_title': f'Field Force view for: {user_role}',
-                'table_headers': table_headers,
+                'table_headers': iat_table_headers,
                 'employee_records': employee_records,
                 'page_number': page_number,
                 'last_page_number': int(math.floor(max_page)),

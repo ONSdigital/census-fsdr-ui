@@ -115,3 +115,65 @@ def employee_record_table(employee_records_json):
         ]}
         )
     return add_employees
+
+#Below is the layout generator for the interface action table  
+#  iat = Interface Action Table
+
+def iat_employee_table_headers():
+    add_headers = [
+        {
+            'value': 'Unique Role ID',
+            'aria_sort': 'none'
+        },
+        {
+            'value': 'Name',
+            'aria_sort': 'none'
+        },
+        {
+            'value': 'Employee ID',
+            'aria_sort': 'none'
+        },
+        {
+            'value': 'Job Role',
+            'aria_sort': 'none'
+        },
+        {
+            'value': 'Area',
+            'aria_sort': 'none'
+        },
+        {
+            'value': 'Asgmt. Status',
+            'aria_sort': 'none'
+        }
+    ]
+
+    return add_headers
+
+def iat_employee_record_table(employee_records_json):
+    add_employees = []
+    for employees in employee_records_json:
+        add_employees.append({'tds': [
+            {
+                'value': employees['unique_role_id']
+            },
+            {
+                'value': '<a href="/employeeinformation/' + employees['unique_employee_id'] + '">' +
+                         employees['first_name'] + " " + employees['surname'] + '</a>'
+            },
+            {
+                'value': "Employee ID here..." 
+            },
+            {
+                'value': employees['job_role_short']
+            },
+            {
+                'value': employees['area_location']
+            },
+            {
+                'value': employees['assignment_status']
+            }
+        ]}
+        )
+    return add_employees
+
+
