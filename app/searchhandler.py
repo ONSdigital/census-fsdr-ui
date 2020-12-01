@@ -8,10 +8,22 @@ from aiohttp.web import HTTPFound, RouteTableDef
 from aiohttp_session import get_session
 from structlog import get_logger
 
-from app.searchcriteria import store_search_criteria, retrieve_job_roles, retrieve_assignment_statuses, \
+from app.searchcriteria import (
+    store_search_criteria,
+    retrieve_job_roles,
+    retrieve_assignment_statuses, 
     clear_stored_search_criteria
-from app.searchfunctions import get_all_assignment_status, get_employee_records, \
-    allocate_search_ranges, employee_record_table, employee_table_headers, get_distinct_job_role_short
+)
+
+from app.searchfunctions import (
+    get_all_assignment_status,
+    get_employee_records, 
+    allocate_search_ranges,
+    employee_record_table,
+    employee_table_headers,
+    get_distinct_job_role_short
+)
+
 from . import (NEED_TO_SIGN_IN_MSG, NO_EMPLOYEE_DATA, SERVICE_DOWN_MSG)
 from . import saml
 from .flash import flash
