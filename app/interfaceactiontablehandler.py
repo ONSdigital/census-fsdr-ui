@@ -107,7 +107,7 @@ class InterfaceActionTable:
 
 #  Below is  from  search handler and  allows the  iat  to do  similar  funcionatlity
 
-@interface_action_handler_table_route.view('/iat-search-results')
+@interface_action_handler_table_routes.view('/iat-search-results')
 class IatSecondaryPage:
     @aiohttp_jinja2.template('iat-search-results.html')
     async def post(self, request):
