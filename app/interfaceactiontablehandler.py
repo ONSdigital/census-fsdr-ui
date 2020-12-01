@@ -109,7 +109,7 @@ class InterfaceActionTable:
             job_role_json = retrieve_job_roles(get_job_roles, '')
 
             return {
-                'page_title': f'Field Force view for: {user_role}',
+                'page_title': f'Interface Action Table view for: {user_role}',
                 'table_headers': table_headers,
                 'employee_records': employee_records,
                 'page_number': page_number,
@@ -218,7 +218,7 @@ class IatSecondaryPage:
             raise ex
 
         if retrieve_employee_info.status_code == 200:
-            table_headers = employee_table_headers()
+            table_headers = iat_employee_table_headers()
 
             employees_present = retrieve_employee_info.content
             if employees_present == b'[]':
@@ -234,7 +234,7 @@ class IatSecondaryPage:
 
             return {
                 'called_from_index': from_index,
-                'page_title': f'Field Force view for: {user_role}',
+                'page_title': f'Interface Action Table view for: {user_role}',
                 'table_headers': table_headers,
                 'employee_records': employee_records,
                 'page_number': page_number,
@@ -345,7 +345,7 @@ class IatSecondaryPage:
             raise ex
 
         if retrieve_employee_info.status_code == 200:
-            table_headers = employee_table_headers()
+            table_headers = iat_employee_table_headers()
 
             employee_records = employee_record_table(
                 retrieve_employee_info.json())
@@ -355,7 +355,7 @@ class IatSecondaryPage:
 
             return {
                 'called_from_index': from_index,
-                'page_title': f'Field Force view for: {user_role}',
+                'page_title': f'Interface Action Table view for: {user_role}',
                 'table_headers': table_headers,
                 'employee_records': employee_records,
                 'page_number': int(page_number),
