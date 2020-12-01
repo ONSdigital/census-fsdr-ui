@@ -226,7 +226,7 @@ class IatSecondaryPage:
                 employee_records = ''
             else:
                 no_employee_data = 'false'
-                employee_records = employee_record_table(
+                employee_records = iat_employee_record_table(
                     retrieve_employee_info.json())
 
             job_role_short_json = retrieve_job_roles(
@@ -347,7 +347,7 @@ class IatSecondaryPage:
         if retrieve_employee_info.status_code == 200:
             table_headers = iat_employee_table_headers()
 
-            employee_records = employee_record_table(
+            employee_records = iat_employee_record_table(
                 retrieve_employee_info.json())
 
             job_role_json = retrieve_job_roles(get_job_roles,
