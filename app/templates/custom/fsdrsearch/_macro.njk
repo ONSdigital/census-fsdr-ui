@@ -94,6 +94,82 @@
                 }
             })
         }}
+
+
+    {% elif params.index_search == "IAT" %}
+        <table>
+            <tr>
+                {{
+                    onsLabel({
+                        "id": 'label',
+                        "for": "some-input",
+                        "text": 'Filter Interface Action Table'
+                    })
+                }}
+                <td>
+                    {{
+                        onsSelect({
+                            "id": "select",
+                            'name': "job_role_select",
+                            "label": {
+                                "text": "Job Role"
+                            },
+                            "options": params.distinct_job_roles
+                        })
+                    }}
+                </td>
+                <td>
+                    {{
+                        onsInput({
+                            "id": "text",
+                            'name': "filter_surname",
+                            "label": {
+                                "text": "Worker Surname"
+                            },
+                            "value": params.previous_surname_filter
+                        })
+                    }}
+                </td>
+                <td>
+                    {{
+                        onsInput({
+                            "id": "text",
+                            'name': "filter_area",
+                            "label": {
+                                "text": "Area"
+                            },
+                            "value": params.previous_area
+                        })
+                    }}
+                </td>
+                {{
+                    onsInput({
+                        "type": "hidden",
+                        "classes": "u-d-no",
+                        "id": "adlocation",
+                        "name": "adlocation",
+                        "value": adlocation,
+                        "label": {
+                            "text": "Enter some text",
+                            "classes": "u-d-no"
+                        }
+                    })
+                }}
+            </tr>
+         <table>
+         {{
+            onsInput({
+                "type": "hidden",
+                "classes": "u-d-no",
+                "id": "indexsearch",
+                "name": "indexsearch",
+                "value": indexsearch,
+                "label": {
+                    "text": "Enter some text",
+                    "classes": "u-d-no"
+                }
+            })
+        }}
     {% else %}
         {{
             onsInput({
