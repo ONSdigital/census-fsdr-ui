@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% from 'components/lists/_macro.njk' import onsList %}
+{% from 'components/input/_macro.njk' import onsInput %}
+{% from "custom/pagination/_macro.njk" import onsPagination %}
+{% from 'components/panel/_macro.njk' import onsPanel %}
+{% from "components/table/_macro.njk" import onsTable %}
+{% from "custom/fsdrsearch/_macro.njk" import fsdrSearch %}
+
+{% set page_title_value = page_title %}
+{% set search_url = "/search-results" %}
+
+{% set form =  {
+    'method': 'POST',
+    'id': 'searchform',
+    'attributes': {
+        'action': url('IatSecondaryPage:post')
+    }
+} %}
+
+{% block pageContent %}
+    {% block main %}
+        <div class="grid">
+            <div class="grid__col col-2@m"></div>
+            <div class="grid__col col-8@m">
+                <div class="table-scrollable__content">
+                    <br>
+                    <h1>{{ page_title_value }}</h1>
+                    {% if called_from_index == 'false' %}
+                        {{ onsButton({
+                            'text': 'Back to Interface  Action Table',
+                            'classes': 'btn--small',
+                            'submitType': "loader",
+                            'url': 'InterfaceActionTable:get'
+                        }) }}
+                        <br>
+                    {% else %}
+                        {{ fsdrSearch({
+                            'distinct_job_roles': distinct_job_roles,
+                            'previous_select': previous_select,
+                            'previous_jobrole_selected': previous_jobrole_selected,
+                            'previous_area': previous_area,
+                            'previous_surname_filter': previous_surname_filter,
+                            'index_search': True,
+                        }) }}
+                        {{ onsButton({
+                            'text': 'Filter',
+                            'classes': 'btn--small',
+                            'submitType': "loader",
+                            'name': 'action[submit]'
+                        }) }}
+                        {% if called_from_index == 'false' %}
+                            {{ onsButton({
+                                'text': 'Clear',
+                                'classes': 'btn--small',
+                                'submitType': "loader",
+                                'url': url('Search:get')
+                            }) }}
+                        {% else %}
+                            {{ onsButton({
+                                'text': 'Clear',
+                                'classes': 'btn--small',
+                                'submitType': "loader",
+                                'url': url('InterfaceActionTable:get')
+                            }) }}
+                        {% endif %}
+                        <br>
+                    {% endif %}
+                    {% if no_employee_data == 'true' %}
+                        <br>
+                        {% call onsPanel({
+                            "title": "No employee data",
+                            "titleTag": "h1",
+                            "type": "error"
+                            }) %}
+                            <p>No employee records have been found</p>
+                        {% endcall %}
+                    {% else %}
+                        <br>
+                        {{  onsTable({
+                            "sortable": true,
+                            "table_class": " table--sortable",
+                            "caption": "Field Workers",
+                            "sort_by": "Sort by",
+                            "aria_asc": "ascending",
+                            "aria_desc": "descending",
+                            "ths": table_headers,
+                            "trs": employee_records
+                            })
+                        }}
+
+                        <div class="page_numbering" align="center">
+                            {{
+                                onsPagination({
+                                    "previous_selection": previous_selection,
+                                    "called_from_index": called_from_index,
+                                    "previous": "Previous",
+                                    "next": "Next",
+                                    "last_page_number": last_page_number,
+                                    "page_number": page_number,
+                                    "link_url": 'IatSecondaryPage:post'
+                                    })
+                            }}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="grid__col col-2@m"></div>
+        </div>
+    {% endblock %}
+{% endblock %}
+</script>
