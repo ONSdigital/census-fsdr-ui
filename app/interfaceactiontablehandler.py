@@ -1,21 +1,25 @@
-import os
-import sys
+import json
+import math
 
 import aiohttp_jinja2
-import math
 
 from aiohttp.client_exceptions import (ClientResponseError)
 from aiohttp.web import HTTPFound, RouteTableDef
 from aiohttp_session import get_session
+from structlog import get_logger
 
-from app.searchcriteria import retrieve_job_roles, clear_stored_search_criteria
+from app.searchcriteria import store_search_criteria, retrieve_job_roles, retrieve_assignment_statuses, clear_stored_search_criteria  
 from app.searchfunctions import get_employee_records, \
     get_employee_count, iat_employee_record_table, iat_employee_table_headers, get_distinct_job_role_short
-from structlog import get_logger
 
 from . import (NEED_TO_SIGN_IN_MSG, NO_EMPLOYEE_DATA, SERVICE_DOWN_MSG)
 from . import saml
 from .flash import flash
+from flask import Flask
+
+import sys
+import os
+
 
 logger = get_logger('fsdr-ui')
 interface_action_handler_table_routes = RouteTableDef()
