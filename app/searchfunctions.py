@@ -122,7 +122,7 @@ def employee_record_table(employee_records_json):
 def iat_employee_table_headers():
     add_headers = [
         {
-            'value': 'Unique Role ID',
+            'value': 'Role ID',
             'aria_sort': 'none'
         },
         {
@@ -161,7 +161,7 @@ def iat_employee_record_table(employee_records_json):
                          employees['first_name'] + " " + employees['surname'] + '</a>'
             },
             {
-                'value': "Employee ID here..." 
+                'value': employees['unique_employee_id']
             },
             {
                 'value': str(employees)
