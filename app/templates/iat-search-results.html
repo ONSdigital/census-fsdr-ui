@@ -8,7 +8,7 @@
 {% from "custom/fsdrsearch/_macro.njk" import fsdrSearch %}
 
 {% set page_title_value = page_title %}
-{% set search_url = "/search-results" %}
+{% set search_url = "/iat-search-results" %}
 
 {% set form =  {
     'method': 'POST',
@@ -44,7 +44,7 @@
                             'index_search': True,
                         }) }}
                         {{ onsButton({
-                            'text': 'Filter',
+                            'text': 'Filter Interface Action Table',
                             'classes': 'btn--small',
                             'submitType': "loader",
                             'name': 'action[submit]'
@@ -54,7 +54,7 @@
                                 'text': 'Clear',
                                 'classes': 'btn--small',
                                 'submitType': "loader",
-                                'url': url('Search:get')
+                                'url': url('InterfaceActionTable:get')
                             }) }}
                         {% else %}
                             {{ onsButton({

@@ -134,7 +134,7 @@ def iat_employee_table_headers():
             'aria_sort': 'none'
         },
         {
-            'value': 'Job Role',
+            'value': 'Employees',
             'aria_sort': 'none'
         },
         {
@@ -164,7 +164,7 @@ def iat_employee_record_table(employee_records_json):
                 'value': "Employee ID here..." 
             },
             {
-                'value': employees['job_role_short']
+                'value': str(employees)
             },
             {
                 'value': employees['area_location']
