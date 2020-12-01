@@ -166,9 +166,11 @@ class IatSecondaryPage:
                 previous_jobrole_selected = data.get('job_role_select')
                 search_criteria['jobRoleShort'] = data.get('job_role_select')
 
-            if data.get('filter_area'):
-                previous_area = data.get('filter_area')
-                search_criteria['area'] = previous_area
+        #Changed to allow ID filtering
+
+            if data.get('filter_unique_employee_id'):
+                unique_employee_id = data.get('filter_unique_employee_id')
+                search_criteria['unique_employee_id'] = unique_employee_id
 
             if data.get('filter_surname'):
                 previous_surname = data.get('filter_surname')
@@ -299,9 +301,11 @@ class IatSecondaryPage:
                 previous_jobrole_selected = session['jobRoleShort']
                 search_criteria['jobRoleShort'] = previous_jobrole_selected
 
-            if session.get('area'):
-                previous_area = session['area']
-                search_criteria['area'] = previous_area
+        #Changed to allow ID filtering
+
+            if data.get('filter_unique_employee_id'):
+                unique_employee_id = data.get('filter_unique_employee_id')
+                search_criteria['unique_employee_id'] = unique_employee_id
 
             if session.get('surname'):
                 previous_surname = session['surname']
