@@ -36,7 +36,7 @@ def get_employee_records(user_filter="", calledFromIAT=False):
         user_filter
     )
 
-    if calledFromIAT == True:
+    if (False) and (calledFromIAT == True):
         errorLevel =("Beep Boop, the filter applied is as follows: " + str(user_filter) + "\nMeaning the fill applied filter is: " + str(employee_record_url)) 
         raise TypeError(errorLevel)
 
