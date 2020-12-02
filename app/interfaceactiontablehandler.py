@@ -212,7 +212,7 @@ class IatSecondaryPage:
             search_criteria_with_range['rangeLow'] = low_value
 
             retrieve_employee_info = get_employee_records(
-                search_criteria_with_range)
+                search_criteria_with_range, calledFromIAT=True)
 
             get_job_roles = get_distinct_job_role_short()
 
@@ -332,7 +332,7 @@ class IatSecondaryPage:
             search_criteria_with_range['rangeLow'] = low_value
 
             retrieve_employee_info = get_employee_records(
-                search_criteria_with_range)
+                search_criteria_with_range, calledFromIAT=True)
 
             get_job_roles = get_distinct_job_role_short()
         except ClientResponseError as ex:

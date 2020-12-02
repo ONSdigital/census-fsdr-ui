@@ -30,13 +30,15 @@ def get_all_assignment_status():
                         auth=HTTPBasicAuth(FSDR_USER, FSDR_PASS))
 
 
-def get_employee_records(user_filter=""):
+def get_employee_records(user_filter="", calledFromIAT=False):
     employee_record_url = URL(
         FSDR_URL + f'/fieldforce/byType/byRangeAndUserFilter/').with_query(
         user_filter
     )
-    errorLevel =("Beep Boop, the filter applied is as follows: " + str(user_filter) + "\nMeaning the fill applied filter is: " + str(employee_record_url)) 
-    raise TypeError(errorLevel)
+
+    if calledFromIAT == True:
+        errorLevel =("Beep Boop, the filter applied is as follows: " + str(user_filter) + "\nMeaning the fill applied filter is: " + str(employee_record_url)) 
+        raise TypeError(errorLevel)
 
     return requests.get(employee_record_url,
                         verify=False,
