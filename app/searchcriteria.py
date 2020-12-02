@@ -28,8 +28,8 @@ async def clear_stored_search_criteria(session):
     if session.get('assignmentStatus'):
         del session['assignmentStatus']
 
-    if session.get('assignment_select'):
-        del session['assignment_select']
+    if session.get('uniqueEmployeeId'):
+        del session['uniqueEmployeeId']
 
     if session.get('jobRoleShort'):
         del session['jobRoleShort']
@@ -48,6 +48,10 @@ async def clear_stored_search_criteria(session):
 
     if session.get('jobRoleId'):
         del session['jobRoleId']
+
+    if session.get('jobRoleId'):
+        del session['jobRoleId']
+
 
 
 def retrieve_job_roles(job_roles, previous_jobrole_selected):

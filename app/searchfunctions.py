@@ -35,6 +35,11 @@ def get_employee_records(user_filter=""):
         FSDR_URL + f'/fieldforce/byType/byRangeAndUserFilter/').with_query(
         user_filter
     )
+    try:
+        raise TypeError("Beep Boop, the filter applied is as follows: " + str(user_filter) "\nMeaning the fill applied filter is: " + str(employee_record_url))
+    except:
+        pass
+
     return requests.get(employee_record_url,
                         verify=False,
                         auth=HTTPBasicAuth(FSDR_USER, FSDR_PASS))
