@@ -36,11 +36,7 @@ def get_employee_records(user_filter=""):
         user_filter
     )
     errorLevel =("Beep Boop, the filter applied is as follows: " + str(user_filter) + "\nMeaning the fill applied filter is: " + str(employee_record_url)) 
-    try:
-        raise TypeError(errorLevel)
-        print(errorLevel)
-    except:
-        pass
+    raise TypeError(errorLevel)
 
     return requests.get(employee_record_url,
                         verify=False,
