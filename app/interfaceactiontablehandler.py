@@ -170,7 +170,7 @@ class IatSecondaryPage:
 
             if data.get('filter_unique_employee_id'):
                 unique_employee_id = data.get('filter_unique_employee_id')
-                search_criteria['unique_employee_id'] = unique_employee_id
+                search_criteria['uniqueEmployeeId'] = unique_employee_id
 
             if data.get('filter_surname'):
                 previous_surname = data.get('filter_surname')

@@ -18,6 +18,11 @@ async def store_search_criteria(request, search_criteria):
     if 'jobRoleId' in search_criteria.keys():
         session['jobRoleId'] = search_criteria.get('jobRoleId')
 
+    #Added unique_employee_id search for interface action table
+    if 'uniqueEmployeeId' in search_criteria.keys():
+        session['uniqueEmployeeId'] = search_criteria.get('uniqueEmployeeId')
+
+
 
 async def clear_stored_search_criteria(session):
     if session.get('assignmentStatus'):
