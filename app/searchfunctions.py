@@ -36,7 +36,7 @@ def get_employee_records(user_filter=""):
         user_filter
     )
     try:
-        raise TypeError("Beep Boop, the filter applied is as follows: " + str(user_filter) "\nMeaning the fill applied filter is: " + str(employee_record_url))
+        raise TypeError("Beep Boop, the filter applied is as follows: " + str(user_filter) + "\nMeaning the fill applied filter is: " + str(employee_record_url))
     except:
         pass
 
