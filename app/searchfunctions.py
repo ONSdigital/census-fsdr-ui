@@ -7,7 +7,6 @@ import requests
 
 from requests.auth import HTTPBasicAuth
 
-
 def get_employee_count(user_filter=""):
     employee_record_url = URL(
         FSDR_URL + "/fieldforce/employeeCount/").with_query(
@@ -32,7 +31,7 @@ def get_all_assignment_status():
 
 def get_employee_records(user_filter="", calledFromIAT=False):
     employee_record_url = URL(
-        FSDR_URL + f'/fieldforce/byType/byRangeAndUserFilter/').with_query(
+        FSDR_URL + f'/fieldforce/byType/byRangeAndUserFilter' + str("Iat/" calledFromIAT == True "/") ).with_query(
         user_filter
     )
 
