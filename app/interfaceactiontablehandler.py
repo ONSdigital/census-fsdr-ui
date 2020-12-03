@@ -122,7 +122,7 @@ class InterfaceActionTable:
             raise HTTPFound(request.app.router['MainPage:get'].url_for())
 
 
-#  Below is  from  search handler and  allows the  iat  to do  similar  funcionatlity
+#  Below is  from  search handler and  allows the  iat  to do  similar  funcionatlity, but in addiotn will search IAT
 
 @interface_action_handler_table_routes.view('/iat-search-results')
 class IatSecondaryPage:
