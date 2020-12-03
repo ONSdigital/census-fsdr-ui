@@ -31,7 +31,7 @@ def get_all_assignment_status():
 
 def get_employee_records(user_filter="", calledFromIAT=False):
     employee_record_url = URL(
-        FSDR_URL + f'/fieldforce/byType/byRangeAndUserFilter' + str("Iat/" if calledFromIAT == True "/") ).with_query(
+        FSDR_URL + f'/fieldforce/byType/byRangeAndUserFilter' + str("Iat/" if calledFromIAT == True else "/") ).with_query(
         user_filter
     )
 
