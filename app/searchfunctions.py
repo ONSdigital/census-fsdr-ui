@@ -153,11 +153,7 @@ def iat_employee_table_headers():
             'value': 'Gsuite',
             'aria_sort': 'none'
         },
-        {
-            'value': 'Adecco',
-            'aria_sort': 'none'
-        },
-       ]
+      ]
 
     return add_headers
 
@@ -190,10 +186,7 @@ def iat_employee_record_table(employee_records_json):
             {
                 'value': employees['gsuite_status']
             },
-            {
-                'value': employees['adecco_status']
-            },
-        ]}
+       ]}
         )
     return add_employees
 
