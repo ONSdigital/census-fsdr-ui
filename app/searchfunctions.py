@@ -35,12 +35,6 @@ def get_employee_records(user_filter="", calledFromIAT=False):
         user_filter
     )
 
-#   Remove before delpoyment, used to see current filter by deliberately crashing the server
-
-#    if (False) and (calledFromIAT == True):
-#       errorLevel =("Beep Boop, the filter applied is as follows: " + str(user_filter) + "\nMeaning the fill applied filter is: " + str(employee_record_url)) 
-#       raise TypeError(errorLevel)
-
     return requests.get(employee_record_url,
                         verify=False,
                         auth=HTTPBasicAuth(FSDR_USER, FSDR_PASS))
