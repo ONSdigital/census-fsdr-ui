@@ -140,18 +140,34 @@ def iat_employee_table_headers():
             'aria_sort': 'none'
         },
         {
-            'value': 'Employees',
+            'value': 'xma_status',
             'aria_sort': 'none'
         },
         {
-            'value': 'Area',
+            'value': 'granby_status',
             'aria_sort': 'none'
         },
         {
-            'value': 'Asgmt. Status',
+            'value': 'lone_worker_solution_status',
             'aria_sort': 'none'
-        }
-    ]
+        },
+        {
+            'value': 'service_now_status',
+            'aria_sort': 'none'
+        },
+        {
+            'value': 'gsuite_status',
+            'aria_sort': 'none'
+        },
+        {
+            'value': 'adecco_status',
+            'aria_sort': 'none'
+        },
+        {
+            'value': 'assignment_status',
+            'aria_sort': 'none'
+        },
+        ]
 
     return add_headers
 
@@ -170,14 +186,27 @@ def iat_employee_record_table(employee_records_json):
                 'value': employees['unique_employee_id']
             },
             {
-                'value': str(employees)
+                'value': employees['xma_status']
             },
             {
-                'value': employees['area_location']
+                'value': employees['granby_status']
+            },
+            {
+                'value': employees['lone_worker_solution_status']
+            },
+            {
+                'value': employees['service_now_status']
+            },
+            {
+                'value': employees['gsuite_status']
+            },
+            {
+                'value': employees['adecco_status']
             },
             {
                 'value': employees['assignment_status']
-            }
+            },
+ 
         ]}
         )
     return add_employees
