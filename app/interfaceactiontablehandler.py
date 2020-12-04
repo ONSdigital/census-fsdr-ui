@@ -89,7 +89,7 @@ class InterfaceActionTable:
 
                 search_range = {'rangeHigh': high_value, 'rangeLow': low_value}
 
-                get_employee_info = get_employee_records(search_range)
+                get_employee_info = get_employee_records(search_range, calledFromIAT=True)
                 get_job_roles = get_distinct_job_role_short()
         except ClientResponseError as ex:
             if ex.status == 503:
