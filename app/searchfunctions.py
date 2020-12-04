@@ -140,31 +140,31 @@ def iat_employee_table_headers():
             'aria_sort': 'none'
         },
         {
-            'value': 'xma_status',
+            'value': 'XMA',
             'aria_sort': 'none'
         },
         {
-            'value': 'granby_status',
+            'value': 'Granby',
             'aria_sort': 'none'
         },
         {
-            'value': 'lone_worker_solution_status',
+            'value': 'Lone Worker',
             'aria_sort': 'none'
         },
         {
-            'value': 'service_now_status',
+            'value': 'Service Now',
             'aria_sort': 'none'
         },
         {
-            'value': 'gsuite_status',
+            'value': 'Gsuite',
             'aria_sort': 'none'
         },
         {
-            'value': 'adecco_status',
+            'value': 'Adecci',
             'aria_sort': 'none'
         },
         {
-            'value': 'assignment_status',
+            'value': 'Assignement',
             'aria_sort': 'none'
         },
         ]
