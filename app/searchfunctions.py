@@ -165,8 +165,7 @@ def iat_employee_record_table(employee_records_json):
                 'value': employees['unique_role_id']
             },
             {
-                'value': '<a href="/employeeinformation/' + employees['unique_employee_id'] + '">' +
-                         employees['first_name'] + " " + employees['surname'] + '</a>'
+                'value': employees['first_name'] + " " + employees['surname']  
             },
             {
                 'value': employees['unique_employee_id']
@@ -189,5 +188,3 @@ def iat_employee_record_table(employee_records_json):
        ]}
         )
     return add_employees
-
-
