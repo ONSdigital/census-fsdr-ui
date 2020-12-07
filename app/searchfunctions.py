@@ -187,4 +187,33 @@ def iat_employee_record_table(employee_records_json):
             },
        ]}
         )
+
+    add_employees.append( {'tds': [
+            {
+                'value':'TESTROLEID', 
+            },
+            {
+                'value':"DaveoMcDave" 
+            },
+            {
+                'value':"Value" 
+            },
+            {
+                'value':"Potential" 
+            },
+            {
+                'value':"Chicken" 
+            },
+            {
+                'value':"NOT DONE" 
+            },
+            {
+                'value':"Test" 
+            },
+            {
+                'value':"Reea" 
+            },
+       ]}
+)
+
     return add_employees
