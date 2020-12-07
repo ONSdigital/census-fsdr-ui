@@ -168,7 +168,7 @@ def iat_employee_record_table(employee_records_json):
                 'value': employees['first_name'] + " " + employees['surname']  
             },
             {
-                'value': employees['unique_employee_id']
+                'value': "#" + str(employees['unique_employee_id'])
             },
             {
                 'value': employees['xma_status']
@@ -188,7 +188,7 @@ def iat_employee_record_table(employee_records_json):
        ]}
         )
 
-    add_employees.append( {'tds': [
+    a = ( {'tds': [
             {
                 'value':'TESTROLEID', 
             },
