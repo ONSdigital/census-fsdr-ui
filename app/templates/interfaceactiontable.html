@@ -5,12 +5,12 @@
 {% from "custom/fsdrsearch/_macro.njk" import fsdrSearch %}
 
 {% set page_title_value = page_title %}
-{% set index_url = "/index" %}
+{% set index_url = "/interfaceactiontable" %}
 
 {% set form =  {
     'method': 'POST',
     'attributes': {
-            'action': url('SecondaryPage:post')
+            'action': url('IatSecondaryPage:post')
     }
 } %}
 {%  block page %}
@@ -32,10 +32,10 @@
                             'previous_jobrole_selected': previous_jobrole_selected,
                             'previous_area': previous_area,
                             'previous_surname_filter': previous_surname_filter,
-                            'index_search': True
+                            'index_search': "IAT", 
                     }) }}
                     {{ onsButton({
-                        'text': 'Filter',
+                        'text': 'Filter Interface Action Table',
                         'classes': 'btn--small',
                         'submitType': "loader",
                         'name': 'action[submit]'
@@ -45,7 +45,7 @@
                         'type': 'reset',
                         'classes': 'btn--small',
                         'submitType': "loader",
-                        'url': url('MainPage:get')
+                        'url': url('InterfaceActionTable:get')
                     }) }}
                     <br>
                     <br>
@@ -69,7 +69,7 @@
                                 "next": "Next",
                                 "last_page_number": last_page_number,
                                 "page_number": page_number,
-                                "link_url": 'MainPage:get'
+                                "link_url": 'InterfaceActionTable:get'
                             })
                         }}
                     </div>

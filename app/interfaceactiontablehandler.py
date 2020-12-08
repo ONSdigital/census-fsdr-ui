@@ -11,63 +11,105 @@ from structlog import get_logger
 from app.searchcriteria import (
     store_search_criteria,
     retrieve_job_roles,
-    retrieve_assignment_statuses, 
-    clear_stored_search_criteria
+    retrieve_assignment_statuses,
+    clear_stored_search_criteria  
 )
 
 from app.searchfunctions import (
     get_all_assignment_status,
     get_employee_records, 
     allocate_search_ranges,
-    employee_record_table,
-    employee_table_headers,
-    get_distinct_job_role_short
+    iat_employee_record_table,
+    iat_employee_table_headers,
+    get_distinct_job_role_short,
+    get_employee_count
 )
 
 from . import (NEED_TO_SIGN_IN_MSG, NO_EMPLOYEE_DATA, SERVICE_DOWN_MSG)
 from . import saml
 from .flash import flash
-from flask import Flask
+
+import sys
+import os
+
 
 logger = get_logger('fsdr-ui')
-search_routes = RouteTableDef()
-app = Flask(__name__)
+interface_action_handler_table_routes = RouteTableDef()
 
 
-@search_routes.view('/search')
-class Search:
-    @aiohttp_jinja2.template('search.html')
+def setup_request(request):
+    request['client_ip'] = request.headers.get('X-Forwarded-For', None)
+
+
+def log_entry(request, endpoint):
+    method = request.method
+    logger.info(f"received {method} on endpoint '{endpoint}'",
+                method=request.method,
+                path=request.path)
+
+
+@interface_action_handler_table_routes.view('/interfaceactiontable')
+class InterfaceActionTable:
+    @aiohttp_jinja2.template('interfaceactiontable.html')
     async def get(self, request):
         session = await get_session(request)
 
         await saml.ensure_logged_in(request)
 
         await clear_stored_search_criteria(session)
+        setup_request(request)
+        log_entry(request, 'start')
+
         user_role = await saml.get_role_id(request)
 
+        if 'page' in request.query:
+            page_number = int(request.query['page'])
+        else:
+            page_number = 1
+
         try:
-            get_job_roles = get_distinct_job_role_short()
-            get_all_assignment_statuses = get_all_assignment_status()
+            employee_count = get_employee_count()
+            max_page = (int(employee_count.text) / 50) - 1
+            if page_number >= max_page > 1:
+                page_number = int(math.floor(max_page))
+            else:
+                if max_page < 1:
+                    max_page = 1
+                if page_number > 1:
+                    low_value = 50 * page_number
+                    high_value = low_value + 50
+                else:
+                    low_value = page_number
+                    high_value = 50
+
+                search_range = {'rangeHigh': high_value, 'rangeLow': low_value}
+
+                get_employee_info = get_employee_records(search_range, calledFromIAT=True)
+                get_job_roles = get_distinct_job_role_short()
         except ClientResponseError as ex:
             if ex.status == 503:
-                logger.warn('Server is unavailable',
-                            client_ip=request['client_ip'])
+                ip = request['client_ip']
+                logger.warn('Server is unavailable', client_ip=ip)
                 flash(request, SERVICE_DOWN_MSG)
                 return aiohttp_jinja2.render_template('error503.html', request,
                                                       {'include_nav': False})
             else:
                 raise ex
 
-        if get_job_roles.status_code == 200 and get_all_assignment_statuses.status_code == 200:
+        if get_employee_info.status_code == 200:
+            table_headers = iat_employee_table_headers()
+
+            employee_records = iat_employee_record_table(get_employee_info.json())
 
             job_role_json = retrieve_job_roles(get_job_roles, '')
-            assignment_statuses_json = retrieve_assignment_statuses(
-                get_all_assignment_statuses)
 
             return {
-                'page_title': f'Field Force view for: {user_role}',
+                'page_title': f'Interface Action Table view for: {user_role}',
+                'table_headers': table_headers,
+                'employee_records': employee_records,
+                'page_number': page_number,
+                'last_page_number': int(math.floor(max_page)),
                 'distinct_job_roles': job_role_json,
-                'all_assignment_statuses': assignment_statuses_json
             }
         else:
             logger.warn('Database is down', client_ip=request['client_ip'])
@@ -75,9 +117,11 @@ class Search:
             raise HTTPFound(request.app.router['MainPage:get'].url_for())
 
 
-@search_routes.view('/search-results')
-class SecondaryPage:
-    @aiohttp_jinja2.template('search-results.html')
+#  Below is  from  search handler and  allows the  iat  to do  similar  funcionatlity, but in addiotn will search IAT
+
+@interface_action_handler_table_routes.view('/iat-search-results')
+class IatSecondaryPage:
+    @aiohttp_jinja2.template('iat-search-results.html')
     async def post(self, request):
         session = await get_session(request)
         data = await request.post()
@@ -117,9 +161,11 @@ class SecondaryPage:
                 previous_jobrole_selected = data.get('job_role_select')
                 search_criteria['jobRoleShort'] = data.get('job_role_select')
 
-            if data.get('filter_area'):
-                previous_area = data.get('filter_area')
-                search_criteria['area'] = previous_area
+        #Changed to allow ID filtering
+
+            if data.get('filter_unique_employee_id'):
+                unique_employee_id = data.get('filter_unique_employee_id')
+                search_criteria['uniqueEmployeeId'] = unique_employee_id
 
             if data.get('filter_surname'):
                 previous_surname = data.get('filter_surname')
@@ -145,7 +191,7 @@ class SecondaryPage:
                 await store_search_criteria(request, search_criteria)
 
             if search_criteria == '' and from_index == 'true':
-                raise HTTPFound(request.app.router['MainPage:get'].url_for())
+                raise HTTPFound(request.app.router['InterfaceActionTable:get'].url_for())
             elif search_criteria == '' and from_index == 'false':
                 return aiohttp_jinja2.render_template(
                     'search.html',
@@ -161,7 +207,7 @@ class SecondaryPage:
             search_criteria_with_range['rangeLow'] = low_value
 
             retrieve_employee_info = get_employee_records(
-                search_criteria_with_range)
+                search_criteria_with_range, calledFromIAT=True)
 
             get_job_roles = get_distinct_job_role_short()
 
@@ -169,7 +215,7 @@ class SecondaryPage:
             raise ex
 
         if retrieve_employee_info.status_code == 200:
-            table_headers = employee_table_headers()
+            table_headers = iat_employee_table_headers()
 
             employees_present = retrieve_employee_info.content
             if employees_present == b'[]':
@@ -177,7 +223,7 @@ class SecondaryPage:
                 employee_records = ''
             else:
                 no_employee_data = 'false'
-                employee_records = employee_record_table(
+                employee_records = iat_employee_record_table(
                     retrieve_employee_info.json())
 
             job_role_short_json = retrieve_job_roles(
@@ -185,7 +231,7 @@ class SecondaryPage:
 
             return {
                 'called_from_index': from_index,
-                'page_title': f'Field Force view for: {user_role}',
+                'page_title': f'Interface Action Table view for: {user_role}',
                 'table_headers': table_headers,
                 'employee_records': employee_records,
                 'page_number': page_number,
@@ -213,7 +259,7 @@ class SecondaryPage:
                                                   },
                                                   status=401)
 
-    @aiohttp_jinja2.template('search-results.html')
+    @aiohttp_jinja2.template('iat-search-results.html')
     async def get(self, request):
         session = await get_session(request)
 
@@ -250,9 +296,11 @@ class SecondaryPage:
                 previous_jobrole_selected = session['jobRoleShort']
                 search_criteria['jobRoleShort'] = previous_jobrole_selected
 
-            if session.get('area'):
-                previous_area = session['area']
-                search_criteria['area'] = previous_area
+        #Changed to allow ID filtering
+
+            if data.get('filter_unique_employee_id'):
+                unique_employee_id = data.get('filter_unique_employee_id')
+                search_criteria['uniqueEmployeeId'] = unique_employee_id
 
             if session.get('surname'):
                 previous_surname = session['surname']
@@ -279,7 +327,7 @@ class SecondaryPage:
             search_criteria_with_range['rangeLow'] = low_value
 
             retrieve_employee_info = get_employee_records(
-                search_criteria_with_range)
+                search_criteria_with_range, calledFromIAT=True)
 
             get_job_roles = get_distinct_job_role_short()
         except ClientResponseError as ex:
@@ -296,9 +344,9 @@ class SecondaryPage:
             raise ex
 
         if retrieve_employee_info.status_code == 200:
-            table_headers = employee_table_headers()
+            table_headers = iat_employee_table_headers()
 
-            employee_records = employee_record_table(
+            employee_records = iat_employee_record_table(
                 retrieve_employee_info.json())
 
             job_role_json = retrieve_job_roles(get_job_roles,
@@ -306,7 +354,7 @@ class SecondaryPage:
 
             return {
                 'called_from_index': from_index,
-                'page_title': f'Field Force view for: {user_role}',
+                'page_title': f'Interface Action Table view for: {user_role}',
                 'table_headers': table_headers,
                 'employee_records': employee_records,
                 'page_number': int(page_number),
@@ -330,3 +378,4 @@ class SecondaryPage:
                 'page_title': 'Sign in',
                 'include_nav': False
             })
+
