@@ -30,6 +30,16 @@ def get_all_assignment_status():
                         auth=HTTPBasicAuth(FSDR_USER, FSDR_PASS))
 
 
+
+def get_employee_records_no_device(user_filter=""):
+    employee_record_url = URL(
+        FSDR_URL + f'/fieldforce/byType/byRangeAndUserFilter/').with_query(
+        user_filter
+    )
+    return requests.get(employee_record_url,
+                        verify=False,
+                        auth=HTTPBasicAuth(FSDR_USER, FSDR_PASS))
+
 def get_employee_records(user_filter=""):
     employee_record_url = URL(
         FSDR_URL + f'/fieldforce/byType/byRangeAndUserFilter/').with_query(
