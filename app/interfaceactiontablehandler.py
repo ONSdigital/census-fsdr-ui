@@ -28,7 +28,6 @@ from app.searchfunctions import (
 from . import (NEED_TO_SIGN_IN_MSG, NO_EMPLOYEE_DATA, SERVICE_DOWN_MSG)
 from . import saml
 from .flash import flash
-from flask import Flask
 
 import sys
 import os
@@ -36,10 +35,6 @@ import os
 
 logger = get_logger('fsdr-ui')
 interface_action_handler_table_routes = RouteTableDef()
-
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-
-STATIC_DIR = os.path.abspath('../static')
 
 
 def setup_request(request):
