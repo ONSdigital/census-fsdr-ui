@@ -98,6 +98,7 @@ class SecondaryPage:
         previous_firstname = ''
         previous_badge = ''
         previous_jobid = ''
+        previous_user_missing_device = False
 
         try:
             if data.get('indexsearch'
@@ -112,6 +113,10 @@ class SecondaryPage:
                 previous_assignment_selected = data.get('assignment_select')
                 search_criteria['assignmentStatus'] = data.get(
                     'assignment_select')
+
+            if data.get('user_missing_device'):
+                previous_user_missing_device = data.get('user_missing_device')
+                search_criteria['user_missing_device'] = data.get('user_missing_device')    
 
             if data.get('job_role_select'):
                 previous_jobrole_selected = data.get('job_role_select')
@@ -160,8 +165,14 @@ class SecondaryPage:
             search_criteria_with_range['rangeHigh'] = high_value
             search_criteria_with_range['rangeLow'] = low_value
 
-            retrieve_employee_info = get_employee_records(
-                search_criteria_with_range)
+          if previous_user_missing_device != False:
+                # if the checkbox is not false, the default value
+                retrieve_emplyee_info = get_employee_records_no_device( 
+                                        search_criteria_with_range )
+            else:
+                retrieve_employee_info = get_employee_records(
+                                         search_criteria_with_range)
+
 
             get_job_roles = get_distinct_job_role_short()
 
@@ -200,6 +211,7 @@ class SecondaryPage:
                 'previous_jobid': previous_jobid,
                 'previous_surname_filter': previous_surname,
                 'no_employee_data': no_employee_data
+                'user_missing_device': previous_user_missing_device,
             }
         else:
             logger.warn(
@@ -240,6 +252,8 @@ class SecondaryPage:
         previous_firstname = ''
         previous_badge = ''
         previous_jobid = ''
+        user_missing_device = False
+
         try:
             if session.get('assignmentStatus'):
                 previous_assignment_selected = session['assignmentStatus']
@@ -249,6 +263,10 @@ class SecondaryPage:
             if session.get('jobRoleShort'):
                 previous_jobrole_selected = session['jobRoleShort']
                 search_criteria['jobRoleShort'] = previous_jobrole_selected
+                                
+            if data.get('userMissingDevice'):
+                previous_user_missing_device = data.get('userMissingDevice')
+                search_criteria['userMissingDevice'] = data.get('userMissingDevice')
 
             if session.get('area'):
                 previous_area = session['area']
@@ -278,8 +296,13 @@ class SecondaryPage:
             search_criteria_with_range['rangeHigh'] = high_value
             search_criteria_with_range['rangeLow'] = low_value
 
-            retrieve_employee_info = get_employee_records(
-                search_criteria_with_range)
+            if previous_user_missing_device != False:
+                # if the checkbox is not false, the default value
+                retrieve_emplyee_info = get_employee_records_no_device( 
+                                        search_criteria_with_range )
+            else:
+                retrieve_employee_info = get_employee_records(
+                                         search_criteria_with_range)
 
             get_job_roles = get_distinct_job_role_short()
         except ClientResponseError as ex:
@@ -319,7 +342,8 @@ class SecondaryPage:
                 'previous_firstname': previous_firstname,
                 'previous_badge': previous_badge,
                 'previous_jobid': previous_jobid,
-                'previous_surname_filter': previous_surname
+                'previous_surname_filter': previous_surname,
+                'userMissingDevice': user_missing_device,
             }
         else:
             logger.warn(
