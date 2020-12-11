@@ -17,6 +17,7 @@ from app.searchcriteria import (
 
 from app.searchfunctions import (
     get_all_assignment_status,
+    get_employee_records_no_device,
     get_employee_records, 
     allocate_search_ranges,
     employee_record_table,
@@ -165,16 +166,22 @@ class SecondaryPage:
             search_criteria_with_range['rangeHigh'] = high_value
             search_criteria_with_range['rangeLow'] = low_value
 
-          if previous_user_missing_device != False:
+ 
+            if previous_user_missing_device != False:
                 # if the checkbox is not false, the default value
                 retrieve_emplyee_info = get_employee_records_no_device( 
                                         search_criteria_with_range )
+                raise Exception("CHECKBOX TICKED  -  BAD from Index")
+                # Works - riade exception code to prove it
+            
             else:
+                # Works - riade exception code to prove it
+                # raise Exception(str( data.get('user_missing_device')   ) )
                 retrieve_employee_info = get_employee_records(
                                          search_criteria_with_range)
 
 
-            get_job_roles = get_distinct_job_role_short()
+        get_job_roles = get_distinct_job_role_short()
 
         except ClientResponseError as ex:
             raise ex
@@ -210,7 +217,7 @@ class SecondaryPage:
                 'previous_badge': previous_badge,
                 'previous_jobid': previous_jobid,
                 'previous_surname_filter': previous_surname,
-                'no_employee_data': no_employee_data
+                'no_employee_data': no_employee_data,
                 'user_missing_device': previous_user_missing_device,
             }
         else:
@@ -252,7 +259,7 @@ class SecondaryPage:
         previous_firstname = ''
         previous_badge = ''
         previous_jobid = ''
-        user_missing_device = False
+        previous_user_missing_device = False
 
         try:
             if session.get('assignmentStatus'):
@@ -264,9 +271,9 @@ class SecondaryPage:
                 previous_jobrole_selected = session['jobRoleShort']
                 search_criteria['jobRoleShort'] = previous_jobrole_selected
                                 
-            if data.get('userMissingDevice'):
-                previous_user_missing_device = data.get('userMissingDevice')
-                search_criteria['userMissingDevice'] = data.get('userMissingDevice')
+            if session.get('user_missing_device'):
+                previous_user_missing_device = session.get('user_missing_device')
+                search_criteria['user_missing_device'] = data.get('user_missing_device')
 
             if session.get('area'):
                 previous_area = session['area']
@@ -300,7 +307,12 @@ class SecondaryPage:
                 # if the checkbox is not false, the default value
                 retrieve_emplyee_info = get_employee_records_no_device( 
                                         search_criteria_with_range )
+                # raise Exception("CHECKBOX TICKED  -  BAD")
+                # Works - riade exception code to prove it
+            
             else:
+                # Works - riade exception code to prove it
+                # raise Exception(str( data.get('user_missing_device')   ) )
                 retrieve_employee_info = get_employee_records(
                                          search_criteria_with_range)
 
@@ -343,7 +355,7 @@ class SecondaryPage:
                 'previous_badge': previous_badge,
                 'previous_jobid': previous_jobid,
                 'previous_surname_filter': previous_surname,
-                'userMissingDevice': user_missing_device,
+                'previous_user_missing_device': previous_user_missing_device,
             }
         else:
             logger.warn(
