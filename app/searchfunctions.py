@@ -33,7 +33,6 @@ def get_employee_records_no_device(user_filter=""):
         FSDR_URL + f'/fieldforce/byType/byRangeAndUserFilterNoDevice/').with_query(
         user_filter
     )
-   # raise Exception("CHECKBOX TICKED  -  BAD")
     return requests.get(employee_record_url,
                         verify=False,
                         auth=HTTPBasicAuth(FSDR_USER, FSDR_PASS))

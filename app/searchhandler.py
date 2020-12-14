@@ -171,9 +171,6 @@ class SecondaryPage:
                 # if the checkbox is not false, the default value
                 retrieve_emplyee_info = get_employee_records_no_device( 
                                         search_criteria_with_range )
-                raise Exception("CHECKBOX TICKED  -  BAD from Index")
-                # Works - riade exception code to prove it
-            
             else:
                 # Works - riade exception code to prove it
                 # raise Exception(str( data.get('user_missing_device')   ) )
@@ -181,7 +178,7 @@ class SecondaryPage:
                                          search_criteria_with_range)
 
 
-        get_job_roles = get_distinct_job_role_short()
+            get_job_roles = get_distinct_job_role_short()
 
         except ClientResponseError as ex:
             raise ex
@@ -307,16 +304,13 @@ class SecondaryPage:
                 # if the checkbox is not false, the default value
                 retrieve_emplyee_info = get_employee_records_no_device( 
                                         search_criteria_with_range )
-                # raise Exception("CHECKBOX TICKED  -  BAD")
-                # Works - riade exception code to prove it
-            
             else:
                 # Works - riade exception code to prove it
-                # raise Exception(str( data.get('user_missing_device')   ) )
                 retrieve_employee_info = get_employee_records(
                                          search_criteria_with_range)
 
             get_job_roles = get_distinct_job_role_short()
+
         except ClientResponseError as ex:
             if ex.status == 503:
                 logger.warn('Server is unavailable',
