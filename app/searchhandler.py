@@ -199,7 +199,8 @@ class SecondaryPage:
                 'previous_badge': previous_badge,
                 'previous_jobid': previous_jobid,
                 'previous_surname_filter': previous_surname,
-                'no_employee_data': no_employee_data
+                'no_employee_data': no_employee_data,
+                'previous_email': filter_email,
             }
         else:
             logger.warn(
@@ -270,6 +271,11 @@ class SecondaryPage:
                 previous_jobid = session['jobRoleId']
                 search_criteria['jobRoleId'] = previous_jobid
 
+            if data.get('filter_email'):
+                previous_email = data.get('filter_email')
+                search_criteria['email'] = previous_email
+
+
             high_value, low_value, page_number, max_page = await allocate_search_ranges(
                 search_criteria, page_number)
 
@@ -319,7 +325,8 @@ class SecondaryPage:
                 'previous_firstname': previous_firstname,
                 'previous_badge': previous_badge,
                 'previous_jobid': previous_jobid,
-                'previous_surname_filter': previous_surname
+                'previous_surname_filter': previous_surname,
+                'previous_email': filter_email,
             }
         else:
             logger.warn(

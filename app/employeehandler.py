@@ -21,7 +21,8 @@ logger = get_logger('fsdr-ui')
 class EmployeeInformation():
     @aiohttp_jinja2.template('employee-information.html')
     async def get(self, request):
-        employee_id = request.match_info['employee_id']
+        employee_id = request.host
+
         session = await get_session(request)
 
         await saml.ensure_logged_in(request)
@@ -49,7 +50,8 @@ class EmployeeInformation():
         if get_employee_info.status_code != 200:
             logger.warn(
                 'Attempted to login with invalid user name and/or password',
-                client_ip=request['client_ip'])
+                
+                request.host['client_ip'])
             flash(request, NO_EMPLOYEE_DATA)
             return aiohttp_jinja2.render_template(
                 'signin.html',
