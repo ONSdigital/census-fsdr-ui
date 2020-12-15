@@ -94,7 +94,7 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
         #'Organisation Unit': current_job_role['uniqueRoleId'],
         #'Ingest Date': get_emp_info('ingestDate'),
         'Chromebook Asset ID': (chr_book and chr_book['Device ID']) or None,
-        # 'Device Type': device_information[0]['Device Type'], # This doesn't make any sense
+        'Device Type': device_information[0]['Device Type'], # This doesn't make any sense
     }
     tab_other = tab_generation('Other Data', data_other)
 
