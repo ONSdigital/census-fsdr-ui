@@ -24,6 +24,11 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
 
     employment_glance = {'Unique Employee ID': get_emp_info('uniqueEmployeeId'),
                          'Name': employee_name,
+                         'Address': get_emp_info('address'),
+                         'Town/City': get_emp_info('town'),
+                         'Postcode': get_emp_info('postcode'),
+                         'Country': get_emp_info('country'),
+                         'County': get_emp_info('county'),
                          'Preferred Name': preferred_name,
                          'ONS Email': get_emp_info('onsId'),
                          'ONS Mobile Number': mob_number,
