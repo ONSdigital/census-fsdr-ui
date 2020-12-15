@@ -49,7 +49,7 @@ class EmployeeInformation():
         if get_employee_info.status_code != 200:
             logger.warn(
                 'Attempted to login with invalid user name and/or password',
-                client_ip=request['client_ip'])
+                client_ip=request.get('client_ip', None))
             flash(request, NO_EMPLOYEE_DATA)
             return aiohttp_jinja2.render_template(
                 'signin.html',
