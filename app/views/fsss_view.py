@@ -6,7 +6,7 @@ def get_device_types(devices):
     types_of_device = ""
     if devices != []:
         for device in devices:
-            types_of_device = types_of_device + str(device['Device ID']) + "\n"
+            types_of_device = types_of_device + str(device['Device Type']) + "\n"
     return types_of_device if types_of_device != "" else "-"
 
 def get_employee_tabs(employee_info, current_job_role, device_information):
@@ -18,15 +18,9 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
         else:
             return employee_info.get(name, on_missing) or on_false
 
- 
     devices, device_numbers = process_device_details(device_information)
-#   raise Exception(str(devices))
-#   Currently returning devices=[]
-
     phone = extract_device_phone(devices)
     chr_book = extract_device_chromebook(devices)
-#   raise Exception(str(phone) + str(chr_book))
-#   Currently both "None"
 
     line_manager = format_line_manager(current_job_role)
 
@@ -106,7 +100,6 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
         #'Ingest Date': get_emp_info('ingestDate'),
         'Chromebook Asset ID': (chr_book and chr_book['Device ID']) or None,
         'Device Type': get_device_types(devices),
-
 #        'Device Type': device_information[0]['Device Type'], # This doesn't make any sense
     }
     tab_other = tab_generation('Other Data', data_other)
