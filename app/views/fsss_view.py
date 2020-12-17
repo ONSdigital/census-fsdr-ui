@@ -2,7 +2,12 @@ from app.employee_view_functions import process_device_details, format_line_mana
 from app.tabutils import tab_generation, table_generation, format_to_uk_dates
 from app.fieldmapping import map_employee_name
 
-
+def get_device_types(devices):
+    types_of_device = ""
+    if devices != []:
+        for device in devices:
+            types_of_device = types_of_device + str(device['Device Type']) + "\n"
+    return types_of_device if types_of_device != "" else "-"
 
 def get_employee_tabs(employee_info, current_job_role, device_information):
     def get_emp_info(name, on_false={}, on_missing='Unspecified'):
@@ -13,7 +18,6 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
         else:
             return employee_info.get(name, on_missing) or on_false
 
- 
     devices, device_numbers = process_device_details(device_information)
     phone = extract_device_phone(devices)
     chr_book = extract_device_chromebook(devices)
@@ -53,6 +57,7 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
     data_job_role = {
         'Job Role ID': current_job_role['uniqueRoleId'],
         'Postcode': get_emp_info('postcode'),
+        'County': get_emp_info('county'),
         'Country': get_emp_info('country'),
         'Job Role Short': current_job_role['jobRoleShort'],
         'Job Role': current_job_role['jobRole'],
@@ -94,7 +99,8 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
         #'Organisation Unit': current_job_role['uniqueRoleId'],
         #'Ingest Date': get_emp_info('ingestDate'),
         'Chromebook Asset ID': (chr_book and chr_book['Device ID']) or None,
-        # 'Device Type': device_information[0]['Device Type'], # This doesn't make any sense
+        'Device Type': get_device_types(devices),
+#        'Device Type': device_information[0]['Device Type'], # This doesn't make any sense
     }
     tab_other = tab_generation('Other Data', data_other)
 
