@@ -169,7 +169,7 @@ class SecondaryPage:
  
             if previous_user_missing_device != False:
                 # if the checkbox is not false, the default value
-                retrieve_emplyee_info = get_employee_records_no_device( 
+                retrieve_employee_info = get_employee_records_no_device( 
                                         search_criteria_with_range )
             else:
                 # Works - riade exception code to prove it
@@ -220,7 +220,7 @@ class SecondaryPage:
         else:
             logger.warn(
                 'Attempted to login with invalid user name and/or password',
-                client_ip=request['client_ip'])
+                 client_ip = request.get('client_ip', None))
             flash(request, NO_EMPLOYEE_DATA)
             return aiohttp_jinja2.render_template('signin.html',
                                                   request, {
