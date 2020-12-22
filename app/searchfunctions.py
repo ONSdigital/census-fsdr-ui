@@ -77,10 +77,6 @@ def employee_table_headers():
             'aria_sort': 'none'
         },
         {
-            'value': 'Area',
-            'aria_sort': 'none'
-        },
-        {
             'value': 'Asgmt. Status',
             'aria_sort': 'none'
         }
@@ -105,9 +101,6 @@ def employee_record_table(employee_records_json):
             },
             {
                 'value': employees['job_role_short']
-            },
-            {
-                'value': employees['area_location']
             },
             {
                 'value': employees['assignment_status']
