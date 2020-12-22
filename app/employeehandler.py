@@ -96,7 +96,10 @@ class EmployeeInformation():
                 device_info = device_info + device_info_json.copy()
 
         last_job_role = employee_info['lastRoleId']
-        job_role_info = employee_info.get('jobRoles', "-")
+
+        job_role_info = employee_info.get('jobRole', "-")
+        job_role_info = [job_role_info]
+
         relevant_job_role = ''
 
         for job_role in job_role_info:
