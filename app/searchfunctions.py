@@ -123,7 +123,7 @@ def iat_employee_table_headers():
             'aria_sort': 'none'
         },
         {
-            'value': 'Employee ID',
+            'value': 'External ID',
             'aria_sort': 'none'
         },
         {
@@ -161,7 +161,7 @@ def iat_employee_record_table(employee_records_json):
                 'value': employees['first_name'] + " " + employees['surname']  
             },
             {
-                'value': "#" + str(employees['unique_employee_id'])
+                'value': "#" + str(employees['external_id'])
             },
             {
                 'value': employees['xma_status']
