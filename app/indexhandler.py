@@ -9,8 +9,15 @@ from aiohttp.web import HTTPFound, RouteTableDef
 from aiohttp_session import get_session
 
 from app.searchcriteria import retrieve_job_roles, clear_stored_search_criteria
-from app.searchfunctions import get_employee_records, \
-    get_employee_count, employee_record_table, employee_table_headers, get_distinct_job_role_short
+
+from app.searchfunctions import (
+        get_employee_records, 
+        get_employee_count,
+        employee_record_table,
+        employee_table_headers,
+        get_distinct_job_role_short
+)
+
 from structlog import get_logger
 
 from . import (NEED_TO_SIGN_IN_MSG, NO_EMPLOYEE_DATA, SERVICE_DOWN_MSG)
