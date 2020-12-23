@@ -53,7 +53,7 @@ class Search:
         except ClientResponseError as ex:
             if ex.status == 503:
                 logger.warn('Server is unavailable',
-                            client_ip=request['client_ip'])
+                            client_ip=request.get('client_ip', None)) 
                 flash(request, SERVICE_DOWN_MSG)
                 return aiohttp_jinja2.render_template('error503.html', request,
                                                       {'include_nav': False})
@@ -72,7 +72,13 @@ class Search:
                 'all_assignment_statuses': assignment_statuses_json
             }
         else:
-            logger.warn('Database is down', client_ip=request['client_ip'])
+
+            #Get all  asignement satuses  status code is  500  atm :/
+
+            raise Exception(str(get_job_roles.status_code) + " " +  str(get_job_roles)  + "  " + \
+                    str(get_all_assignment_statuses) + " " +  str(get_all_assignment_statuses.status_code))
+
+            logger.warn('Database is down', client_ip=request.get('client_ip', None))
             flash(request, NO_EMPLOYEE_DATA)
             raise HTTPFound(request.app.router['MainPage:get'].url_for())
 
@@ -222,6 +228,9 @@ class SecondaryPage:
                 'Attempted to login with invalid user name and/or password',
                 client_ip=request['client_ip'])
             flash(request, NO_EMPLOYEE_DATA)
+
+            raise Exception(str(retrieve_employee_info.status_code))
+
             return aiohttp_jinja2.render_template('signin.html',
                                                   request, {
                                                       'page_title': 'Sign in',
@@ -356,6 +365,9 @@ class SecondaryPage:
                 'Attempted to login with invalid user name and/or password',
                 client_ip=request['client_ip'])
             flash(request, NO_EMPLOYEE_DATA)
+
+            raise Exception(str(retrieve_employee_info.status_code))
+
             return aiohttp_jinja2.render_template('signin.html', request, {
                 'page_title': 'Sign in',
                 'include_nav': False
