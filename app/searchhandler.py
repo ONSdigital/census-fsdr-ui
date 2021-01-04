@@ -175,11 +175,11 @@ class SecondaryPage:
  
             if previous_user_missing_device != False:
                 # if the checkbox is not false, the default value
+            #   raise Exception("Checkbox TICKED" + str( data.get('user_missing_device')   ) )
                 retrieve_employee_info = get_employee_records_no_device( 
                                         search_criteria_with_range )
             else:
-                # Works - riade exception code to prove it
-                # raise Exception(str( data.get('user_missing_device')   ) )
+            #   raise Exception("Checkbox Unticked" + str( data.get('user_missing_device')   ) )
                 retrieve_employee_info = get_employee_records(
                                          search_criteria_with_range)
 
