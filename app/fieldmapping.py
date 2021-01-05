@@ -6,57 +6,58 @@ from . import role_matchers
 def map_employee_history_table_headers(user_role, employee_history_table):
     mapping_entries = []
 
-    for history in employee_history_table:
-        employee_name = map_employee_name(history)
+#       raise Exception(str(employee_history_table) + "\n\n" + str(history))
 
-        if role_matchers.fsss_combined_regex.match(user_role):
-            mapping = {
-                'Ingest Date': history.pop('ingestDate'),
-                'ID': history.pop('uniqueEmployeeId'),
-                'Name': employee_name,
-                'Preferred Name': history.pop('preferredName'),
-                'ONS ID': history.pop('onsId'),
-                'Personal Mobile Number': history.pop('telephoneNumberContact1'),
-                'Home Phone Number': history.pop('telephoneNumberContact2'),
-                'Status': history.pop('status'),
-                'Badge ID': history.pop('idBadgeNo'),
-                'Personal Email Address': history.pop('personalEmailAddress'),
-                'Postcode': history.pop('postcode'),
-                'Country': history.pop('country'),
-                'Emergency Contact Name': history['emergencyContactFullName'],
-                'Emergency Contact Mobile Number': history.pop('emergencyContactMobileNo'),
-                'Weekly Hours': history.pop('weeklyHours'),
-                'Mobility': history.pop('mobility'),
-            }
+    employee_name = map_employee_name(history)
 
-            mapping_entries.append(mapping)
+    if role_matchers.fsss_combined_regex.match(user_role):
+        mapping = {
+            'Ingest Date': history.pop('ingestDate'),
+            'ID': history.pop('uniqueEmployeeId'),
+            'Name': employee_name,
+            'Preferred Name': history.pop('preferredName'),
+            'ONS ID': history.pop('onsId'),
+            'Personal Mobile Number': history.pop('telephoneNumberContact1'),
+            'Home Phone Number': history.pop('telephoneNumberContact2'),
+            'Status': history.pop('status'),
+            'Badge ID': history.pop('idBadgeNo'),
+            'Personal Email Address': history.pop('personalEmailAddress'),
+            'Postcode': history.pop('postcode'),
+            'Country': history.pop('country'),
+            'Emergency Contact Name': history['emergencyContactFullName'],
+            'Emergency Contact Mobile Number': history.pop('emergencyContactMobileNo'),
+            'Weekly Hours': history.pop('weeklyHours'),
+            'Mobility': history.pop('mobility'),
+        }
 
-        elif role_matchers.hr_combined_regex.match(user_role):
-            # TODO this may be a duplicate
-            history['address'] = ' '.join(v for v in (history['address1'], history['address2']) if v is not None)
+        mapping_entries.append(mapping)
 
-            mapping = {
-                'Ingest Date': history.pop('ingestDate'),
-                'ID': history.pop('uniqueEmployeeId'),
-                'Name': employee_name,
-                'Preferred Name': history.pop('preferredName'),
-                'ONS ID': history.pop('onsId'),
-                'Personal Mobile Number': history.pop('telephoneNumberContact1'),
-                'Status': history.pop('status'),
-                'Badge ID': history.pop('idBadgeNo'),
-                'Personal Email Address': history.pop('personalEmailAddress'),
-                'Address': history.pop('address'),
-                'County': history.pop('county'),
-                'Postcode': history.pop('postcode'),
-                'Country': history.pop('country'),
-                'Emergency Contact Name': history['emergencyContactFullName'],
-                'Emergency Contact Mobile Number': history.pop('emergencyContactMobileNo'),
-                'Date of Birth': history.pop('dob'),
-                'Weekly Hours': history.pop('weeklyHours'),
-                'Mobility': history.pop('mobility'),
-            }
+    elif role_matchers.hr_combined_regex.match(user_role):
+        # TODO this may be a duplicate
+        history['address'] = ' '.join(v for v in (history['address1'], history['address2']) if v is not None)
 
-            mapping_entries.append(mapping)
+        mapping = {
+            'Ingest Date': history.pop('ingestDate'),
+            'ID': history.pop('uniqueEmployeeId'),
+            'Name': employee_name,
+            'Preferred Name': history.pop('preferredName'),
+            'ONS ID': history.pop('onsId'),
+            'Personal Mobile Number': history.pop('telephoneNumberContact1'),
+            'Status': history.pop('status'),
+            'Badge ID': history.pop('idBadgeNo'),
+            'Personal Email Address': history.pop('personalEmailAddress'),
+            'Address': history.pop('address'),
+            'County': history.pop('county'),
+            'Postcode': history.pop('postcode'),
+            'Country': history.pop('country'),
+            'Emergency Contact Name': history['emergencyContactFullName'],
+            'Emergency Contact Mobile Number': history.pop('emergencyContactMobileNo'),
+            'Date of Birth': history.pop('dob'),
+            'Weekly Hours': history.pop('weeklyHours'),
+            'Mobility': history.pop('mobility'),
+        }
+
+        mapping_entries.append(mapping)
 
     return table_generation(mapping_entries)
 
@@ -92,8 +93,12 @@ def map_employee_history_job_role_table_headers(employee_history_job_role_table)
     return job_role_history_table
 
 
-def map_employee_name(employee_table):
-    maybe_names = (employee_table['firstName'], employee_table['surname'])
-    names = (n for n in maybe_names if n and n != '-')
-    return ' '.join(names)
+def map_employee_name(employee_table, calledFrom="None"):
 
+    try:    
+        maybe_names = (employee_table['firstName'], employee_table['surname'])
+        names = (n for n in maybe_names if n and n != '-')
+        return ' '.join(names)
+    except:
+        # Errors on "id" string:/
+        raise Exception(str(employee_table) + "\n\n" + str(calledFrom))
