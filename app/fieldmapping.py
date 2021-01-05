@@ -3,12 +3,11 @@ from app.tabutils import table_generation, format_to_uk_dates
 from . import role_matchers
 
 
-def map_employee_history_table_headers(user_role, employee_history_table):
+def map_employee_history_table_headers(user_role, history, employee_name):
+#   return ([])
     mapping_entries = []
 
-#       raise Exception(str(employee_history_table) + "\n\n" + str(history))
-
-    employee_name = map_employee_name(history)
+    raise Exception(str(history) + "\n\n" )
 
     if role_matchers.fsss_combined_regex.match(user_role):
         mapping = {
@@ -62,7 +61,8 @@ def map_employee_history_table_headers(user_role, employee_history_table):
     return table_generation(mapping_entries)
 
 
-def map_employee_history_job_role_table_headers(employee_history_job_role_table):
+def map_employee_history_job_role_table_headers(employee_history_job_role_table, employee_name):    
+    return ([])
     employee_history_job_role_table_mapped = []
 
     for job_roles in employee_history_job_role_table:

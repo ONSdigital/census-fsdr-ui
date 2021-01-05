@@ -129,11 +129,16 @@ class EmployeeInformation():
             
            #raise Exception(str(job_role), str(type(job_role)))
 
-            employee_history_tabs = history_tab(role_id,
-                                                job_role)
+            employee_history_tabs = history_tab(role_id,job_role,employee_name )
 
             if (not role_matchers.hr_combined_regex.match(role_id)
                 ) and not (role_matchers.logi_combined_regex.match(role_id)):
+
+                job_role_history_header = []
+                job_role_history_data = []
+
+                history_header = ""
+                history_data = ""
 
                 for employee_history in employee_history_tabs[0]:
                     if 'headers' in employee_history:
