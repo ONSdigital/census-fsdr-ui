@@ -229,7 +229,8 @@ class SecondaryPage:
                  client_ip = request.get('client_ip', None))
             flash(request, NO_EMPLOYEE_DATA)
 
-            raise Exception(str(retrieve_employee_info.status_code))
+            # Getting a "500" errorwhen the checkbox is ticked
+#           raise Exception(str(retrieve_employee_info.status_code))
 
             return aiohttp_jinja2.render_template('signin.html',
                                                   request, {
