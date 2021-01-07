@@ -128,8 +128,6 @@ class EmployeeInformation():
                         if 'tds' in device_table:
                             device_data = device_table['tds']
             
-           #raise Exception(str(job_role), str(type(job_role)))
-            # Employee history is an Array of dictionaries, which have names etc
             employee_history_tabs = history_tab(role_id,job_role,employee_history)
 
             if (not role_matchers.hr_combined_regex.match(role_id)

@@ -6,12 +6,6 @@ from . import role_matchers
 def map_employee_history_table_headers(user_role, full_history):
     mapping_entries = []
 
-    test = ""
-    for i in full_history:
-        test = test + str(i) + "\n"
-
-#   raise Exception(str(full_history) + "\n\n" + "Individual Histories:\n" + str(test))
-
     for history in full_history:
         if role_matchers.fsss_combined_regex.match(user_role):
             mapping = {
