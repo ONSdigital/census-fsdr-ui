@@ -3,6 +3,7 @@
 {% from "custom/pagination/_macro.njk" import onsPagination %}
 {% from "components/table/_macro.njk" import onsTable %}
 {% from "custom/fsdrsearch/_macro.njk" import fsdrSearch %}
+{% from "components/checkboxes/_checkbox-macro.njk" import onsCheckbox %}
 
 {% set page_title_value = page_title %}
 {% set index_url = "/index" %}
@@ -34,6 +35,22 @@
                             'previous_surname_filter': previous_surname_filter,
                             'index_search': True
                     }) }}
+		    {{
+
+		    onsCheckbox({
+				"id": "user_missing_device",
+				"label": {
+				    "text": "Only Show Users Missing a Device"
+				},
+				"value": "user_missing_device",
+				"name":  "user_missing_device",
+			    })
+		    }}
+
+		    <br>
+		    <br>
+
+
                     {{ onsButton({
                         'text': 'Filter',
                         'classes': 'btn--small',

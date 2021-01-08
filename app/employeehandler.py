@@ -81,6 +81,7 @@ class EmployeeInformation():
 
         if get_employee_history.status_code == 200:
             if get_employee_history.content != b'':
+
                 employee_history_json = get_employee_history.json()
 
                 for employee_history_dict in employee_history_json:
@@ -97,38 +98,22 @@ class EmployeeInformation():
 
         last_job_role = employee_info['lastRoleId']
 
-        job_role_info = employee_info.get('jobRole', "-")
-        job_role_info = [job_role_info]
+        job_role = employee_info.get('jobRole', "-")
 
-        relevant_job_role = ''
+        job_role['contractStartDate'] = format_to_uk_dates(job_role['contractStartDate'])
+        job_role['operationalEndDate'] = format_to_uk_dates(job_role['operationalEndDate'])
 
-        for job_role in job_role_info:
-            if job_role['active']:
-                relevant_job_role = job_role
-            else:
-                job_role['contractStartDate'] = format_to_uk_dates(
-                    job_role['contractStartDate'])
-                job_role['operationalEndDate'] = format_to_uk_dates(
-                    job_role['operationalEndDate'])
-
-        if relevant_job_role == '':
-            for job_role in job_role_info:
-                if job_role['uniqueRoleId'] == last_job_role:
-                    relevant_job_role = job_role
-
-        if relevant_job_role:
-            if relevant_job_role['contractStartDate']:
-                relevant_job_role['contractStartDate'] = format_to_uk_dates(
-                    relevant_job_role['contractStartDate'])
-            if relevant_job_role['contractEndDate']:
-                relevant_job_role['contractEndDate'] = format_to_uk_dates(
-                    relevant_job_role['contractEndDate'])
-            if relevant_job_role['operationalEndDate']:
-                relevant_job_role['operationalEndDate'] = format_to_uk_dates(
-                    relevant_job_role['operationalEndDate'])
+        #  if a job role is returned then format all the dates to uk
+        if job_role:
+            if job_role['contractStartDate']:
+                job_role['contractStartDate'] = format_to_uk_dates(job_role['contractStartDate'])
+            if job_role['contractEndDate']:
+                job_role['contractEndDate'] = format_to_uk_dates(job_role['contractEndDate'])
+            if job_role['operationalEndDate']:
+                job_role['operationalEndDate'] = format_to_uk_dates(job_role['operationalEndDate'])
 
             employee_tabs = get_employee_tabs(role_id, employee_info,
-                                              relevant_job_role, device_info)
+                                              job_role, device_info)
 
             device_headers = []
             device_data = []
@@ -142,12 +127,17 @@ class EmployeeInformation():
                             device_headers = device_table['headers']
                         if 'tds' in device_table:
                             device_data = device_table['tds']
-
-            employee_history_tabs = history_tab(role_id, employee_history,
-                                                job_role_info)
+            
+            employee_history_tabs = history_tab(role_id,job_role,employee_history)
 
             if (not role_matchers.hr_combined_regex.match(role_id)
                 ) and not (role_matchers.logi_combined_regex.match(role_id)):
+
+                job_role_history_header = []
+                job_role_history_data = []
+
+                history_header = ""
+                history_data = ""
 
                 for employee_history in employee_history_tabs[0]:
                     if 'headers' in employee_history:
@@ -191,8 +181,8 @@ class EmployeeInformation():
                 'employee_job_role_history_header': job_role_history_header,
                 'employee_job_role_history_data': job_role_history_data,
                 'employee_history': employee_history,
-                'employee_job_role': relevant_job_role,
-                'employee_job_role_history': job_role_info,
+                'employee_job_role': job_role,
+                'employee_job_role_history': job_role,
                 'employee_record': employee_info,
                 'employee_status': employee_status
             }

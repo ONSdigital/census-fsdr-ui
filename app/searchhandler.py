@@ -17,6 +17,7 @@ from app.searchcriteria import (
 
 from app.searchfunctions import (
     get_all_assignment_status,
+    get_employee_records_no_device,
     get_employee_records, 
     allocate_search_ranges,
     employee_record_table,
@@ -104,6 +105,7 @@ class SecondaryPage:
         previous_firstname = ''
         previous_badge = ''
         previous_jobid = ''
+        previous_user_missing_device = False
 
         try:
             if data.get('indexsearch'
@@ -118,6 +120,10 @@ class SecondaryPage:
                 previous_assignment_selected = data.get('assignment_select')
                 search_criteria['assignmentStatus'] = data.get(
                     'assignment_select')
+
+            if data.get('user_missing_device'):
+                previous_user_missing_device = data.get('user_missing_device')
+                search_criteria['user_missing_device'] = data.get('user_missing_device')    
 
             if data.get('job_role_select'):
                 previous_jobrole_selected = data.get('job_role_select')
@@ -166,8 +172,17 @@ class SecondaryPage:
             search_criteria_with_range['rangeHigh'] = high_value
             search_criteria_with_range['rangeLow'] = low_value
 
-            retrieve_employee_info = get_employee_records(
-                search_criteria_with_range)
+ 
+            if previous_user_missing_device != False:
+                # if the checkbox is not false, the default value
+            #   raise Exception("Checkbox TICKED" + str( data.get('user_missing_device')   ) )
+                retrieve_employee_info = get_employee_records_no_device( 
+                                        search_criteria_with_range )
+            else:
+            #   raise Exception("Checkbox Unticked" + str( data.get('user_missing_device')   ) )
+                retrieve_employee_info = get_employee_records(
+                                         search_criteria_with_range)
+
 
             get_job_roles = get_distinct_job_role_short()
 
@@ -205,15 +220,17 @@ class SecondaryPage:
                 'previous_badge': previous_badge,
                 'previous_jobid': previous_jobid,
                 'previous_surname_filter': previous_surname,
-                'no_employee_data': no_employee_data
+                'no_employee_data': no_employee_data,
+                'user_missing_device': previous_user_missing_device,
             }
         else:
             logger.warn(
                 'Attempted to login with invalid user name and/or password',
-                client_ip=request['client_ip'])
+                 client_ip = request.get('client_ip', None))
             flash(request, NO_EMPLOYEE_DATA)
 
-            raise Exception(str(retrieve_employee_info.status_code))
+            # Getting a "500" errorwhen the checkbox is ticked
+#           raise Exception(str(retrieve_employee_info.status_code))
 
             return aiohttp_jinja2.render_template('signin.html',
                                                   request, {
@@ -249,6 +266,8 @@ class SecondaryPage:
         previous_firstname = ''
         previous_badge = ''
         previous_jobid = ''
+        previous_user_missing_device = False
+
         try:
             if session.get('assignmentStatus'):
                 previous_assignment_selected = session['assignmentStatus']
@@ -258,6 +277,10 @@ class SecondaryPage:
             if session.get('jobRoleShort'):
                 previous_jobrole_selected = session['jobRoleShort']
                 search_criteria['jobRoleShort'] = previous_jobrole_selected
+                                
+            if session.get('user_missing_device'):
+                previous_user_missing_device = session.get('user_missing_device')
+                search_criteria['user_missing_device'] = data.get('user_missing_device')
 
             if session.get('area'):
                 previous_area = session['area']
@@ -287,10 +310,17 @@ class SecondaryPage:
             search_criteria_with_range['rangeHigh'] = high_value
             search_criteria_with_range['rangeLow'] = low_value
 
-            retrieve_employee_info = get_employee_records(
-                search_criteria_with_range)
+            if previous_user_missing_device != False:
+                # if the checkbox is not false, the default value
+                retrieve_emplyee_info = get_employee_records_no_device( 
+                                        search_criteria_with_range )
+            else:
+                # Works - riade exception code to prove it
+                retrieve_employee_info = get_employee_records(
+                                         search_criteria_with_range)
 
             get_job_roles = get_distinct_job_role_short()
+
         except ClientResponseError as ex:
             if ex.status == 503:
                 logger.warn('Server is unavailable',
@@ -328,7 +358,8 @@ class SecondaryPage:
                 'previous_firstname': previous_firstname,
                 'previous_badge': previous_badge,
                 'previous_jobid': previous_jobid,
-                'previous_surname_filter': previous_surname
+                'previous_surname_filter': previous_surname,
+                'previous_user_missing_device': previous_user_missing_device,
             }
         else:
             logger.warn(
