@@ -91,11 +91,6 @@ def map_employee_history_job_role_table_headers(employee_history_job_role_table)
 
 
 def map_employee_name(employee_table, calledFrom="None"):
-
-    try:    
-        maybe_names = (employee_table['firstName'], employee_table['surname'])
-        names = (n for n in maybe_names if n and n != '-')
-        return ' '.join(names)
-    except:
-        # Errors on "id" string:/
-        raise Exception(str(employee_table) + "\n\n" + str(calledFrom))
+    maybe_names = (employee_table['firstName'], employee_table['surname'])
+    names = (n for n in maybe_names if n and n != '-')
+    return ' '.join(names)
