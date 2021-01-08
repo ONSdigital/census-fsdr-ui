@@ -81,6 +81,7 @@ class EmployeeInformation():
 
         if get_employee_history.status_code == 200:
             if get_employee_history.content != b'':
+
                 employee_history_json = get_employee_history.json()
 
                 for employee_history_dict in employee_history_json:
@@ -127,13 +128,16 @@ class EmployeeInformation():
                         if 'tds' in device_table:
                             device_data = device_table['tds']
             
-           #raise Exception(str(job_role), str(type(job_role)))
-
-            employee_history_tabs = history_tab(role_id,
-                                                job_role)
+            employee_history_tabs = history_tab(role_id,job_role,employee_history)
 
             if (not role_matchers.hr_combined_regex.match(role_id)
                 ) and not (role_matchers.logi_combined_regex.match(role_id)):
+
+                job_role_history_header = []
+                job_role_history_data = []
+
+                history_header = ""
+                history_data = ""
 
                 for employee_history in employee_history_tabs[0]:
                     if 'headers' in employee_history:

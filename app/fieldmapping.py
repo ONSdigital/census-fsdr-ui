@@ -3,17 +3,15 @@ from app.tabutils import table_generation, format_to_uk_dates
 from . import role_matchers
 
 
-def map_employee_history_table_headers(user_role, employee_history_table):
+def map_employee_history_table_headers(user_role, full_history):
     mapping_entries = []
 
-    for history in employee_history_table:
-        employee_name = map_employee_name(history)
-
+    for history in full_history:
         if role_matchers.fsss_combined_regex.match(user_role):
             mapping = {
                 'Ingest Date': history.pop('ingestDate'),
                 'ID': history.pop('uniqueEmployeeId'),
-                'Name': employee_name,
+                'Name': map_employee_name(history),
                 'Preferred Name': history.pop('preferredName'),
                 'ONS ID': history.pop('onsId'),
                 'Personal Mobile Number': history.pop('telephoneNumberContact1'),
@@ -38,7 +36,7 @@ def map_employee_history_table_headers(user_role, employee_history_table):
             mapping = {
                 'Ingest Date': history.pop('ingestDate'),
                 'ID': history.pop('uniqueEmployeeId'),
-                'Name': employee_name,
+                'Name': map_employee_name(history),
                 'Preferred Name': history.pop('preferredName'),
                 'ONS ID': history.pop('onsId'),
                 'Personal Mobile Number': history.pop('telephoneNumberContact1'),
@@ -92,8 +90,7 @@ def map_employee_history_job_role_table_headers(employee_history_job_role_table)
     return job_role_history_table
 
 
-def map_employee_name(employee_table):
+def map_employee_name(employee_table, calledFrom="None"):
     maybe_names = (employee_table['firstName'], employee_table['surname'])
     names = (n for n in maybe_names if n and n != '-')
     return ' '.join(names)
-
