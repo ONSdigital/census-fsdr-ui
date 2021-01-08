@@ -30,6 +30,8 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
             'ONS Email': get_emp_info('onsId'),
             'ONS Mobile Number': mob_number,
             'Status': get_emp_info('status'),
+            'Badge Number': get_emp_info('idBadgeNo'),
+            'Postcode': get_emp_info('postcode'),
      }
 
     emp_job_role = {
