@@ -24,8 +24,7 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
 
     line_manager = format_line_manager(current_job_role)
 
-    
-    employee_name = map_employee_name(employee_info,calledFrom="FSS - employeename")
+    employee_name = map_employee_name(employee_info)
 
     preferred_name = get_emp_info('preferredName', on_false='None')
 

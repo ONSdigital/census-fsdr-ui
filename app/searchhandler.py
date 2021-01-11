@@ -172,17 +172,12 @@ class SecondaryPage:
             search_criteria_with_range['rangeHigh'] = high_value
             search_criteria_with_range['rangeLow'] = low_value
 
- 
             if previous_user_missing_device != False:
-                # if the checkbox is not false, the default value
-            #   raise Exception("Checkbox TICKED" + str( data.get('user_missing_device')   ) )
                 retrieve_employee_info = get_employee_records_no_device( 
                                         search_criteria_with_range )
             else:
-            #   raise Exception("Checkbox Unticked" + str( data.get('user_missing_device')   ) )
                 retrieve_employee_info = get_employee_records(
                                          search_criteria_with_range)
-
 
             get_job_roles = get_distinct_job_role_short()
 
@@ -228,9 +223,6 @@ class SecondaryPage:
                 'Attempted to login with invalid user name and/or password',
                  client_ip = request.get('client_ip', None))
             flash(request, NO_EMPLOYEE_DATA)
-
-            # Getting a "500" errorwhen the checkbox is ticked
-#           raise Exception(str(retrieve_employee_info.status_code))
 
             return aiohttp_jinja2.render_template('signin.html',
                                                   request, {
@@ -311,11 +303,9 @@ class SecondaryPage:
             search_criteria_with_range['rangeLow'] = low_value
 
             if previous_user_missing_device != False:
-                # if the checkbox is not false, the default value
                 retrieve_emplyee_info = get_employee_records_no_device( 
                                         search_criteria_with_range )
             else:
-                # Works - riade exception code to prove it
                 retrieve_employee_info = get_employee_records(
                                          search_criteria_with_range)
 

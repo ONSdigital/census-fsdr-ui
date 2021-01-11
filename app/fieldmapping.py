@@ -90,7 +90,7 @@ def map_employee_history_job_role_table_headers(employee_history_job_role_table)
     return job_role_history_table
 
 
-def map_employee_name(employee_table, calledFrom="None"):
+def map_employee_name(employee_table):
     maybe_names = (employee_table['firstName'], employee_table['surname'])
     names = (n for n in maybe_names if n and n != '-')
     return ' '.join(names)
