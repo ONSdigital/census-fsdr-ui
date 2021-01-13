@@ -123,6 +123,10 @@ def employee_record_table(employee_records_json):
 def iat_employee_table_headers():
     add_headers = [
         {
+            'value': 'Gsuite',
+            'aria_sort': 'none'
+        },
+       {
             'value': 'Role ID',
             'aria_sort': 'none'
         },
@@ -150,10 +154,6 @@ def iat_employee_table_headers():
             'value': 'Service Now',
             'aria_sort': 'none'
         },
-        {
-            'value': 'Gsuite',
-            'aria_sort': 'none'
-        },
       ]
 
     return add_headers
@@ -162,6 +162,9 @@ def iat_employee_record_table(employee_records_json):
     add_employees = []
     for employees in employee_records_json:
         add_employees.append({'tds': [
+            {
+                'value': employees['gsuite_status']
+            },
             {
                 'value': employees['unique_role_id']
             },
@@ -182,9 +185,6 @@ def iat_employee_record_table(employee_records_json):
             },
             {
                 'value': employees['service_now_status']
-            },
-            {
-                'value': employees['gsuite_status']
             },
        ]}
         )
