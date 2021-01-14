@@ -52,8 +52,6 @@ async def clear_stored_search_criteria(session):
     if session.get('jobRoleId'):
         del session['jobRoleId']
 
-
-
 def retrieve_job_roles(job_roles, previous_jobrole_selected):
     add_job_roles = []
     job_shorts = job_roles.json()
@@ -82,6 +80,25 @@ def retrieve_job_roles(job_roles, previous_jobrole_selected):
         })
 
     return add_job_roles
+
+
+def retreiveIATstatuses():
+
+#            iat_options = [ {'value':'CREATE',      'text':'create'},
+#                           {'value':'SETUP',       'text':'setup'},
+#                           {'value':'UPDATE',      'text':'update'},
+#                           {'value':'LEAVER',      'text':'leaver'},
+#                           {'value':'LEFT',        'text':'left'},
+#                           {'value':'COMPLETE',    'text':'complete'},]
+
+    # NEXT STEP - make sure this is passed through to interfaceactiontablehandler
+    # Make sure it reaches HTMl (somehow it doesnt atm!?!?!)
+
+
+    add_job_roles = [{'value': 'Census area manager', 'text': 'Census area manager'}, {'value': 'Census mobile officer - 2nd intake', 'text': 'Census mobile officer - 2nd intake'}, {'value': 'Communal establishments team leader', 'text': 'Communal establishments team leader'}, {'value': 'Census coverage survey team leader', 'text': 'Census coverage survey team leader'}, {'value': 'Communal establishments officer', 'text': 'Communal establishments officer'}, {'value': 'Census coverage survey interviewer', 'text': 'Census coverage survey interviewer'}, {'value': 'Census area manager (Welsh speaking)', 'text': 'Census area manager (Welsh speaking)'}, {'value': 'Census team leader', 'text': 'Census team leader'}, {'value': 'Census engagement manager', 'text': 'Census engagement manager'}, {'value': 'Communal establishments area manager', 'text': 'Communal establishments area manager'}, {'value': 'Community adviser working with the Somali community', 'text': 'Community adviser working with the Somali community'}, {'value': 'Census Officer', 'text': 'Census Officer'}, {'value': 'Census officer - 2nd intake', 'text': 'Census officer - 2nd intake'}, {'value': 'Census coverage survey area manager', 'text': 'Census coverage survey area manager'}, {'value': 'Communal establishments team leader (Welsh speaking)', 'text': 'Communal establishments team leader (Welsh speaking)'}, {'value': 'Census officer - 1st intake', 'text': 'Census officer - 1st intake'}, {'value': 'Census mobile team leader', 'text': 'Census mobile team leader'}, {'value': 'Non-compliance field manager', 'text': 'Non-compliance field manager'}, {'value': 'Non-compliance assistant', 'text': 'Non-compliance assistant'}, {'value': 'Census officer - 3rd intake', 'text': 'Census officer - 3rd intake'}, {'value': 'Census area support', 'text': 'Census area support'}, {'value': 'Non-compliance officer', 'text': 'Non-compliance officer'}, {'value': 'Census engagement manager (Welsh speaking)', 'text': 'Census engagement manager (Welsh speaking)'}, {'value': '', 'text': 'Select a job role', 'disabled': True, 'selected': True}]
+
+    return add_job_roles
+
 
 
 def retrieve_assignment_statuses(assignment_statuses):

@@ -12,7 +12,8 @@ from app.searchcriteria import (
     store_search_criteria,
     retrieve_job_roles,
     retrieve_assignment_statuses,
-    clear_stored_search_criteria  
+    clear_stored_search_criteria,
+    retreiveIATstatuses
 )
 
 from app.searchfunctions import (
@@ -103,6 +104,7 @@ class InterfaceActionTable:
 
             job_role_json = retrieve_job_roles(get_job_roles, '')
 
+    
             return {
                 'page_title': f'Interface Action Table view for: {user_role}',
                 'table_headers': table_headers,
@@ -110,6 +112,7 @@ class InterfaceActionTable:
                 'page_number': page_number,
                 'last_page_number': int(math.floor(max_page)),
                 'distinct_job_roles': job_role_json,
+                'iat_options': retreiveIATstatuses(),
             }
         else:
             logger.warn('Database is down', client_ip=request['client_ip'])
@@ -245,7 +248,8 @@ class IatSecondaryPage:
                 'previous_badge': previous_badge,
                 'previous_jobid': previous_jobid,
                 'previous_surname_filter': previous_surname,
-                'no_employee_data': no_employee_data
+                'no_employee_data': no_employee_data,
+                'iat_options': retreiveIATstatuses(),
             }
         else:
             logger.warn(
@@ -367,7 +371,8 @@ class IatSecondaryPage:
                 'previous_firstname': previous_firstname,
                 'previous_badge': previous_badge,
                 'previous_jobid': previous_jobid,
-                'previous_surname_filter': previous_surname
+                'previous_surname_filter': previous_surname,
+                'iat_options': retreiveIATstatuses(),
             }
         else:
             logger.warn(

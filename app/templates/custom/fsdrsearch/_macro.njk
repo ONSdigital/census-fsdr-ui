@@ -106,6 +106,7 @@
                         "text": 'Filter Interface Action Table'
                     })
                 }}
+
                 <td>
                     {{
                         onsSelect({
@@ -118,6 +119,7 @@
                         })
                     }}
                 </td>
+
                 <td>
                     {{
                         onsInput({
@@ -155,7 +157,75 @@
                         }
                     })
                 }}
-            </tr>
+        </tr>
+	<tr>
+                <td>
+                    {{
+                        onsSelect({
+                            "id": "select",
+                            'name': "gsuite_select",
+                            "label": {
+                                "text": "Gsuite Status"
+                            },
+                            "options": params.iat_options
+                        })
+                    }}
+                </td>
+                <td>
+                    {{
+                        onsSelect({
+                            "id": "select",
+                            'name': "xma_select",
+                            "label": {
+                                "text": "XMA Status"
+                            },
+                            "options": params.iat_options
+                        })
+                    }}
+                </td>
+                <td>
+                    {{
+                        onsSelect({
+                            "id": "select",
+                            'name': "granby_select",
+                            "label": {
+                                "text": "Granby Status"
+                            },
+                            "options": params.iat_options
+                        })
+                    }}
+                </td>
+
+	</tr>
+	<tr>
+	      <td>
+                    {{
+                        onsSelect({
+                            "id": "select",
+                            'name': "lone_worker_select",
+                            "label": {
+                                "text": "Lone Worker Status"
+                            },
+                            "options": params.iat_options
+                        })
+                    }}
+                </td>
+	      <td>
+                    {{
+                        onsSelect({
+                            "id": "select",
+                            'name': "service_now_select",
+                            "label": {
+                                "text": "Service Now Status"
+                            },
+                            "options": params.iat_options
+                        })
+                    }}
+                </td>
+               </td>
+
+	</tr>
+
          <table>
          {{
             onsInput({
