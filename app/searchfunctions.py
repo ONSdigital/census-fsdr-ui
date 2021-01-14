@@ -6,6 +6,7 @@ from app.utils import FSDR_USER, FSDR_URL, FSDR_PASS
 import requests
 
 from requests.auth import HTTPBasicAuth
+from app.tabutils import acc_generation
 
 def get_employee_count(user_filter=""):
     employee_record_url = URL(
@@ -172,7 +173,7 @@ def iat_employee_record_table(employee_records_json):
                 'value': employees['first_name'] + " " + employees['surname']  
             },
             {
-                'value': "#" + str(employees['external_id'])
+                'value':  acc_generation(str(employees['external_id']))
             },
             {
                 'value': employees['xma_status']

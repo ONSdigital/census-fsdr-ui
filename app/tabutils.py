@@ -20,6 +20,24 @@ def tab_generation(tab_name, tab_data):
     return generic_tab
 
 
+def acc_generation(content):
+    acc_gen = []
+
+    acc_gen.append("""<div id="accordion" class="accordion">""")
+    acc_gen.append("""<details id="accordion-1" class="details js-collapsible details--accordion details--initialised" data-btn-close="Hide" data-group="accordion" role="group">""")
+    acc_gen.append("""<summary class="details__summary js-collapsible-summary" role="link" aria-controls="accordion-1" aria-expanded="false" data-ga-action="Close panel">""")
+    acc_gen.append("""<div class="details__heading"><span class="details__title u-fs-r--b">Expand for ID</span></div></summary>""")
+    acc_gen.append("""<div id="accordion-1-content" class="details__content js-collapsible-content" aria-hidden="true">""")
+    acc_gen.append("""<dl class="metadata metadata__list grid grid--gutterless u-cf u-mb-l">""")
+    acc_gen.append("""<dt class="metadata__term grid__col col-18@m">""" + str(content) + """</dt>""")
+    acc_gen.append("""<dd class="metadata__value grid__col col-1@m"></dd></dl></div>""")
+    acc_gen.append("""</details>""")
+    acc_gen.append("""</div>""")
+
+    acc_gen = ''.join(acc_gen)
+
+    return acc_gen
+
 def table_generation(tab_data):
     add_headers = []
     tds_data = []
