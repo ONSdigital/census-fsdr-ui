@@ -103,7 +103,8 @@ class InterfaceActionTable:
             employee_records = iat_employee_record_table(get_employee_info.json())
 
             job_role_json = retrieve_job_roles(get_job_roles, '')
-
+            
+            iatStat = retreiveIATstatuses()
     
             return {
                 'page_title': f'Interface Action Table view for: {user_role}',
@@ -112,7 +113,7 @@ class InterfaceActionTable:
                 'page_number': page_number,
                 'last_page_number': int(math.floor(max_page)),
                 'distinct_job_roles': job_role_json,
-                'iat_options': retreiveIATstatuses(),
+                'iat_options': iatStat,
             }
         else:
             logger.warn('Database is down', client_ip=request['client_ip'])
@@ -232,6 +233,8 @@ class IatSecondaryPage:
             job_role_short_json = retrieve_job_roles(
                 get_job_roles, previous_jobrole_selected)
 
+            iatStat = retreiveIATstatuses()
+
             return {
                 'called_from_index': from_index,
                 'page_title': f'Interface Action Table view for: {user_role}',
@@ -249,7 +252,7 @@ class IatSecondaryPage:
                 'previous_jobid': previous_jobid,
                 'previous_surname_filter': previous_surname,
                 'no_employee_data': no_employee_data,
-                'iat_options': retreiveIATstatuses(),
+                'iat_options': iatStat,
             }
         else:
             logger.warn(
@@ -355,6 +358,7 @@ class IatSecondaryPage:
 
             job_role_json = retrieve_job_roles(get_job_roles,
                                                previous_jobrole_selected)
+            iatStat = retreiveIATstatuses()
 
             return {
                 'called_from_index': from_index,
@@ -372,7 +376,7 @@ class IatSecondaryPage:
                 'previous_badge': previous_badge,
                 'previous_jobid': previous_jobid,
                 'previous_surname_filter': previous_surname,
-                'iat_options': retreiveIATstatuses(),
+                'iat_options':iatStat, 
             }
         else:
             logger.warn(
