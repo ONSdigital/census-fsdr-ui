@@ -15,7 +15,7 @@ def map_employee_history_table_headers(user_role, full_history):
                 'Preferred Name': history.pop('preferredName'),
                 'ONS ID': history.pop('onsId'),
                 'Personal Mobile Number': history.pop('telephoneNumberContact1'),
-                'Home Phone Number': history.pop('telephoneNumberContact2'),
+                'Home Phone Number': history.pop('telephoneNumberContact2', None),
                 'Status': history.pop('status'),
                 'Badge ID': history.pop('idBadgeNo'),
                 'Personal Email Address': history.pop('personalEmailAddress'),

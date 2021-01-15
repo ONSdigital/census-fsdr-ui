@@ -75,7 +75,7 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
     data_contact = {
         'Address': get_emp_info('address'),
         'Personal Mobile Number': get_emp_info('telephoneNumberContact1'),
-        'Home Phone Number': get_emp_info('telephoneNumberContact2'),
+        'Home Phone Number': get_emp_info('telephoneNumberContact2', None),
         'Personal Email Account': get_emp_info('personalEmailAddress'),
         'Emergency Contact Name': get_emp_info('emergencyContactFullName'),
         'Emergency Contact Number': get_emp_info('emergencyContactMobileNo'),
