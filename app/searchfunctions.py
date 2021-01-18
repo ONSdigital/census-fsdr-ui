@@ -38,9 +38,9 @@ def get_employee_records_no_device(user_filter=""):
                         verify=False,
                         auth=HTTPBasicAuth(FSDR_USER, FSDR_PASS))
 
-def get_employee_records(user_filter="", calledFromIAT=False):
+def get_employee_records(user_filter="", iat=False):
     employee_record_url = URL(
-        FSDR_URL + f'/fieldforce/byType/byRangeAndUserFilter' + str("Iat/" if calledFromIAT else "/") ).with_query(
+        FSDR_URL + f'/fieldforce/byType/byRangeAndUserFilter' + str("Iat/" if iat else "/") ).with_query(
         user_filter
     )
 

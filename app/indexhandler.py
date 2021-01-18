@@ -63,24 +63,14 @@ class MainPage:
             page_number = 1
 
         try:
-            employee_count = get_employee_count()
-            max_page = (int(employee_count.text) / 50) - 1
-            if page_number >= max_page > 1:
-                page_number = int(math.floor(max_page))
-            else:
-                if max_page < 1:
-                    max_page = 1
-                if page_number > 1:
-                    low_value = 50 * page_number
-                    high_value = low_value + 50
-                else:
-                    low_value = page_number
-                    high_value = 50
+            employee_sum = int(get_employee_count().text)
 
-                search_range = {'rangeHigh': high_value, 'rangeLow': low_value}
+            last_record, first_record, max_page = page_bounds(employee_sum, page_number)
 
-                get_employee_info = get_employee_records(search_range)
-                get_job_roles = get_distinct_job_role_short()
+            search_range = {'rangeHigh': last_record, 'rangeLow': first_record}
+
+            get_employee_info = get_employee_records(search_range)
+            get_job_roles = get_distinct_job_role_short()
         except ClientResponseError as ex:
             if ex.status == 503:
                 ip = request['client_ip']

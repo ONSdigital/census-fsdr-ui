@@ -1,24 +1,14 @@
-def pagehighlow(totalNumberOfEmployees, currentPageNumber):
-    # current_page_number is min of 1
-    split = 50              # 50 items per page
+def page_bounds(employee_sum: int, page_number: int) -> tuple[int, int, int]:
+    if page_number < 1:
+        raise ValueError(f'page_number must be 1 or greater, but was {page_number}')
 
-    highValue = split * currentPageNumber 
-    lowValue =  highValue - split 
+    records_per_page = 50   
+
+    last_record  = records_per_page * page_number 
+    first_record = last_record - records_per_page
     
-    maxPage = ((int(totalNumberOfEmployees.text) / 50) - 1).ceil()
+    max_page = ((employee_sum / records_per_page) - 1).ceil()
 
-    return (highValue, lowValue)
+    return (last_record, first_record, max_page)
 
-    max_page = 
-    if page_number >= max_page > 1:
-        page_number = int(math.floor(max_page))
-    else:
-        if max_page < 1:
-            max_page = 1
-        if page_number > 1:
-            low_value = 50 * page_number
-            high_value = low_value + 50
-        else:
-            low_value = page_number
-            high_value = 50
 

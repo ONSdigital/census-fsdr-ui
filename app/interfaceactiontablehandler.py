@@ -73,13 +73,13 @@ class InterfaceActionTable:
             page_number = 1
 
         try:
-            employee_count = get_employee_count()
+            employee_sum = int(get_employee_count().text)
 
-            high_value, low_value, max_page = pagehighlow(employee_count, page_number)
+            last_record, first_record, max_page = page_bounds(employee_sum, page_number)
 
-            search_range = {'rangeHigh': high_value, 'rangeLow': low_value}
+            search_range = {'rangeHigh': last_record, 'rangeLow': first_record}
 
-            get_employee_info = get_employee_records(search_range, calledFromIAT=True)
+            get_employee_info = get_employee_records(search_range, iat = True)
             get_job_roles = get_distinct_job_role_short()
 
         except ClientResponseError as ex:
@@ -203,16 +203,16 @@ class IatSecondaryPage:
                     request, {'no_search_criteria': 'True'},
                     status=405)
 
-            high_value, low_value, page_number, max_page = await allocate_search_ranges(
+            last_record, first_record, page_number, max_page = await allocate_search_ranges(
                 search_criteria, page_number)
 
             search_criteria_with_range = search_criteria.copy()
 
-            search_criteria_with_range['rangeHigh'] = high_value
-            search_criteria_with_range['rangeLow'] = low_value
+            search_criteria_with_range['rangeHigh'] = last_record 
+            search_criteria_with_range['rangeLow'] =  first_record 
 
             retrieve_employee_info = get_employee_records(
-                search_criteria_with_range, calledFromIAT=True)
+                search_criteria_with_range, iat = True)
 
             get_job_roles = get_distinct_job_role_short()
 
@@ -326,16 +326,16 @@ class IatSecondaryPage:
                 previous_jobid = session['jobRoleId']
                 search_criteria['jobRoleId'] = previous_jobid
 
-            high_value, low_value, page_number, max_page = await allocate_search_ranges(
+            last_record, first_record, page_number, max_page = await allocate_search_ranges(
                 search_criteria, page_number)
 
             search_criteria_with_range = search_criteria.copy()
 
-            search_criteria_with_range['rangeHigh'] = high_value
-            search_criteria_with_range['rangeLow'] = low_value
+            search_criteria_with_range['rangeHigh'] = last_record 
+            search_criteria_with_range['rangeLow'] =  first_record 
 
             retrieve_employee_info = get_employee_records(
-                search_criteria_with_range, calledFromIAT=True)
+                search_criteria_with_range, iat = True)
 
             get_job_roles = get_distinct_job_role_short()
         except ClientResponseError as ex:
