@@ -8,6 +8,10 @@ from aiohttp.web import HTTPFound, RouteTableDef
 from aiohttp_session import get_session
 from structlog import get_logger
 
+from app.pageutils import (
+        pagehighlow,
+)
+
 from app.searchcriteria import (
     store_search_criteria,
     retrieve_job_roles,
@@ -70,23 +74,14 @@ class InterfaceActionTable:
 
         try:
             employee_count = get_employee_count()
-            max_page = (int(employee_count.text) / 50) - 1
-            if page_number >= max_page > 1:
-                page_number = int(math.floor(max_page))
-            else:
-                if max_page < 1:
-                    max_page = 1
-                if page_number > 1:
-                    low_value = 50 * page_number
-                    high_value = low_value + 50
-                else:
-                    low_value = page_number
-                    high_value = 50
 
-                search_range = {'rangeHigh': high_value, 'rangeLow': low_value}
+            high_value, low_value, max_page = pagehighlow(employee_count, page_number)
 
-                get_employee_info = get_employee_records(search_range, calledFromIAT=True)
-                get_job_roles = get_distinct_job_role_short()
+            search_range = {'rangeHigh': high_value, 'rangeLow': low_value}
+
+            get_employee_info = get_employee_records(search_range, calledFromIAT=True)
+            get_job_roles = get_distinct_job_role_short()
+
         except ClientResponseError as ex:
             if ex.status == 503:
                 ip = request['client_ip']
@@ -165,6 +160,12 @@ class IatSecondaryPage:
                 previous_jobrole_selected = data.get('job_role_select')
                 search_criteria['jobRoleShort'] = data.get('job_role_select')
 
+            select_options = ["gsuite_select","xma_select","granby_select","lone-worker_select","service-now_select"]
+            for select_element in select_options:
+                if data.get(select_element):
+                    search_criteria[str(select_options.split("_")[0])] = data.get(select_element)
+
+            
         #Changed to allow ID filtering
 
             if data.get('filter_unique_employee_id'):
