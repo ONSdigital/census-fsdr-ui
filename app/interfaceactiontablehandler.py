@@ -9,7 +9,7 @@ from aiohttp_session import get_session
 from structlog import get_logger
 
 from app.pageutils import (
-        pagehighlow,
+        page_bounds,
 )
 
 from app.searchcriteria import (
