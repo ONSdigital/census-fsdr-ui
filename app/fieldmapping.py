@@ -11,7 +11,7 @@ def map_employee_history_table_headers(user_role, full_history):
             mapping = {
                 'Ingest Date': history.pop('ingestDate', None),
                 'ID': history.pop('uniqueEmployeeId', None),
-                'Name': map_employee_name(history, None),
+                'Name': map_employee_name(history),
                 'Preferred Name': history.pop('preferredName', None),
                 'ONS ID': history.pop('onsId', None),
                 'Personal Mobile Number': history.pop('telephoneNumberContact1', None),
@@ -36,7 +36,7 @@ def map_employee_history_table_headers(user_role, full_history):
             mapping = {
                 'Ingest Date': history.pop('ingestDate', None),
                 'ID': history.pop('uniqueEmployeeId', None),
-                'Name': map_employee_name(history, None),
+                'Name': map_employee_name(history),
                 'Preferred Name': history.pop('preferredName', None),
                 'ONS ID': history.pop('onsId', None),
                 'Personal Mobile Number': history.pop('telephoneNumberContact1', None),
@@ -90,7 +90,7 @@ def map_employee_history_job_role_table_headers(employee_history_job_role_table)
     return job_role_history_table
 
 
-def map_employee_name(employee_table):
-    maybe_names = (employee_table['firstName'], employee_table['surname'])
+def map_employee_name(history):
+    maybe_names = (history.get('firstName', None), history.get('surname', None))
     names = (n for n in maybe_names if n and n != '-')
     return ' '.join(names)
