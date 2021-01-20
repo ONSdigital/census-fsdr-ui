@@ -6,6 +6,8 @@
 {% from 'components/panel/_macro.njk' import onsPanel %}
 {% from "components/table/_macro.njk" import onsTable %}
 {% from "custom/fsdrsearch/_macro.njk" import fsdrSearch %}
+{% from "components/metadata/_macro.njk" import onsMetadata %}
+{% from "custom/tabs/_macro.njk" import onsTabs %}
 
 {% set page_title_value = page_title %}
 {% set search_url = "/iat-search-results" %}
@@ -42,6 +44,7 @@
                             'previous_area': previous_area,
                             'previous_surname_filter': previous_surname_filter,
                             'index_search': "IAT",
+			    'iat_options': iat_options, 
                         }) }}
                         {{ onsButton({
                             'text': 'Filter Interface Action Table',

@@ -7,12 +7,14 @@ from aiohttp.client_exceptions import (ClientResponseError)
 from aiohttp.web import HTTPFound, RouteTableDef
 from aiohttp_session import get_session
 from structlog import get_logger
+from app.pageutils import page_bounds
 
 from app.searchcriteria import (
     store_search_criteria,
     retrieve_job_roles,
     retrieve_assignment_statuses,
-    clear_stored_search_criteria  
+    clear_stored_search_criteria,
+    retreive_iat_statuses
 )
 
 from app.searchfunctions import (
@@ -68,24 +70,15 @@ class InterfaceActionTable:
             page_number = 1
 
         try:
-            employee_count = get_employee_count()
-            max_page = (int(employee_count.text) / 50) - 1
-            if page_number >= max_page > 1:
-                page_number = int(math.floor(max_page))
-            else:
-                if max_page < 1:
-                    max_page = 1
-                if page_number > 1:
-                    low_value = 50 * page_number
-                    high_value = low_value + 50
-                else:
-                    low_value = page_number
-                    high_value = 50
+            employee_sum = int(get_employee_count().text)
 
-                search_range = {'rangeHigh': high_value, 'rangeLow': low_value}
+            last_record, first_record, max_page = page_bounds(employee_sum, page_number)
 
-                get_employee_info = get_employee_records(search_range, calledFromIAT=True)
-                get_job_roles = get_distinct_job_role_short()
+            search_range = {'rangeHigh': last_record, 'rangeLow': first_record}
+
+            get_employee_info = get_employee_records(search_range, iat = True)
+            get_job_roles = get_distinct_job_role_short()
+
         except ClientResponseError as ex:
             if ex.status == 503:
                 ip = request['client_ip']
@@ -102,7 +95,8 @@ class InterfaceActionTable:
             employee_records = iat_employee_record_table(get_employee_info.json())
 
             job_role_json = retrieve_job_roles(get_job_roles, '')
-
+            
+            iat_stats = retreive_iat_statuses()    
             return {
                 'page_title': f'Interface Action Table view for: {user_role}',
                 'table_headers': table_headers,
@@ -110,6 +104,7 @@ class InterfaceActionTable:
                 'page_number': page_number,
                 'last_page_number': int(math.floor(max_page)),
                 'distinct_job_roles': job_role_json,
+                'iat_options': iat_stats,
             }
         else:
             logger.warn('Database is down', client_ip=request['client_ip'])
@@ -161,7 +156,11 @@ class IatSecondaryPage:
                 previous_jobrole_selected = data.get('job_role_select')
                 search_criteria['jobRoleShort'] = data.get('job_role_select')
 
-        #Changed to allow ID filtering
+            select_options = ["gsuite_select","xma_select","granby_select","loneWorker_select","serviceNow_select"]
+            for select_element in select_options:
+                if data.get(select_element):
+                    if data.get(select_element)  != "blank":
+                        search_criteria[str(select_element.split("_")[0])] = data.get(select_element)
 
             if data.get('filter_unique_employee_id'):
                 unique_employee_id = data.get('filter_unique_employee_id')
@@ -198,16 +197,16 @@ class IatSecondaryPage:
                     request, {'no_search_criteria': 'True'},
                     status=405)
 
-            high_value, low_value, page_number, max_page = await allocate_search_ranges(
+            last_record, first_record, page_number, max_page = await allocate_search_ranges(
                 search_criteria, page_number)
 
             search_criteria_with_range = search_criteria.copy()
 
-            search_criteria_with_range['rangeHigh'] = high_value
-            search_criteria_with_range['rangeLow'] = low_value
+            search_criteria_with_range['rangeHigh'] = last_record 
+            search_criteria_with_range['rangeLow'] =  first_record 
 
             retrieve_employee_info = get_employee_records(
-                search_criteria_with_range, calledFromIAT=True)
+                search_criteria_with_range, iat = True)
 
             get_job_roles = get_distinct_job_role_short()
 
@@ -229,6 +228,7 @@ class IatSecondaryPage:
             job_role_short_json = retrieve_job_roles(
                 get_job_roles, previous_jobrole_selected)
 
+            iat_stats = retreive_iat_statuses()    
             return {
                 'called_from_index': from_index,
                 'page_title': f'Interface Action Table view for: {user_role}',
@@ -245,7 +245,8 @@ class IatSecondaryPage:
                 'previous_badge': previous_badge,
                 'previous_jobid': previous_jobid,
                 'previous_surname_filter': previous_surname,
-                'no_employee_data': no_employee_data
+                'no_employee_data': no_employee_data,
+                'iat_options': iat_stats,
             }
         else:
             logger.warn(
@@ -298,7 +299,7 @@ class IatSecondaryPage:
 
         #Changed to allow ID filtering
 
-            if data.get('filter_unique_employee_id'):
+            if session.get('filter_unique_employee_id'):
                 unique_employee_id = data.get('filter_unique_employee_id')
                 search_criteria['uniqueEmployeeId'] = unique_employee_id
 
@@ -318,16 +319,16 @@ class IatSecondaryPage:
                 previous_jobid = session['jobRoleId']
                 search_criteria['jobRoleId'] = previous_jobid
 
-            high_value, low_value, page_number, max_page = await allocate_search_ranges(
+            last_record, first_record, page_number, max_page = await allocate_search_ranges(
                 search_criteria, page_number)
 
             search_criteria_with_range = search_criteria.copy()
 
-            search_criteria_with_range['rangeHigh'] = high_value
-            search_criteria_with_range['rangeLow'] = low_value
+            search_criteria_with_range['rangeHigh'] = last_record 
+            search_criteria_with_range['rangeLow'] =  first_record 
 
             retrieve_employee_info = get_employee_records(
-                search_criteria_with_range, calledFromIAT=True)
+                search_criteria_with_range, iat = True)
 
             get_job_roles = get_distinct_job_role_short()
         except ClientResponseError as ex:
@@ -351,7 +352,7 @@ class IatSecondaryPage:
 
             job_role_json = retrieve_job_roles(get_job_roles,
                                                previous_jobrole_selected)
-
+            iat_stats = retreive_iat_statuses()    
             return {
                 'called_from_index': from_index,
                 'page_title': f'Interface Action Table view for: {user_role}',
@@ -367,7 +368,8 @@ class IatSecondaryPage:
                 'previous_firstname': previous_firstname,
                 'previous_badge': previous_badge,
                 'previous_jobid': previous_jobid,
-                'previous_surname_filter': previous_surname
+                'previous_surname_filter': previous_surname,
+                'iat_options':iat_stats, 
             }
         else:
             logger.warn(

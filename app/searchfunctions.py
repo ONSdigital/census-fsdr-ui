@@ -6,6 +6,12 @@ from app.utils import FSDR_USER, FSDR_URL, FSDR_PASS
 import requests
 
 from requests.auth import HTTPBasicAuth
+from app.tabutils import acc_generation
+from structlog import get_logger
+
+
+logger = get_logger('fsdr-ui')
+
 
 def get_employee_count(user_filter=""):
     employee_record_url = URL(
@@ -37,9 +43,9 @@ def get_employee_records_no_device(user_filter=""):
                         verify=False,
                         auth=HTTPBasicAuth(FSDR_USER, FSDR_PASS))
 
-def get_employee_records(user_filter="", calledFromIAT=False):
+def get_employee_records(user_filter="", iat=False):
     employee_record_url = URL(
-        FSDR_URL + f'/fieldforce/byType/byRangeAndUserFilter' + str("Iat/" if calledFromIAT else "/") ).with_query(
+        FSDR_URL + f'/fieldforce/byType/byRangeAndUserFilter{"Iat/" if iat else "/"}').with_query(
         user_filter
     )
 
@@ -123,6 +129,10 @@ def employee_record_table(employee_records_json):
 def iat_employee_table_headers():
     add_headers = [
         {
+            'value': 'Gsuite',
+            'aria_sort': 'none'
+        },
+       {
             'value': 'Role ID',
             'aria_sort': 'none'
         },
@@ -150,10 +160,6 @@ def iat_employee_table_headers():
             'value': 'Service Now',
             'aria_sort': 'none'
         },
-        {
-            'value': 'Gsuite',
-            'aria_sort': 'none'
-        },
       ]
 
     return add_headers
@@ -163,13 +169,16 @@ def iat_employee_record_table(employee_records_json):
     for employees in employee_records_json:
         add_employees.append({'tds': [
             {
+                'value': employees['gsuite_status']
+            },
+            {
                 'value': employees['unique_role_id']
             },
             {
                 'value': employees['first_name'] + " " + employees['surname']  
             },
             {
-                'value': "#" + str(employees['external_id'])
+                'value':  acc_generation(str(employees['external_id']))
             },
             {
                 'value': employees['xma_status']
@@ -182,9 +191,6 @@ def iat_employee_record_table(employee_records_json):
             },
             {
                 'value': employees['service_now_status']
-            },
-            {
-                'value': employees['gsuite_status']
             },
        ]}
         )
