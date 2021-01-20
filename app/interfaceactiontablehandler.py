@@ -160,7 +160,7 @@ class IatSecondaryPage:
                 previous_jobrole_selected = data.get('job_role_select')
                 search_criteria['jobRoleShort'] = data.get('job_role_select')
 
-            select_options = ["gsuite_select","xma_select","granby_select","lone-worker_select","service-now_select"]
+            select_options = ["gsuite_select","xma_select","granby_select","loneWorker_select","serviceNow_select"]
             for select_element in select_options:
                 if data.get(select_element):
                     if data.get(select_element)  != "blank":
