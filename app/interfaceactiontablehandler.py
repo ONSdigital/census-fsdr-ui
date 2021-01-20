@@ -166,9 +166,6 @@ class IatSecondaryPage:
                     if data.get(select_element)  != "blank":
                         search_criteria[str(select_element.split("_")[0])] = data.get(select_element)
 
-            # TODO remove  logging
-            logger.error("Search Criteria:   " + str(search_criteria))
-            
             if data.get('filter_unique_employee_id'):
                 unique_employee_id = data.get('filter_unique_employee_id')
                 search_criteria['uniqueEmployeeId'] = unique_employee_id
