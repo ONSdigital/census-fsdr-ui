@@ -7,17 +7,14 @@ from aiohttp.client_exceptions import (ClientResponseError)
 from aiohttp.web import HTTPFound, RouteTableDef
 from aiohttp_session import get_session
 from structlog import get_logger
-
-from app.pageutils import (
-        page_bounds,
-)
+from app.pageutils import page_bounds
 
 from app.searchcriteria import (
     store_search_criteria,
     retrieve_job_roles,
     retrieve_assignment_statuses,
     clear_stored_search_criteria,
-    retreiveIATstatuses
+    retreive_iat_statuses
 )
 
 from app.searchfunctions import (
@@ -99,8 +96,7 @@ class InterfaceActionTable:
 
             job_role_json = retrieve_job_roles(get_job_roles, '')
             
-            iatStat = retreiveIATstatuses()
-    
+            iat_stats = retreive_iat_statuses()    
             return {
                 'page_title': f'Interface Action Table view for: {user_role}',
                 'table_headers': table_headers,
@@ -108,7 +104,7 @@ class InterfaceActionTable:
                 'page_number': page_number,
                 'last_page_number': int(math.floor(max_page)),
                 'distinct_job_roles': job_role_json,
-                'iat_options': iatStat,
+                'iat_options': iat_stats,
             }
         else:
             logger.warn('Database is down', client_ip=request['client_ip'])
@@ -232,8 +228,7 @@ class IatSecondaryPage:
             job_role_short_json = retrieve_job_roles(
                 get_job_roles, previous_jobrole_selected)
 
-            iatStat = retreiveIATstatuses()
-
+            iat_stats = retreive_iat_statuses()    
             return {
                 'called_from_index': from_index,
                 'page_title': f'Interface Action Table view for: {user_role}',
@@ -251,7 +246,7 @@ class IatSecondaryPage:
                 'previous_jobid': previous_jobid,
                 'previous_surname_filter': previous_surname,
                 'no_employee_data': no_employee_data,
-                'iat_options': iatStat,
+                'iat_options': iat_stats,
             }
         else:
             logger.warn(
@@ -357,8 +352,7 @@ class IatSecondaryPage:
 
             job_role_json = retrieve_job_roles(get_job_roles,
                                                previous_jobrole_selected)
-            iatStat = retreiveIATstatuses()
-
+            iat_stats = retreive_iat_statuses()    
             return {
                 'called_from_index': from_index,
                 'page_title': f'Interface Action Table view for: {user_role}',
@@ -375,7 +369,7 @@ class IatSecondaryPage:
                 'previous_badge': previous_badge,
                 'previous_jobid': previous_jobid,
                 'previous_surname_filter': previous_surname,
-                'iat_options':iatStat, 
+                'iat_options':iat_stats, 
             }
         else:
             logger.warn(

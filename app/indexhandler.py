@@ -9,10 +9,7 @@ from aiohttp.web import HTTPFound, RouteTableDef
 from aiohttp_session import get_session
 
 from app.searchcriteria import retrieve_job_roles, clear_stored_search_criteria
-
-from app.pageutils import (
-        page_bounds,
-)
+from app.pageutils import page_bounds
 
 from app.searchfunctions import (
         get_employee_records, 

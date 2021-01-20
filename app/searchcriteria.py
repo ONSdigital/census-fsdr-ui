@@ -82,7 +82,7 @@ def retrieve_job_roles(job_roles, previous_jobrole_selected):
     return add_job_roles
 
 
-def retreiveIATstatuses():
+def retreive_iat_statuses():
 
     iat_options = [ {'value':'blank',       'text':'Select a status', "disabled": True, "selected": True},
                     {'value':'CREATE',      'text':'CREATE'},
