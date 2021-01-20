@@ -163,11 +163,12 @@ class IatSecondaryPage:
             select_options = ["gsuite_select","xma_select","granby_select","lone-worker_select","service-now_select"]
             for select_element in select_options:
                 if data.get(select_element):
-                    search_criteria[str(select_options.split("_")[0])] = data.get(select_element)
+                    if data.get(select_element)  != "blank":
+                        search_criteria[str(select_element.split("_")[0])] = data.get(select_element)
 
+            # TODO remove  logging
+            logger.error("Search Criteria:   " + str(search_criteria))
             
-        #Changed to allow ID filtering
-
             if data.get('filter_unique_employee_id'):
                 unique_employee_id = data.get('filter_unique_employee_id')
                 search_criteria['uniqueEmployeeId'] = unique_employee_id
@@ -306,7 +307,7 @@ class IatSecondaryPage:
 
         #Changed to allow ID filtering
 
-            if data.get('filter_unique_employee_id'):
+            if session.get('filter_unique_employee_id'):
                 unique_employee_id = data.get('filter_unique_employee_id')
                 search_criteria['uniqueEmployeeId'] = unique_employee_id
 

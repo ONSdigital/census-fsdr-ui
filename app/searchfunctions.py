@@ -44,7 +44,6 @@ def get_employee_records_no_device(user_filter=""):
                         auth=HTTPBasicAuth(FSDR_USER, FSDR_PASS))
 
 def get_employee_records(user_filter="", iat=False):
-    logger.error("CURRENT FILTER" + str(user_filter))
     employee_record_url = URL(
         FSDR_URL + f'/fieldforce/byType/byRangeAndUserFilter' + str("Iat/" if iat else "/") ).with_query(
         user_filter
