@@ -70,13 +70,18 @@ class InterfaceActionTable:
             page_number = 1
 
         try:
-            employee_sum = int(get_employee_count().text)
-
-            last_record, first_record, max_page = page_bounds(employee_sum, page_number)
-
-            search_range = {'rangeHigh': last_record, 'rangeLow': first_record}
+            search_range, records_per_page = page_bounds(page_number)
 
             get_employee_info = get_employee_records(search_range, iat = True)
+            get_employee_info_json = get_employee_info.json() 
+
+            
+            if len(get_employee_info_json) > 0:
+                employee_sum = get_employee_info_json[0].get('total_employees',0)
+                max_page = math.ceil(employee_sum / records_per_page)        
+            else:
+                max_page = 1 
+
             get_job_roles = get_distinct_job_role_short()
 
         except ClientResponseError as ex:
@@ -92,7 +97,7 @@ class InterfaceActionTable:
         if get_employee_info.status_code == 200:
             table_headers = iat_employee_table_headers()
 
-            employee_records = iat_employee_record_table(get_employee_info.json())
+            employee_records = iat_employee_record_table(get_employee_info_json)
 
             job_role_json = retrieve_job_roles(get_job_roles, '')
             
