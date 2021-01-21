@@ -75,9 +75,10 @@ class InterfaceActionTable:
             get_employee_info = get_employee_records(search_range, iat = True)
             get_employee_info_json = get_employee_info.json() 
 
+            
             if len(get_employee_info_json) > 0:
                 employee_sum = get_employee_info_json[0].get('total_employees',0)
-                max_page = math.ceil((employee_sum / records_per_page) - 1)
+                max_page = math.ceil(employee_sum / records_per_page)        
             else:
                 max_page = 1 
 
