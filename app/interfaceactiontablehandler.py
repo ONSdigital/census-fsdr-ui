@@ -156,6 +156,7 @@ class IatSecondaryPage:
                 from_index = 'false'
 
             search_criteria = {}
+            previous_criteria = {}
 
             if data.get('assignment_select'):
                 previous_assignment_selected = data.get('assignment_select')
@@ -171,6 +172,7 @@ class IatSecondaryPage:
                 if data.get(select_element):
                     if data.get(select_element)  != "blank":
                         search_criteria[str(select_element.split("_")[0])] = data.get(select_element)
+                        previous_criteria[select_element] = data.get(select_element)
 
             if data.get('filter_unique_employee_id'):
                 unique_employee_id = data.get('filter_unique_employee_id')
@@ -256,6 +258,11 @@ class IatSecondaryPage:
                 'previous_jobid': previous_jobid,
                 'previous_surname_filter': previous_surname,
                 'no_employee_data': no_employee_data,
+                'previous_gsuite_select' : previous_criteria.get('gsuite_select'),
+                'previous_xma_select' : previous_criteria.get('xma_select'),
+                'previous_granby_select' : previous_criteria.get('granby_select'),
+                'previous_lone_worker_select' : previous_criteria.get('loneWorker_select'),
+                'previous_service_now_select' : previous_criteria.get('serviceNow_select'),
                 'iat_options': iat_stats,
             }
         else:
@@ -289,6 +296,7 @@ class IatSecondaryPage:
             from_index = False
 
         search_criteria = {}
+        previous_criteria = {}
 
         previous_assignment_selected = ''
         previous_jobrole_selected = ''
@@ -297,17 +305,26 @@ class IatSecondaryPage:
         previous_firstname = ''
         previous_badge = ''
         previous_jobid = ''
+        previous_gsuite_select = ''
+        previous_xma_select = ''
+        previous_granby_select = ''
+        previous_lone_worker_select = ''
+        previous_service_now_select = ''
         try:
             if session.get('assignmentStatus'):
                 previous_assignment_selected = session['assignmentStatus']
-                search_criteria[
-                    'assignmentStatus'] = previous_assignment_selected
+                search_criteria['assignmentStatus'] = previous_assignment_selected
+
+            select_options = ["gsuite_select","xma_select","granby_select","loneWorker_select","serviceNow_select"]
+            for select_element in select_options:
+                if data.get(select_element):
+                    if data.get(select_element)  != "blank":
+                        search_criteria[str(select_element.split("_")[0])] = data.get(select_element)
+                        previous_criteria[select_element] = data.get(select_element)
 
             if session.get('jobRoleShort'):
                 previous_jobrole_selected = session['jobRoleShort']
                 search_criteria['jobRoleShort'] = previous_jobrole_selected
-
-        #Changed to allow ID filtering
 
             if session.get('filter_unique_employee_id'):
                 unique_employee_id = data.get('filter_unique_employee_id')
@@ -379,6 +396,11 @@ class IatSecondaryPage:
                 'previous_badge': previous_badge,
                 'previous_jobid': previous_jobid,
                 'previous_surname_filter': previous_surname,
+                'previous_gsuite_select' : previous_criteria.get('gsuite_select'),
+                'previous_xma_select' : previous_criteria.get('xma_select'),
+                'previous_granby_select' : previous_criteria.get('granby_select'),
+                'previous_lone_worker_select' : previous_criteria.get('loneWorker_select'),
+                'previous_service_now_select' : previous_criteria.get('serviceNow_select'),
                 'iat_options':iat_stats, 
             }
         else:
