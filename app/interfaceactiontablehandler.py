@@ -142,6 +142,11 @@ class IatSecondaryPage:
         previous_firstname = ''
         previous_badge = ''
         previous_jobid = ''
+        previous_gsuite_select = ''
+        previous_xma_select = ''
+        previous_granby_select = ''
+        previous_lone_worker_select = ''
+        previous_service_now_select = ''
 
         try:
             if data.get('indexsearch'
