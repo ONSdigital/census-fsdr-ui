@@ -168,10 +168,10 @@ class IatSecondaryPage:
             for select_element in select_options:
                 if data.get(select_element):
                     if data.get(select_element)  != "blank":
-                        search_criteria[str(select_element.split("_")[0])] = data.get(select_element)
-                        previous_criteria[str(select_element.split("_")[0])] = data.get(select_element)
+                        search_criteria[select_element] = data.get(select_element)
+                        previous_criteria[select_element] = data.get(select_element)
                     else:
-                        previous_criteria[str(select_element.split("_")[0])] = '' 
+                        previous_criteria[select_element] = '' 
 
 
             if data.get('filter_unique_employee_id'):
@@ -316,11 +316,10 @@ class IatSecondaryPage:
             for select_element in select_options:
                 if data.get(select_element):
                     if data.get(select_element)  != "blank":
-                        search_criteria[str(select_element.split("_")[0])] = data.get(select_element)
-                        previous_criteria[str(select_element.split("_")[0])] = data.get(select_element)
+                        search_criteria[select_element] = data.get(select_element)
+                        previous_criteria[select_element] = data.get(select_element)
                     else:
-                        previous_criteria[str(select_element.split("_")[0])] = '' 
-
+                        previous_criteria[select_element] = '' 
 
             if session.get('jobRoleShort'):
                 previous_jobrole_selected = session['jobRoleShort']
