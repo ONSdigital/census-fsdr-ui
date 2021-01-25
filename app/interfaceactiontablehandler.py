@@ -126,6 +126,8 @@ class IatSecondaryPage:
         session = await get_session(request)
         data = await request.post()
 
+        logger.error("Session:\n" + str(session) + "\n\nData(previous info):\n" + str(data) + "\n\n")
+
         user_role = await saml.get_role_id(request)
 
         await saml.ensure_logged_in(request)
@@ -142,7 +144,7 @@ class IatSecondaryPage:
         previous_firstname = ''
         previous_badge = ''
         previous_jobid = ''
-        previous_gsuite_select = ''
+#       previous_gsuite_select = ''
         previous_xma_select = ''
         previous_granby_select = ''
         previous_lone_worker_select = ''
@@ -175,11 +177,15 @@ class IatSecondaryPage:
 #                       search_criteria[str(select_element.split("_")[0])] = data.get(select_element)
 #                       previous_criteria[str(select_element.split("_")[0])] = data.get(select_element)
 
+
+
+
 # New Dropdowns
 
-           if data.get('gsuite'):
-               previous_gsuite = data.get('gsuite')
-               search_criteria['gsuite'] = previous_gsuite
+            if data.get('gsuite'):
+                logger.error("Detected Previous Gsuite Value")
+                previous_gsuite = data.get('gsuite')
+                search_criteria['gsuite'] = previous_gsuite
 
 
 
@@ -193,7 +199,7 @@ class IatSecondaryPage:
                 previous_surname = data.get('filter_surname')
                 search_criteria['surname'] = previous_surname
 
-            if data.get('filter_firstname'):
+            if data.get('filter_firstname'): 
                 previous_firstname = data.get('filter_firstname')
                 search_criteria['firstName'] = previous_firstname
 
@@ -253,8 +259,6 @@ class IatSecondaryPage:
 
             iat_stats = retreive_iat_statuses()    
             
-            logger.error("Previous Criteria: \n" + str(previous_criteria) + \
-                    "\n search_criteria: \n " + str(search_criteria))
 
 
             return {
@@ -274,7 +278,7 @@ class IatSecondaryPage:
                 'previous_jobid': previous_jobid,
                 'previous_surname_filter': previous_surname,
                 'no_employee_data': no_employee_data,
-                'previous_gsuite_select' : previous_gsuite, 
+                'previous_gsuite' : previous_gsuite, 
                 'previous_xma_select' : previous_criteria.get('xma'),
                 'previous_granby_select' : previous_criteria.get('granby'),
                 'previous_lone_worker_select' : previous_criteria.get('loneWorker'),
@@ -321,22 +325,35 @@ class IatSecondaryPage:
         previous_firstname = ''
         previous_badge = ''
         previous_jobid = ''
-        previous_gsuite_select = ''
+#       previous_gsuite_select = ''
         previous_xma_select = ''
         previous_granby_select = ''
         previous_lone_worker_select = ''
         previous_service_now_select = ''
+
+#TODO cleanup
+        previous_gsuite = ''
+
         try:
             if session.get('assignmentStatus'):
                 previous_assignment_selected = session['assignmentStatus']
                 search_criteria['assignmentStatus'] = previous_assignment_selected
 
-            select_options = ["gsuite_select","xma_select","granby_select","loneWorker_select","serviceNow_select"]
-            for select_element in select_options:
-                if session.get(select_element):
-                    if session.get(select_element)  != "blank":
-                        search_criteria[str(select_element.split("_")[0])] = session.get(select_element)
-                        previous_criteria[select_element] = session.get(select_element)
+#           select_options = ["gsuite_select","xma_select","granby_select","loneWorker_select","serviceNow_select"]
+#           for select_element in select_options:
+#               if session.get(select_element):
+#                   if session.get(select_element)  != "blank":
+#                       search_criteria[str(select_element.split("_")[0])] = session.get(select_element)
+#                       previous_criteria[select_element] = session.get(select_element)
+
+#New Dropdowns TODO cleanup either above or below
+
+            if data.get('gsuite'):
+                logger.error("Detected Previous Gsuite Value")
+                previous_gsuite = data.get('gsuite')
+                search_criteria['gsuite'] = previous_gsuite
+
+#New Dropdowns  End
 
             if session.get('jobRoleShort'):
                 previous_jobrole_selected = session['jobRoleShort']
@@ -412,7 +429,7 @@ class IatSecondaryPage:
                 'previous_badge': previous_badge,
                 'previous_jobid': previous_jobid,
                 'previous_surname_filter': previous_surname,
-                'previous_gsuite_select' : previous_criteria.get('gsuite_select'),
+                'previous_gsuite' : previous_gsuite, 
                 'previous_xma_select' : previous_criteria.get('xma_select'),
                 'previous_granby_select' : previous_criteria.get('granby_select'),
                 'previous_lone_worker_select' : previous_criteria.get('loneWorker_select'),

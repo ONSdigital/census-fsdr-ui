@@ -27,6 +27,7 @@ async def store_search_criteria(request, search_criteria):
         session['gsuite'] = search_criteria.get('gsuite')
         #TODO remove
         logger.error("We detected that you've set the gsute filter and added it to the session!")
+
     if 'xma' in search_criteria.keys():
         session['xma'] = search_criteria.get('xma')
     if 'granby' in search_criteria.keys():
@@ -38,11 +39,11 @@ async def store_search_criteria(request, search_criteria):
     
     #TODO remove
     removable = "Search Criteria: \n" + str(search_criteria) + \
-                "Session Data: \n" +    str(session)
+                "Session Data: \n" +    str(session) + "\n"
     logger.error(removable)
 
 async def clear_stored_search_criteria(session):
-    select_options = ["gsuite_select","xma_select","granby_select","loneWorker_select","serviceNow_select"]
+    select_options = ["gsuite","xma_select","granby_select","loneWorker_select","serviceNow_select"]
     for key_to_clear in  select_options:
         if session.get(key_to_clear):
             del session[key_to_clear]
