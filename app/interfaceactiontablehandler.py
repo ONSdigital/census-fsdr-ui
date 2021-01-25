@@ -144,13 +144,6 @@ class IatSecondaryPage:
         previous_firstname = ''
         previous_badge = ''
         previous_jobid = ''
-#       previous_gsuite_select = ''
-        previous_xma_select = ''
-        previous_granby_select = ''
-        previous_lone_worker_select = ''
-        previous_service_now_select = ''
-
-        previous_gsuite = ''
 
         try:
             if data.get('indexsearch'
@@ -170,26 +163,15 @@ class IatSecondaryPage:
                 previous_jobrole_selected = data.get('job_role_select')
                 search_criteria['jobRoleShort'] = data.get('job_role_select')
 
-#           select_options = ["gsuite_select","xma_select","granby_select","loneWorker_select","serviceNow_select"]
-#           for select_element in select_options:
-#               if data.get(select_element):
-#                   if data.get(select_element)  != "blank":
-#                       search_criteria[str(select_element.split("_")[0])] = data.get(select_element)
-#                       previous_criteria[str(select_element.split("_")[0])] = data.get(select_element)
+            select_options = ["gsuite","xma","granby","loneWorker","serviceNow"]
+            for select_element in select_options:
+                if data.get(select_element):
+                    if data.get(select_element)  != "blank":
+                        search_criteria[str(select_element.split("_")[0])] = data.get(select_element)
+                        previous_criteria[str(select_element.split("_")[0])] = data.get(select_element)
+                    else:
+                        previous_criteria[str(select_element.split("_")[0])] = '' 
 
-
-
-
-# New Dropdowns
-
-            if data.get('gsuite'):
-                logger.error("Detected Previous Gsuite Value")
-                previous_gsuite = data.get('gsuite')
-                search_criteria['gsuite'] = previous_gsuite
-
-
-
-# New Dropdown End
 
             if data.get('filter_unique_employee_id'):
                 unique_employee_id = data.get('filter_unique_employee_id')
@@ -257,9 +239,7 @@ class IatSecondaryPage:
             job_role_short_json = retrieve_job_roles(
                 get_job_roles, previous_jobrole_selected)
 
-            iat_stats = retreive_iat_statuses()    
-            
-
+            dropdown_options = retreive_iat_statuses(data, select_options)    
 
             return {
                 'called_from_index': from_index,
@@ -278,12 +258,12 @@ class IatSecondaryPage:
                 'previous_jobid': previous_jobid,
                 'previous_surname_filter': previous_surname,
                 'no_employee_data': no_employee_data,
-                'previous_gsuite' : previous_gsuite, 
+                'previous_gsuite' : previous_criteria.get('gsuite'),
                 'previous_xma_select' : previous_criteria.get('xma'),
                 'previous_granby_select' : previous_criteria.get('granby'),
                 'previous_lone_worker_select' : previous_criteria.get('loneWorker'),
                 'previous_service_now_select' : previous_criteria.get('serviceNow'),
-                'iat_options': iat_stats,
+                'iat_options': dropdown_options,
             }
         else:
             logger.warn(
@@ -325,35 +305,21 @@ class IatSecondaryPage:
         previous_firstname = ''
         previous_badge = ''
         previous_jobid = ''
-#       previous_gsuite_select = ''
-        previous_xma_select = ''
-        previous_granby_select = ''
-        previous_lone_worker_select = ''
-        previous_service_now_select = ''
-
-#TODO cleanup
-        previous_gsuite = ''
 
         try:
             if session.get('assignmentStatus'):
                 previous_assignment_selected = session['assignmentStatus']
                 search_criteria['assignmentStatus'] = previous_assignment_selected
 
-#           select_options = ["gsuite_select","xma_select","granby_select","loneWorker_select","serviceNow_select"]
-#           for select_element in select_options:
-#               if session.get(select_element):
-#                   if session.get(select_element)  != "blank":
-#                       search_criteria[str(select_element.split("_")[0])] = session.get(select_element)
-#                       previous_criteria[select_element] = session.get(select_element)
+            select_options = ["gsuite","xma","granby","loneWorker","serviceNow"]
+            for select_element in select_options:
+                if data.get(select_element):
+                    if data.get(select_element)  != "blank":
+                        search_criteria[str(select_element.split("_")[0])] = data.get(select_element)
+                        previous_criteria[str(select_element.split("_")[0])] = data.get(select_element)
+                    else:
+                        previous_criteria[str(select_element.split("_")[0])] = '' 
 
-#New Dropdowns TODO cleanup either above or below
-
-            if data.get('gsuite'):
-                logger.error("Detected Previous Gsuite Value")
-                previous_gsuite = data.get('gsuite')
-                search_criteria['gsuite'] = previous_gsuite
-
-#New Dropdowns  End
 
             if session.get('jobRoleShort'):
                 previous_jobrole_selected = session['jobRoleShort']
@@ -412,7 +378,7 @@ class IatSecondaryPage:
 
             job_role_json = retrieve_job_roles(get_job_roles,
                                                previous_jobrole_selected)
-            iat_stats = retreive_iat_statuses()    
+            dropdown_options = retreive_iat_statuses()    
             return {
                 'called_from_index': from_index,
                 'page_title': f'Interface Action Table view for: {user_role}',
@@ -429,12 +395,12 @@ class IatSecondaryPage:
                 'previous_badge': previous_badge,
                 'previous_jobid': previous_jobid,
                 'previous_surname_filter': previous_surname,
-                'previous_gsuite' : previous_gsuite, 
+                'previous_gsuite' : previous_criteria.get('gsuite'),
                 'previous_xma_select' : previous_criteria.get('xma_select'),
                 'previous_granby_select' : previous_criteria.get('granby_select'),
                 'previous_lone_worker_select' : previous_criteria.get('loneWorker_select'),
                 'previous_service_now_select' : previous_criteria.get('serviceNow_select'),
-                'iat_options':iat_stats, 
+                'iat_options':dropdown_options, 
             }
         else:
             logger.warn(

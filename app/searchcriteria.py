@@ -105,18 +105,36 @@ def retrieve_job_roles(job_roles, previous_jobrole_selected):
     return add_job_roles
 
 
-def retreive_iat_statuses():
+def retreive_iat_statuses(data,select_options):
 
-    #TODO remove this comment 
+    def set_status(dropdown_options, dropdown_name):
+        for each_dict in dropdown_options:
+            if each_dict['value'] == dropdown_name:
+                each_dict['selected'] = True
+    return(dropdown_options)
+    
+    all_options = {}
 
-    iat_options = [ {'value':'blank',       'text':'Select a status'},
-                    {'value':'CREATE',      'text':'CREATE'},
-                    {'value':'SETUP',       'text':'SETUP'},
-                    {'value':'UPDATE',      'text':'UPDATE'},
-                    {'value':'LEAVER',      'text':'LEAVER'},
-                    {'value':'LEFT',        'text':'LEFT'},
-                    {'value':'COMPLETE',    'text':'COMPLETE'},]
+    # Set the default options
+    dropdown_options =  [   {'value':'blank',       'text':'Select a status', "disabled": True},
+                            {'value':'CREATE',      'text':'CREATE'},
+                            {'value':'SETUP',       'text':'SETUP'},
+                            {'value':'UPDATE',      'text':'UPDATE'},
+                            {'value':'LEAVER',      'text':'LEAVER'},
+                            {'value':'LEFT',        'text':'LEFT'},
+                            {'value':'COMPLETE',    'text':'COMPLETE'},]
 
+    # For each dropdown, create a duplicate of iat_options with correct selection 
+    for dropdown_name in select_options:
+        # if the dropdown should be a pre-selected value
+        if data.get(dropdown_name):
+            dropdown_value = data.get(dropdown_name)
+            
+            all_options[dropdown_name] = set_status(dropdown_options[:], dropdown_name)
+        else:
+            all_options[dropdown_name] = dropdown_options[:]
+
+        
     return iat_options
 
 
