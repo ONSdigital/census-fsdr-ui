@@ -107,7 +107,9 @@ def retrieve_job_roles(job_roles, previous_jobrole_selected):
 
 def retreive_iat_statuses():
 
-    iat_options = [ {'value':'blank',       'text':'Select a status', "disabled": True, "selected": True},
+    #TODO remove this comment 
+
+    iat_options = [ {'value':'blank',       'text':'Select a status'},
                     {'value':'CREATE',      'text':'CREATE'},
                     {'value':'SETUP',       'text':'SETUP'},
                     {'value':'UPDATE',      'text':'UPDATE'},
