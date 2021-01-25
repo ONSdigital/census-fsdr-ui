@@ -1,5 +1,7 @@
 from aiohttp_session import get_session
+from structlog import get_logger
 
+logger = get_logger('fsdr-ui')
 
 async def store_search_criteria(request, search_criteria):
     session = await get_session(request)
@@ -17,14 +19,34 @@ async def store_search_criteria(request, search_criteria):
         session['badgeNumber'] = search_criteria.get('badgeNumber')
     if 'jobRoleId' in search_criteria.keys():
         session['jobRoleId'] = search_criteria.get('jobRoleId')
-
-    #Added unique_employee_id search for interface action table
     if 'uniqueEmployeeId' in search_criteria.keys():
         session['uniqueEmployeeId'] = search_criteria.get('uniqueEmployeeId')
 
-
+    # Added for IAT TODO remove comments and lines 
+    if 'gsuite' in search_criteria.keys():
+        session['gsuite'] = search_criteria.get('gsuite')
+        #TODO remove
+        logger.error("We detected that you've set the gsute filter and added it to the session!")
+    if 'xma' in search_criteria.keys():
+        session['xma'] = search_criteria.get('xma')
+    if 'granby' in search_criteria.keys():
+        session['granby'] = search_criteria.get('granby')
+    if 'lone_worker' in search_criteria.keys():
+        session['lone_worker'] = search_criteria.get('lone_worker')
+    if 'service_now' in search_criteria.keys():
+        session['service_now'] = search_criteria.get('service_now')
+    
+    #TODO remove
+    removable = "Search Criteria: \n" + str(search_criteria) + \
+                "Session Data: \n" +    str(session)
+    logger.error(removable)
 
 async def clear_stored_search_criteria(session):
+    select_options = ["gsuite_select","xma_select","granby_select","loneWorker_select","serviceNow_select"]
+    for key_to_clear in  select_options:
+        if session.get(key_to_clear):
+            del session[key_to_clear]
+
     if session.get('assignmentStatus'):
         del session['assignmentStatus']
 
