@@ -148,6 +148,8 @@ class IatSecondaryPage:
         previous_lone_worker_select = ''
         previous_service_now_select = ''
 
+        previous_gsuite = ''
+
         try:
             if data.get('indexsearch'
                         ) == '' or 'called_from_index' in request.query:
@@ -166,16 +168,22 @@ class IatSecondaryPage:
                 previous_jobrole_selected = data.get('job_role_select')
                 search_criteria['jobRoleShort'] = data.get('job_role_select')
 
-            select_options = ["gsuite_select","xma_select","granby_select","loneWorker_select","serviceNow_select"]
-            for select_element in select_options:
-                if data.get(select_element):
-                    if data.get(select_element)  != "blank":
-                        search_criteria[str(select_element.split("_")[0])] = data.get(select_element)
-                        previous_criteria[str(select_element.split("_")[0])] = data.get(select_element)
+#           select_options = ["gsuite_select","xma_select","granby_select","loneWorker_select","serviceNow_select"]
+#           for select_element in select_options:
+#               if data.get(select_element):
+#                   if data.get(select_element)  != "blank":
+#                       search_criteria[str(select_element.split("_")[0])] = data.get(select_element)
+#                       previous_criteria[str(select_element.split("_")[0])] = data.get(select_element)
 
-#           if data.get('gsuite'):
-#               previous_gsuite = data.get('gsuite')
-#               search_criteria['gsuite'] = previous_gsuite
+# New Dropdowns
+
+           if data.get('gsuite'):
+               previous_gsuite = data.get('gsuite')
+               search_criteria['gsuite'] = previous_gsuite
+
+
+
+# New Dropdown End
 
             if data.get('filter_unique_employee_id'):
                 unique_employee_id = data.get('filter_unique_employee_id')
@@ -266,7 +274,7 @@ class IatSecondaryPage:
                 'previous_jobid': previous_jobid,
                 'previous_surname_filter': previous_surname,
                 'no_employee_data': no_employee_data,
-                'previous_gsuite_select' : previous_criteria.get('gsuite'),
+                'previous_gsuite_select' : previous_gsuite, 
                 'previous_xma_select' : previous_criteria.get('xma'),
                 'previous_granby_select' : previous_criteria.get('granby'),
                 'previous_lone_worker_select' : previous_criteria.get('loneWorker'),
