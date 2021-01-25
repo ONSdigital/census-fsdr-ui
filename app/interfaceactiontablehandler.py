@@ -101,7 +101,8 @@ class InterfaceActionTable:
 
             job_role_json = retrieve_job_roles(get_job_roles, '')
             
-            iat_stats = retreive_iat_statuses()    
+            select_options = ["gsuite","xma","granby","loneWorker","serviceNow"]
+            dropdown_options = retreive_iat_statuses({}, select_options)    
             return {
                 'page_title': f'Interface Action Table view for: {user_role}',
                 'table_headers': table_headers,
@@ -109,7 +110,7 @@ class InterfaceActionTable:
                 'page_number': page_number,
                 'last_page_number': int(math.floor(max_page)),
                 'distinct_job_roles': job_role_json,
-                'iat_options': iat_stats,
+                'iat_options': dropdown_options,
             }
         else:
             logger.warn('Database is down', client_ip=request['client_ip'])
@@ -378,7 +379,9 @@ class IatSecondaryPage:
 
             job_role_json = retrieve_job_roles(get_job_roles,
                                                previous_jobrole_selected)
-            dropdown_options = retreive_iat_statuses()    
+
+            dropdown_options = retreive_iat_statuses(data, select_options)    
+
             return {
                 'called_from_index': from_index,
                 'page_title': f'Interface Action Table view for: {user_role}',

@@ -25,9 +25,6 @@ async def store_search_criteria(request, search_criteria):
     # Added for IAT TODO remove comments and lines 
     if 'gsuite' in search_criteria.keys():
         session['gsuite'] = search_criteria.get('gsuite')
-        #TODO remove
-        logger.error("We detected that you've set the gsute filter and added it to the session!")
-
     if 'xma' in search_criteria.keys():
         session['xma'] = search_criteria.get('xma')
     if 'granby' in search_criteria.keys():
@@ -37,13 +34,9 @@ async def store_search_criteria(request, search_criteria):
     if 'serviceNow' in search_criteria.keys():
         session['serviceNow'] = search_criteria.get('serviceNow')
     
-    #TODO remove
-    removable = "Search Criteria: \n" + str(search_criteria) + \
-                "Session Data: \n" +    str(session) + "\n"
-    logger.error(removable)
 
 async def clear_stored_search_criteria(session):
-    select_options = ["gsuite","xma_select","granby_select","loneWorker_select","serviceNow_select"]
+    select_options = ["gsuite","xma","granby","loneWorker","serviceNow"]
     for key_to_clear in  select_options:
         if session.get(key_to_clear):
             del session[key_to_clear]
@@ -104,18 +97,10 @@ def retrieve_job_roles(job_roles, previous_jobrole_selected):
 
     return add_job_roles
 
-
-def retreive_iat_statuses(data,select_options):
-
-    def set_status(dropdown_options, dropdown_name):
-        for each_dict in dropdown_options:
-            if each_dict['value'] == dropdown_name:
-                each_dict['selected'] = True
-    return(dropdown_options)
     
-    all_options = {}
+def set_status(dropdown_value):
 
-    # Set the default options
+# Set the default options
     dropdown_options =  [   {'value':'blank',       'text':'Select a status', "disabled": True},
                             {'value':'CREATE',      'text':'CREATE'},
                             {'value':'SETUP',       'text':'SETUP'},
@@ -124,18 +109,24 @@ def retreive_iat_statuses(data,select_options):
                             {'value':'LEFT',        'text':'LEFT'},
                             {'value':'COMPLETE',    'text':'COMPLETE'},]
 
-    # For each dropdown, create a duplicate of iat_options with correct selection 
+    for each_dict in dropdown_options:
+        if each_dict['value'] == dropdown_value:
+            each_dict['selected'] = True
+             
+    return dropdown_options
+
+def retreive_iat_statuses(data,select_options):
+    all_options = {}
+
     for dropdown_name in select_options:
         # if the dropdown should be a pre-selected value
         if data.get(dropdown_name):
             dropdown_value = data.get(dropdown_name)
-            
-            all_options[dropdown_name] = set_status(dropdown_options[:], dropdown_name)
+            all_options[dropdown_name] = set_status(dropdown_value)
         else:
-            all_options[dropdown_name] = dropdown_options[:]
-
+            all_options[dropdown_name] = set_status('blank')
         
-    return iat_options
+    return all_options
 
 
 def retrieve_assignment_statuses(assignment_statuses):
