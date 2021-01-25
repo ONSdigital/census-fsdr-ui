@@ -31,10 +31,10 @@ async def store_search_criteria(request, search_criteria):
         session['xma'] = search_criteria.get('xma')
     if 'granby' in search_criteria.keys():
         session['granby'] = search_criteria.get('granby')
-    if 'lone_worker' in search_criteria.keys():
-        session['lone_worker'] = search_criteria.get('lone_worker')
-    if 'service_now' in search_criteria.keys():
-        session['service_now'] = search_criteria.get('service_now')
+    if 'loneWorker' in search_criteria.keys():
+        session['loneWorker'] = search_criteria.get('loneWorker')
+    if 'serviceNow' in search_criteria.keys():
+        session['serviceNow'] = search_criteria.get('serviceNow')
     
     #TODO remove
     removable = "Search Criteria: \n" + str(search_criteria) + \
