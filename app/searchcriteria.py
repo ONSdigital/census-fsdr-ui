@@ -5,68 +5,21 @@ logger = get_logger('fsdr-ui')
 
 async def store_search_criteria(request, search_criteria):
     session = await get_session(request)
-    if 'assignmentStatus' in search_criteria.keys():
-        session['assignmentStatus'] = search_criteria.get('assignmentStatus')
-    if 'jobRoleShort' in search_criteria.keys():
-        session['jobRoleShort'] = search_criteria.get('jobRoleShort')
-    if 'area' in search_criteria.keys():
-        session['area'] = search_criteria.get('area')
-    if 'surname' in search_criteria.keys():
-        session['surname'] = search_criteria.get('surname')
-    if 'firstName' in search_criteria.keys():
-        session['firstName'] = search_criteria.get('firstName')
-    if 'badgeNumber' in search_criteria.keys():
-        session['badgeNumber'] = search_criteria.get('badgeNumber')
-    if 'jobRoleId' in search_criteria.keys():
-        session['jobRoleId'] = search_criteria.get('jobRoleId')
-    if 'uniqueEmployeeId' in search_criteria.keys():
-        session['uniqueEmployeeId'] = search_criteria.get('uniqueEmployeeId')
+    possible_stored_atributes =['assignmentStatus', 'jobRoleShort','area','surname','firstName','badgeNumber',
+            'jobRoleId','uniqueEmployeeId','gsuite','xma','granby','loneWorker','serviceNow']
 
-    # Added for IAT TODO remove comments and lines 
-    if 'gsuite' in search_criteria.keys():
-        session['gsuite'] = search_criteria.get('gsuite')
-    if 'xma' in search_criteria.keys():
-        session['xma'] = search_criteria.get('xma')
-    if 'granby' in search_criteria.keys():
-        session['granby'] = search_criteria.get('granby')
-    if 'loneWorker' in search_criteria.keys():
-        session['loneWorker'] = search_criteria.get('loneWorker')
-    if 'serviceNow' in search_criteria.keys():
-        session['serviceNow'] = search_criteria.get('serviceNow')
-    
+    for atribute in possible_stored_atributes:
+        if atribute in search_criteria.keys():
+            session[atribute] = search_criteria.get(atribute)
 
 async def clear_stored_search_criteria(session):
-    select_options = ["gsuite","xma","granby","loneWorker","serviceNow"]
-    for key_to_clear in  select_options:
+    possible_stored_atributes=['assignmentStatus', 'jobRoleShort','area','surname','firstName','badgeNumber',
+            'jobRoleId','uniqueEmployeeId','gsuite','xma','granby','loneWorker','serviceNow']
+
+    for key_to_clear in  possible_stored_atributes:
         if session.get(key_to_clear):
             del session[key_to_clear]
 
-    if session.get('assignmentStatus'):
-        del session['assignmentStatus']
-
-    if session.get('uniqueEmployeeId'):
-        del session['uniqueEmployeeId']
-
-    if session.get('jobRoleShort'):
-        del session['jobRoleShort']
-
-    if session.get('area'):
-        del session['area']
-
-    if session.get('surname'):
-        del session['surname']
-
-    if session.get('firstName'):
-        del session['firstName']
-
-    if session.get('badgeNumber'):
-        del session['badgeNumber']
-
-    if session.get('jobRoleId'):
-        del session['jobRoleId']
-
-    if session.get('jobRoleId'):
-        del session['jobRoleId']
 
 def retrieve_job_roles(job_roles, previous_jobrole_selected):
     add_job_roles = []

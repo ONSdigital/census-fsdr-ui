@@ -127,8 +127,6 @@ class IatSecondaryPage:
         session = await get_session(request)
         data = await request.post()
 
-        logger.error("Session:\n" + str(session) + "\n\nData(previous info):\n" + str(data) + "\n\n")
-
         user_role = await saml.get_role_id(request)
 
         await saml.ensure_logged_in(request)
