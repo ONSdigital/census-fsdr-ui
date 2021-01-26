@@ -116,6 +116,7 @@ class SecondaryPage:
 
             search_criteria = {}
 
+
             if data.get('assignment_select'):
                 previous_assignment_selected = data.get('assignment_select')
                 search_criteria['assignmentStatus'] = data.get(
@@ -178,6 +179,9 @@ class SecondaryPage:
             else:
                 retrieve_employee_info = get_employee_records(
                                          search_criteria_with_range)
+
+            if data.get('user_missing_device'):
+                previous_user_missing_device = data.get('user_missing_device')
 
             get_job_roles = get_distinct_job_role_short()
 
