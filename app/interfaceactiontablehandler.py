@@ -172,9 +172,9 @@ class IatSecondaryPage:
                         previous_criteria[select_element] = '' 
 
 
-            if data.get('filter_unique_employee_id'):
-                unique_employee_id = data.get('filter_unique_employee_id')
-                search_criteria['uniqueEmployeeId'] = unique_employee_id
+            if data.get('filter_external_id'):
+                external_id = data.get('filter_external_id')
+                search_criteria['externalId'] = external_id 
 
             if data.get('filter_surname'):
                 previous_surname = data.get('filter_surname')
@@ -207,33 +207,34 @@ class IatSecondaryPage:
                     request, {'no_search_criteria': 'True'},
                     status=405)
 
-            last_record, first_record, page_number, max_page = await allocate_search_ranges(
-                search_criteria, page_number)
 
-            search_criteria_with_range = search_criteria.copy()
+            search_range, records_per_page = page_bounds(page_number)
 
-            search_criteria_with_range['rangeHigh'] = last_record 
-            search_criteria_with_range['rangeLow'] =  first_record 
-
-            retrieve_employee_info = get_employee_records(
-                search_criteria_with_range, iat = True)
+            get_employee_info = get_employee_records(search_range, iat = True)
+            get_employee_info_json = get_employee_info.json() 
+            
+            if len(get_employee_info_json) > 0:
+                employee_sum = get_employee_info_json[0].get('total_employees',0)
+                max_page = math.ceil(employee_sum / records_per_page)        
+            else:
+                max_page = 1 
 
             get_job_roles = get_distinct_job_role_short()
 
         except ClientResponseError as ex:
             raise ex
 
-        if retrieve_employee_info.status_code == 200:
+        if get_employee_info.status_code == 200:
             table_headers = iat_employee_table_headers()
 
-            employees_present = retrieve_employee_info.content
+            employees_present = get_employee_info.content
             if employees_present == b'[]':
                 no_employee_data = 'true'
                 employee_records = ''
             else:
                 no_employee_data = 'false'
                 employee_records = iat_employee_record_table(
-                    retrieve_employee_info.json())
+                        get_employee_info_json)
 
             job_role_short_json = retrieve_job_roles(
                 get_job_roles, previous_jobrole_selected)
@@ -323,9 +324,9 @@ class IatSecondaryPage:
                 previous_jobrole_selected = session['jobRoleShort']
                 search_criteria['jobRoleShort'] = previous_jobrole_selected
 
-            if session.get('filter_unique_employee_id'):
-                unique_employee_id = data.get('filter_unique_employee_id')
-                search_criteria['uniqueEmployeeId'] = unique_employee_id
+            if data.get('filter_external_id'):
+                external_id = data.get('filter_external_id')
+                search_criteria['externalId'] = external_id 
 
             if session.get('surname'):
                 previous_surname = session['surname']
@@ -343,16 +344,16 @@ class IatSecondaryPage:
                 previous_jobid = session['jobRoleId']
                 search_criteria['jobRoleId'] = previous_jobid
 
-            last_record, first_record, page_number, max_page = await allocate_search_ranges(
-                search_criteria, page_number)
+            search_range, records_per_page = page_bounds(page_number)
 
-            search_criteria_with_range = search_criteria.copy()
-
-            search_criteria_with_range['rangeHigh'] = last_record 
-            search_criteria_with_range['rangeLow'] =  first_record 
-
-            retrieve_employee_info = get_employee_records(
-                search_criteria_with_range, iat = True)
+            get_employee_info = get_employee_records(search_range, iat = True)
+            get_employee_info_json = get_employee_info.json() 
+            
+            if len(get_employee_info_json) > 0:
+                employee_sum = get_employee_info_json[0].get('total_employees',0)
+                max_page = math.ceil(employee_sum / records_per_page)        
+            else:
+                max_page = 1 
 
             get_job_roles = get_distinct_job_role_short()
         except ClientResponseError as ex:
@@ -368,11 +369,11 @@ class IatSecondaryPage:
         except ClientResponseError as ex:
             raise ex
 
-        if retrieve_employee_info.status_code == 200:
+        if get_employee_info.status_code == 200:
             table_headers = iat_employee_table_headers()
 
             employee_records = iat_employee_record_table(
-                retrieve_employee_info.json())
+                get_employee_info_json)
 
             job_role_json = retrieve_job_roles(get_job_roles,
                                                previous_jobrole_selected)
