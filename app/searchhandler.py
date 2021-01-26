@@ -183,7 +183,6 @@ class SecondaryPage:
             if data.get('user_missing_device'):
                 previous_user_missing_device = data.get('user_missing_device')
 
-
             get_job_roles = get_distinct_job_role_short()
 
         except ClientResponseError as ex:
