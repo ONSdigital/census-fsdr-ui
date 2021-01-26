@@ -162,12 +162,12 @@
                 <td>
                     {{
                         onsSelect({
-                            "id": "select",
-                            'name': "gsuite_select",
+                            "id": "gsuiteselect",
+                            'name': "gsuite",
                             "label": {
                                 "text": "Gsuite Status"
                             },
-                            "options": params.iat_options
+                            "options": params.iat_options.get('gsuite')
                         })
                     }}
                 </td>
@@ -175,11 +175,11 @@
                     {{
                         onsSelect({
                             "id": "select",
-                            'name': "xma_select",
+                            'name': "xma",
                             "label": {
                                 "text": "XMA Status"
                             },
-                            "options": params.iat_options
+                            "options": params.iat_options.get('xma')
                         })
                     }}
                 </td>
@@ -187,11 +187,11 @@
                     {{
                         onsSelect({
                             "id": "select",
-                            'name': "granby_select",
+                            'name': "granby",
                             "label": {
                                 "text": "Granby Status"
                             },
-                            "options": params.iat_options
+                            "options": params.iat_options.get('granby')
                         })
                     }}
                 </td>
@@ -202,11 +202,11 @@
                     {{
                         onsSelect({
                             "id": "select",
-                            'name': "loneWorker_select",
+                            'name': "loneWorker",
                             "label": {
                                 "text": "Lone Worker Status"
                             },
-                            "options": params.iat_options
+                            "options": params.iat_options.get('loneWorker')
                         })
                     }}
                 </td>
@@ -214,11 +214,11 @@
                     {{
                         onsSelect({
                             "id": "select",
-                            'name': "serviceNow_select",
+                            'name': "serviceNow",
                             "label": {
                                 "text": "Service Now Status"
                             },
-                            "options": params.iat_options
+                            "options": params.iat_options.get('serviceNow')
                         })
                     }}
                 </td>

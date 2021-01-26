@@ -101,7 +101,8 @@ class InterfaceActionTable:
 
             job_role_json = retrieve_job_roles(get_job_roles, '')
             
-            iat_stats = retreive_iat_statuses()    
+            select_options = ["gsuite","xma","granby","loneWorker","serviceNow"]
+            dropdown_options = retreive_iat_statuses({}, select_options)    
             return {
                 'page_title': f'Interface Action Table view for: {user_role}',
                 'table_headers': table_headers,
@@ -109,7 +110,7 @@ class InterfaceActionTable:
                 'page_number': page_number,
                 'last_page_number': int(math.floor(max_page)),
                 'distinct_job_roles': job_role_json,
-                'iat_options': iat_stats,
+                'iat_options': dropdown_options,
             }
         else:
             logger.warn('Database is down', client_ip=request['client_ip'])
@@ -151,21 +152,25 @@ class IatSecondaryPage:
                 from_index = 'false'
 
             search_criteria = {}
+            previous_criteria = {}
 
             if data.get('assignment_select'):
                 previous_assignment_selected = data.get('assignment_select')
-                search_criteria['assignmentStatus'] = data.get(
-                    'assignment_select')
+                search_criteria['assignmentStatus'] = data.get('assignment_select')
 
             if data.get('job_role_select'):
                 previous_jobrole_selected = data.get('job_role_select')
                 search_criteria['jobRoleShort'] = data.get('job_role_select')
 
-            select_options = ["gsuite_select","xma_select","granby_select","loneWorker_select","serviceNow_select"]
+            select_options = ["gsuite","xma","granby","loneWorker","serviceNow"]
             for select_element in select_options:
                 if data.get(select_element):
                     if data.get(select_element)  != "blank":
-                        search_criteria[str(select_element.split("_")[0])] = data.get(select_element)
+                        search_criteria[select_element] = data.get(select_element)
+                        previous_criteria[select_element] = data.get(select_element)
+                    else:
+                        previous_criteria[select_element] = '' 
+
 
             if data.get('filter_unique_employee_id'):
                 unique_employee_id = data.get('filter_unique_employee_id')
@@ -175,7 +180,7 @@ class IatSecondaryPage:
                 previous_surname = data.get('filter_surname')
                 search_criteria['surname'] = previous_surname
 
-            if data.get('filter_firstname'):
+            if data.get('filter_firstname'): 
                 previous_firstname = data.get('filter_firstname')
                 search_criteria['firstName'] = previous_firstname
 
@@ -233,7 +238,8 @@ class IatSecondaryPage:
             job_role_short_json = retrieve_job_roles(
                 get_job_roles, previous_jobrole_selected)
 
-            iat_stats = retreive_iat_statuses()    
+            dropdown_options = retreive_iat_statuses(data, select_options)    
+
             return {
                 'called_from_index': from_index,
                 'page_title': f'Interface Action Table view for: {user_role}',
@@ -251,7 +257,12 @@ class IatSecondaryPage:
                 'previous_jobid': previous_jobid,
                 'previous_surname_filter': previous_surname,
                 'no_employee_data': no_employee_data,
-                'iat_options': iat_stats,
+                'previous_gsuite' : previous_criteria.get('gsuite'),
+                'previous_xma_select' : previous_criteria.get('xma'),
+                'previous_granby_select' : previous_criteria.get('granby'),
+                'previous_lone_worker_select' : previous_criteria.get('loneWorker'),
+                'previous_service_now_select' : previous_criteria.get('serviceNow'),
+                'iat_options': dropdown_options,
             }
         else:
             logger.warn(
@@ -284,6 +295,7 @@ class IatSecondaryPage:
             from_index = False
 
         search_criteria = {}
+        previous_criteria = {}
 
         previous_assignment_selected = ''
         previous_jobrole_selected = ''
@@ -292,17 +304,24 @@ class IatSecondaryPage:
         previous_firstname = ''
         previous_badge = ''
         previous_jobid = ''
+
         try:
             if session.get('assignmentStatus'):
                 previous_assignment_selected = session['assignmentStatus']
-                search_criteria[
-                    'assignmentStatus'] = previous_assignment_selected
+                search_criteria['assignmentStatus'] = previous_assignment_selected
+
+            select_options = ["gsuite","xma","granby","loneWorker","serviceNow"]
+            for select_element in select_options:
+                if data.get(select_element):
+                    if data.get(select_element)  != "blank":
+                        search_criteria[select_element] = data.get(select_element)
+                        previous_criteria[select_element] = data.get(select_element)
+                    else:
+                        previous_criteria[select_element] = '' 
 
             if session.get('jobRoleShort'):
                 previous_jobrole_selected = session['jobRoleShort']
                 search_criteria['jobRoleShort'] = previous_jobrole_selected
-
-        #Changed to allow ID filtering
 
             if session.get('filter_unique_employee_id'):
                 unique_employee_id = data.get('filter_unique_employee_id')
@@ -357,7 +376,9 @@ class IatSecondaryPage:
 
             job_role_json = retrieve_job_roles(get_job_roles,
                                                previous_jobrole_selected)
-            iat_stats = retreive_iat_statuses()    
+
+            dropdown_options = retreive_iat_statuses(data, select_options)    
+
             return {
                 'called_from_index': from_index,
                 'page_title': f'Interface Action Table view for: {user_role}',
@@ -374,7 +395,12 @@ class IatSecondaryPage:
                 'previous_badge': previous_badge,
                 'previous_jobid': previous_jobid,
                 'previous_surname_filter': previous_surname,
-                'iat_options':iat_stats, 
+                'previous_gsuite' : previous_criteria.get('gsuite'),
+                'previous_xma_select' : previous_criteria.get('xma_select'),
+                'previous_granby_select' : previous_criteria.get('granby_select'),
+                'previous_lone_worker_select' : previous_criteria.get('loneWorker_select'),
+                'previous_service_now_select' : previous_criteria.get('serviceNow_select'),
+                'iat_options':dropdown_options, 
             }
         else:
             logger.warn(

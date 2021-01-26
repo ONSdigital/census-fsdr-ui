@@ -1,56 +1,25 @@
 from aiohttp_session import get_session
+from structlog import get_logger
 
+logger = get_logger('fsdr-ui')
 
 async def store_search_criteria(request, search_criteria):
     session = await get_session(request)
-    if 'assignmentStatus' in search_criteria.keys():
-        session['assignmentStatus'] = search_criteria.get('assignmentStatus')
-    if 'jobRoleShort' in search_criteria.keys():
-        session['jobRoleShort'] = search_criteria.get('jobRoleShort')
-    if 'area' in search_criteria.keys():
-        session['area'] = search_criteria.get('area')
-    if 'surname' in search_criteria.keys():
-        session['surname'] = search_criteria.get('surname')
-    if 'firstName' in search_criteria.keys():
-        session['firstName'] = search_criteria.get('firstName')
-    if 'badgeNumber' in search_criteria.keys():
-        session['badgeNumber'] = search_criteria.get('badgeNumber')
-    if 'jobRoleId' in search_criteria.keys():
-        session['jobRoleId'] = search_criteria.get('jobRoleId')
+    possible_stored_atributes =['assignmentStatus', 'jobRoleShort','area','surname','firstName','badgeNumber',
+            'jobRoleId','uniqueEmployeeId','gsuite','xma','granby','loneWorker','serviceNow']
 
-    #Added unique_employee_id search for interface action table
-    if 'uniqueEmployeeId' in search_criteria.keys():
-        session['uniqueEmployeeId'] = search_criteria.get('uniqueEmployeeId')
-
-
+    for atribute in possible_stored_atributes:
+        if atribute in search_criteria.keys():
+            session[atribute] = search_criteria.get(atribute)
 
 async def clear_stored_search_criteria(session):
-    if session.get('assignmentStatus'):
-        del session['assignmentStatus']
+    possible_stored_atributes=['assignmentStatus', 'jobRoleShort','area','surname','firstName','badgeNumber',
+            'jobRoleId','uniqueEmployeeId','gsuite','xma','granby','loneWorker','serviceNow']
 
-    if session.get('uniqueEmployeeId'):
-        del session['uniqueEmployeeId']
+    for key_to_clear in  possible_stored_atributes:
+        if session.get(key_to_clear):
+            del session[key_to_clear]
 
-    if session.get('jobRoleShort'):
-        del session['jobRoleShort']
-
-    if session.get('area'):
-        del session['area']
-
-    if session.get('surname'):
-        del session['surname']
-
-    if session.get('firstName'):
-        del session['firstName']
-
-    if session.get('badgeNumber'):
-        del session['badgeNumber']
-
-    if session.get('jobRoleId'):
-        del session['jobRoleId']
-
-    if session.get('jobRoleId'):
-        del session['jobRoleId']
 
 def retrieve_job_roles(job_roles, previous_jobrole_selected):
     add_job_roles = []
@@ -81,18 +50,36 @@ def retrieve_job_roles(job_roles, previous_jobrole_selected):
 
     return add_job_roles
 
+    
+def set_status(dropdown_value):
 
-def retreive_iat_statuses():
+# Set the default options
+    dropdown_options =  [   {'value':'blank',       'text':'Select a status', "disabled": True},
+                            {'value':'CREATE',      'text':'CREATE'},
+                            {'value':'SETUP',       'text':'SETUP'},
+                            {'value':'UPDATE',      'text':'UPDATE'},
+                            {'value':'LEAVER',      'text':'LEAVER'},
+                            {'value':'LEFT',        'text':'LEFT'},
+                            {'value':'COMPLETE',    'text':'COMPLETE'},]
 
-    iat_options = [ {'value':'blank',       'text':'Select a status', "disabled": True, "selected": True},
-                    {'value':'CREATE',      'text':'CREATE'},
-                    {'value':'SETUP',       'text':'SETUP'},
-                    {'value':'UPDATE',      'text':'UPDATE'},
-                    {'value':'LEAVER',      'text':'LEAVER'},
-                    {'value':'LEFT',        'text':'LEFT'},
-                    {'value':'COMPLETE',    'text':'COMPLETE'},]
+    for each_dict in dropdown_options:
+        if each_dict['value'] == dropdown_value:
+            each_dict['selected'] = True
+             
+    return dropdown_options
 
-    return iat_options
+def retreive_iat_statuses(data,select_options):
+    all_options = {}
+
+    for dropdown_name in select_options:
+        # if the dropdown should be a pre-selected value
+        if data.get(dropdown_name):
+            dropdown_value = data.get(dropdown_name)
+            all_options[dropdown_name] = set_status(dropdown_value)
+        else:
+            all_options[dropdown_name] = set_status('blank')
+        
+    return all_options
 
 
 def retrieve_assignment_statuses(assignment_statuses):

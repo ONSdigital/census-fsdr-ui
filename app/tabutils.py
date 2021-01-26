@@ -29,8 +29,8 @@ def acc_generation(content):
     acc_gen.append("""<div class="details__heading"><span class="details__title u-fs-r--b">Expand for ID</span></div></summary>""")
     acc_gen.append("""<div id="accordion-1-content" class="details__content js-collapsible-content" aria-hidden="true">""")
     acc_gen.append("""<dl class="metadata metadata__list grid grid--gutterless u-cf u-mb-l">""")
-    acc_gen.append("""<dt class="metadata__term grid__col col-18@m">""" + str(content) + """</dt>""")
-    acc_gen.append("""<dd class="metadata__value grid__col col-1@m"></dd></dl></div>""")
+    acc_gen.append("""<dt class="metadata__term grid__col col-40@m">""" + str(content) + """</dt>""")
+    acc_gen.append("""<dd class="metadata__value grid__col col-40@m"></dd></dl></div>""")
     acc_gen.append("""</details>""")
     acc_gen.append("""</div>""")
 
