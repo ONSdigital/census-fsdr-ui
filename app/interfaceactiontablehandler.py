@@ -171,11 +171,10 @@ class IatSecondaryPage:
                     else:
                         previous_criteria[select_element] = '' 
 
-
-            if data.get('filter_external_id'):
-                external_id = data.get('filter_external_id')
-                search_criteria['externalId'] = external_id 
-
+            if data.get('filter_unique_employee_id'):
+                unique_employee_id = data.get('filter_unique_employee_id')
+                search_criteria['uniqueEmployeeId'] = unique_employee_id
+                
             if data.get('filter_surname'):
                 previous_surname = data.get('filter_surname')
                 search_criteria['surname'] = previous_surname
@@ -209,8 +208,9 @@ class IatSecondaryPage:
 
 
             search_range, records_per_page = page_bounds(page_number)
+            search_criteria.update(search_range)
 
-            get_employee_info = get_employee_records(search_range, iat = True)
+            get_employee_info = get_employee_records(search_criteria, iat = True)
             get_employee_info_json = get_employee_info.json() 
             
             if len(get_employee_info_json) > 0:
@@ -324,9 +324,9 @@ class IatSecondaryPage:
                 previous_jobrole_selected = session['jobRoleShort']
                 search_criteria['jobRoleShort'] = previous_jobrole_selected
 
-            if data.get('filter_external_id'):
-                external_id = data.get('filter_external_id')
-                search_criteria['externalId'] = external_id 
+            if session.get('filter_unique_employee_id'):
+                unique_employee_id = data.get('filter_unique_employee_id')
+                search_criteria['uniqueEmployeeId'] = unique_employee_id
 
             if session.get('surname'):
                 previous_surname = session['surname']
@@ -345,9 +345,11 @@ class IatSecondaryPage:
                 search_criteria['jobRoleId'] = previous_jobid
 
             search_range, records_per_page = page_bounds(page_number)
+            search_criteria.update(search_range)
 
-            get_employee_info = get_employee_records(search_range, iat = True)
+            get_employee_info = get_employee_records(search_criteria, iat = True)
             get_employee_info_json = get_employee_info.json() 
+
             
             if len(get_employee_info_json) > 0:
                 employee_sum = get_employee_info_json[0].get('total_employees',0)
