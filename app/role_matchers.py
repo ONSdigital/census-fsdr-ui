@@ -7,6 +7,7 @@ from structlog import get_logger
 logger = get_logger('fsdr-ui')
 
 
+
 # keep the following locations up to date with this Enum:
 #  app.employee_view_router.role_id_to_router
 class RoleEnum(Enum):
