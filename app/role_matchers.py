@@ -64,6 +64,8 @@ def invalid_role_id(role_id):
 
 
 def get_role(role_id):
+    #TODO remove
+    logger.error(f'The Role ID is: {role_id}')
     if rmt_combined_regex.match(role_id):
         return RoleEnum.RMT
     # Logistics

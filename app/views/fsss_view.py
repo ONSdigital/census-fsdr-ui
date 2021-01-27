@@ -2,6 +2,10 @@ from app.employee_view_functions import process_device_details, format_line_mana
 from app.tabutils import tab_generation, table_generation, format_to_uk_dates
 from app.fieldmapping import map_employee_name
 
+from structlog import get_logger
+logger = get_logger('fsdr-ui')
+
+
 def get_device_types(devices):
     types_of_device = ""
     if devices != []:
@@ -10,6 +14,7 @@ def get_device_types(devices):
     return types_of_device if types_of_device != "" else "-"
 
 def get_employee_tabs(employee_info, current_job_role, device_information):
+    logger.error("FSSS VIEW FILE LOADED")
     def get_emp_info(name, on_false={}, on_missing='Unspecified'):
         # This first line is odd, but basically triggers whenever the
         # user did not supply a value for on_false
@@ -107,4 +112,5 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
     tabs_all = [{
         'all_info': tab_detail + tab_employment + tab_job_role + tab_contact + tab_devices + tab_other
     }]
+
     return tabs_all

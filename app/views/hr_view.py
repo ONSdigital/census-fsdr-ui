@@ -3,7 +3,12 @@ from app.tabutils import tab_generation, format_to_uk_dates
 from app.fieldmapping import map_employee_name
 
 
+from structlog import get_logger
+logger = get_logger('fsdr-ui')
+
+
 def get_employee_tabs(employee_info, current_job_role, device_information):
+    logger.error("HR  VIEW FILE LOADED")
     def get_emp_info(name, on_false={}, on_missing='Unspecified'):
         # This first line is odd, but basically triggers whenever the
         # user did not supply a value for on_false
