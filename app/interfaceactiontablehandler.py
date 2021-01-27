@@ -324,8 +324,8 @@ class IatSecondaryPage:
                 previous_jobrole_selected = session['jobRoleShort']
                 search_criteria['jobRoleShort'] = previous_jobrole_selected
 
-            if session.get('filter_unique_employee_id'):
-                unique_employee_id = data.get('filter_unique_employee_id')
+            if session.get('uniqueEmployeeId'):
+                unique_employee_id = data.get('uniqueEmployeeId')
                 search_criteria['uniqueEmployeeId'] = unique_employee_id
 
             if session.get('surname'):
