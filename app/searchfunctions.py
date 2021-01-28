@@ -43,6 +43,16 @@ def get_employee_records_no_device(user_filter=""):
                         verify=False,
                         auth=HTTPBasicAuth(FSDR_USER, FSDR_PASS))
 
+def get_device_records(user_filter=""):
+    employee_record_url = URL(
+        FSDR_URL + f'/fieldforce/byType/byRangeAndUserFilterDevice/').with_query(
+        user_filter
+    )
+    return requests.get(employee_record_url,
+                        verify=False,
+                        auth=HTTPBasicAuth(FSDR_USER, FSDR_PASS))
+
+
 def get_employee_records(user_filter="", iat=False):
     employee_record_url = URL(
         FSDR_URL + f'/fieldforce/byType/byRangeAndUserFilter{"Iat/" if iat else "/"}').with_query(
@@ -196,3 +206,57 @@ def iat_employee_record_table(employee_records_json):
         )
 
     return add_employees
+
+# Device Table below
+def device_table_headers():
+    add_headers = [
+        {
+            'value': 'Device ID',
+            'aria_sort': 'none'
+        },
+        {
+            'value': 'Phone Number',
+            'aria_sort': 'none'
+        },
+        {
+            'value': 'Device Type',
+            'aria_sort': 'none'
+        },
+        {
+            'value': 'Device  Sent',
+            'aria_sort': 'none'
+        },
+        {
+            'value': 'ONS ID',
+            'aria_sort': 'none'
+        },
+
+      ]
+
+    return add_headers
+
+def device_records_table(device_records_json):
+    add_devices = []
+    for devices in device_records_json:
+        add_devices.append({'tds': [
+            {
+                'value': devices['device_id']
+            },
+            {
+                'value': devices['field_device_phone_number']
+            },
+            {
+                'value': devices['device_type']
+            },
+            {
+                'value': devices['device_sent']
+            },
+            {
+                'value': devices['ons_email_address']
+            },
+       ]}
+        )
+
+    return add_devices
+
+
