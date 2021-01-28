@@ -14,7 +14,9 @@ from app.searchcriteria import (
     retrieve_job_roles,
     retrieve_assignment_statuses,
     clear_stored_search_criteria,
-    retreive_iat_statuses
+    retreive_iat_statuses,
+    device_type_dropdown,
+    device_sent_dropdown,
 )
 
 from app.searchfunctions import (
@@ -95,6 +97,8 @@ class DeviceTable:
             table_headers = device_table_headers()
 
             device_records = device_records_table(get_device_info_json)
+            device_type_dropdown_options = device_type_dropdown('blank')
+            device_sent_dropdown_options = device_sent_dropdown('blank')
 
             return {
                 'page_title': f'Device Table view for: {user_role}',
@@ -102,6 +106,8 @@ class DeviceTable:
                 'device_records': device_records,
                 'page_number': page_number,
                 'last_page_number': max_page,
+                'device_type_options': device_type_dropdown_options,
+                'device_sent_options': device_sent_dropdown_options,
             }
         else:
             logger.warn('Database is down', client_ip=request['client_ip'])
@@ -187,15 +193,18 @@ class DeviceSecondaryPage:
                 no_device_data  = 'false'
                 device_records  = device_records_table(
                         get_device_info_json)
+
+            device_type_dropdown_options = device_type_dropdown(previous_criteria.get('device_type'))
+            device_sent_dropdown_options = device_sent_dropdown(previous_criteria.get('device_sent'))
+
             #TODO REMOVE
             logger.error("Session Data:  " + str(session) + "\nPage Data: " + str(data) + \
                     "\nPrevious Search Criteria:  " + str(previous_criteria))
 
             return {
                 'called_from_index': from_index,
-
-                'previous_device_sent': previous_criteria.get('device_sent'),
-                'previous_device_type': previous_criteria.get('device_type'),
+                'device_sent_options': device_sent_dropdown_options,
+                'device_type_options': device_type_dropdown_options,
                 'previous_device_id': previous_criteria.get('device_id'),
                 'previous_field_device_phone_number': previous_criteria.get('field_device_phone_number'),
                 'previous_ons_id': previous_criteria.get('ons_id'),
@@ -284,12 +293,15 @@ class DeviceSecondaryPage:
             device_records = device_record_table(
                 get_device_info_json)
 
+            device_type_dropdown_options = device_type_dropdown(previous_criteria.get('device_type'))
+            device_sent_dropdown_options = device_sent_dropdown(previous_criteria.get('device_sent'))
+
             return {
                 'called_from_index': from_index,
                 'page_title': f'Device Table view for: {user_role}',
 
-                'previous_device_sent': previous_criteria.get('device_sent'),
-                'previous_device_type': previous_criteria.get('device_type'),
+                'device_sent_options': device_sent_dropdown_options,
+                'device_type_options': device_type_dropdown_options,
                 'previous_device_id': previous_criteria.get('device_id'),
                 'previous_field_device_phone_number': previous_criteria.get('field_device_phone_number'),
                 'previous_ons_id': previous_criteria.get('ons_id'),
