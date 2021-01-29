@@ -249,7 +249,7 @@ def device_records_table(device_records_json):
                 'value': devices['device_type']
             },
             {
-                'value': devices['device_sent']
+                'value': devices['device_sent'] if (devices['device_sent'] != False) else "False"
             },
             {
                 'value': devices['ons_email_address']
@@ -257,6 +257,8 @@ def device_records_table(device_records_json):
        ]}
         )
 
+    #TODO remove
+    logger.error("RAW DEVICES DATA: "  +str(add_devices))
     return add_devices
 
 
