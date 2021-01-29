@@ -68,6 +68,33 @@ def set_status(dropdown_value):
              
     return dropdown_options
 
+def device_type_dropdown(dropdown_value):
+    if dropdown_value == '':
+        dropdown_value = "blank"
+    dropdown_options =  [   {'value':'blank',       'text':'Select a value', "disabled": True},
+                            {'value':'CHROMEBOOK',      'text':'CHROMEBOOK'},
+                            {'value':'PHONE',    'text':'PHONE'},]
+
+    for each_dict in dropdown_options:
+        if each_dict['value'] == dropdown_value:
+            each_dict['selected'] = True
+             
+    return dropdown_options
+
+def device_sent_dropdown(dropdown_value):
+    if dropdown_value == '':
+        dropdown_value = "blank"
+    dropdown_options =  [   {'value':'blank',       'text':'Select a value', "disabled": True},
+                            {'value':'True',      'text':'True'},
+                            {'value':'False',    'text':'False'},]
+
+    for each_dict in dropdown_options:
+        if each_dict['value'] == dropdown_value:
+            each_dict['selected'] = True
+             
+    return dropdown_options
+
+
 def retreive_iat_statuses(data,select_options):
     all_options = {}
 
