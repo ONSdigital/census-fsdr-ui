@@ -257,8 +257,6 @@ def device_records_table(device_records_json):
        ]}
         )
 
-    #TODO remove
-    logger.error("RAW DEVICES DATA: "  +str(add_devices))
     return add_devices
 
 

@@ -77,10 +77,6 @@ class DeviceTable:
             get_device_info = get_device_records(search_range)
             get_device_info_json = get_device_info.json() 
 
-            #TODO remove
-            device_sum = get_device_info_json[0].get('total_devices',0)
-            logger.error("RAW DEVICES DATA: "  +str(get_device_info) + "\n\n TOTALROWS: " + str(device_sum))
-
             if len(get_device_info_json) > 0:
                 device_sum = get_device_info_json[0].get('total_devices',0)
                 max_page = math.ceil(device_sum / records_per_page)        
@@ -200,10 +196,6 @@ class DeviceSecondaryPage:
 
             device_type_dropdown_options = device_type_dropdown(previous_criteria.get('device_type'))
             device_sent_dropdown_options = device_sent_dropdown(previous_criteria.get('device_sent'))
-
-            #TODO REMOVE
-            logger.error("Session Data:  " + str(session) + "\nPage Data: " + str(data) + \
-                    "\nPrevious Search Criteria:  " + str(previous_criteria))
 
             return {
                 'called_from_index': from_index,
