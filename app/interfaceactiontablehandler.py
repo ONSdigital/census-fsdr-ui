@@ -162,7 +162,7 @@ class IatSecondaryPage:
                 previous_jobrole_selected = data.get('job_role_select')
                 search_criteria['jobRoleShort'] = data.get('job_role_select')
 
-            select_options = ["gsuite","xma","granby","loneWorker","serviceNow"]
+            select_options = ["gsuite","xma","granby","loneWorker","serviceNow","ons_id"]
             for select_element in select_options:
                 if data.get(select_element):
                     if data.get(select_element)  != "blank":
@@ -258,6 +258,7 @@ class IatSecondaryPage:
                 'previous_jobid': previous_jobid,
                 'previous_surname_filter': previous_surname,
                 'no_employee_data': no_employee_data,
+                'previous_ons_id': previous_criteria.get('ons_id'),
                 'previous_gsuite' : previous_criteria.get('gsuite'),
                 'previous_xma_select' : previous_criteria.get('xma'),
                 'previous_granby_select' : previous_criteria.get('granby'),
@@ -311,7 +312,7 @@ class IatSecondaryPage:
                 previous_assignment_selected = session['assignmentStatus']
                 search_criteria['assignmentStatus'] = previous_assignment_selected
 
-            select_options = ["gsuite","xma","granby","loneWorker","serviceNow"]
+            select_options = ["gsuite","xma","granby","loneWorker","serviceNow","ons_id"]
             for select_element in select_options:
                 if data.get(select_element):
                     if data.get(select_element)  != "blank":
@@ -398,6 +399,7 @@ class IatSecondaryPage:
                 'previous_badge': previous_badge,
                 'previous_jobid': previous_jobid,
                 'previous_surname_filter': previous_surname,
+                'previous_ons_id' : previous_criteria.get('ons_id'),
                 'previous_gsuite' : previous_criteria.get('gsuite'),
                 'previous_xma_select' : previous_criteria.get('xma_select'),
                 'previous_granby_select' : previous_criteria.get('granby_select'),
