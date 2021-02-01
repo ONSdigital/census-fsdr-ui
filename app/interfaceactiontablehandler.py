@@ -118,8 +118,6 @@ class InterfaceActionTable:
             raise HTTPFound(request.app.router['MainPage:get'].url_for())
 
 
-#  Below is  from  search handler and  allows the  iat  to do  similar  funcionatlity, but in addiotn will search IAT
-
 @interface_action_handler_table_routes.view('/iat-search-results')
 class IatSecondaryPage:
     @aiohttp_jinja2.template('iat-search-results.html')
@@ -162,10 +160,11 @@ class IatSecondaryPage:
                 previous_jobrole_selected = data.get('job_role_select')
                 search_criteria['jobRoleShort'] = data.get('job_role_select')
 
-            select_options = ["gsuite","xma","granby","loneWorker","serviceNow","ons_id"]
+            select_options = ["gsuite","xma","granby","loneWorker","serviceNow",
+                    "ons_id","employee_id"]
             for select_element in select_options:
                 if data.get(select_element):
-                    if data.get(select_element)  != "blank":
+                    if (data.get(select_element)  != "blank") and (data.get(select_element)  != "None"):
                         search_criteria[select_element] = data.get(select_element)
                         previous_criteria[select_element] = data.get(select_element)
                     else:
@@ -266,6 +265,7 @@ class IatSecondaryPage:
                 'previous_granby_select' : previous_criteria.get('granby'),
                 'previous_lone_worker_select' : previous_criteria.get('loneWorker'),
                 'previous_service_now_select' : previous_criteria.get('serviceNow'),
+                'previous_employee_id' : previous_criteria.get('employee_id'),
                 'iat_options': dropdown_options,
             }
         else:
@@ -314,7 +314,8 @@ class IatSecondaryPage:
                 previous_assignment_selected = session['assignmentStatus']
                 search_criteria['assignmentStatus'] = previous_assignment_selected
 
-            select_options = ["gsuite","xma","granby","loneWorker","serviceNow","ons_id"]
+            select_options = ["gsuite","xma","granby","loneWorker","serviceNow",
+                    "ons_id","employee_id"]
             for select_element in select_options:
                 if session.get(select_element):
                     if session.get(select_element)  != "blank":
@@ -409,6 +410,7 @@ class IatSecondaryPage:
                 'previous_granby_select' : previous_criteria.get('granby_select'),
                 'previous_lone_worker_select' : previous_criteria.get('loneWorker_select'),
                 'previous_service_now_select' : previous_criteria.get('serviceNow_select'),
+                'previous_employee_id' : previous_criteria.get('employee_id'),
                 'iat_options':dropdown_options, 
             }
         else:
