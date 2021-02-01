@@ -15,10 +15,6 @@ async def store_search_criteria(request, search_criteria):
         if atribute in search_criteria.keys():
             session[atribute] = search_criteria.get(atribute)
 
-    #TODO  remove
-    logger.error("Saving the following to the session Cookie: \n " + str(session))
-
-
 async def clear_stored_search_criteria(session):
     possible_stored_atributes =['assignmentStatus', 'jobRoleShort','area','surname','firstName','badgeNumber',
             'jobRoleId','uniqueEmployeeId','gsuite','xma','granby','loneWorker','serviceNow',

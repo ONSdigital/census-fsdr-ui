@@ -192,16 +192,8 @@ class DeviceSecondaryPage:
                 device_records  = device_records_table(
                         get_device_info_json)
 
-            #TODO remove
-            logger.error("Loading from cookie, device type: \n\n" + str(previous_criteria.get('device_type')) \
-                    + "previous_criteria: \n" + str(previous_criteria))
-
-
             device_type_dropdown_options = device_type_dropdown(previous_criteria.get('device_type'))
             device_sent_dropdown_options = device_sent_dropdown(previous_criteria.get('device_sent'))
-
-            #TODO remove
-            logger.error("Device Type Options: \n " + str(device_type_dropdown_options))
 
             return {
                 'called_from_index': from_index,
@@ -250,9 +242,6 @@ class DeviceSecondaryPage:
         previous_criteria = {}
 
         try:
-
-            #TODO remove
-            logger.error("Session:  "  + str(session))
 
             select_options = ["device_sent","device_id","field_device_phone_number",
                     "device_type","ons_id"]
