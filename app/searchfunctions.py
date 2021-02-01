@@ -138,20 +138,25 @@ def employee_record_table(employee_records_json):
 
 def iat_employee_table_headers():
     add_headers = [
-        {
-            'value': 'Gsuite',
-            'aria_sort': 'none'
-        },
        {
             'value': 'Role ID',
             'aria_sort': 'none'
         },
         {
-            'value': 'Name',
+            'value': 'ONS ID',
             'aria_sort': 'none'
         },
         {
-            'value': 'External ID',
+            'value': 'Employee ID',
+            'aria_sort': 'none'
+        },
+        {
+            'value': 'Start Date',
+            'aria_sort': 'none'
+        },
+
+        {
+            'value': 'Gsuite',
             'aria_sort': 'none'
         },
         {
@@ -179,16 +184,19 @@ def iat_employee_record_table(employee_records_json):
     for employees in employee_records_json:
         add_employees.append({'tds': [
             {
-                'value': employees['gsuite_status']
-            },
-            {
                 'value': employees['unique_role_id']
             },
             {
-                'value': employees['first_name'] + " " + employees['surname']  
+                'value': acc_generation(str(employees['ons_email_address']))
             },
             {
                 'value':  acc_generation(str(employees['external_id']))
+            },
+            {
+                'value': employees['contract_start_date']
+            },
+            {
+                'value': employees['gsuite_status']
             },
             {
                 'value': employees['xma_status']
