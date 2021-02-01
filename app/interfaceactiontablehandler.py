@@ -170,6 +170,8 @@ class IatSecondaryPage:
                         previous_criteria[select_element] = data.get(select_element)
                     else:
                         previous_criteria[select_element] = '' 
+                else:
+                    previous_criteria[select_element] = ''
 
             if data.get('filter_unique_employee_id'):
                 unique_employee_id = data.get('filter_unique_employee_id')
@@ -314,12 +316,14 @@ class IatSecondaryPage:
 
             select_options = ["gsuite","xma","granby","loneWorker","serviceNow","ons_id"]
             for select_element in select_options:
-                if data.get(select_element):
-                    if data.get(select_element)  != "blank":
-                        search_criteria[select_element] = data.get(select_element)
-                        previous_criteria[select_element] = data.get(select_element)
+                if session.get(select_element):
+                    if session.get(select_element)  != "blank":
+                        search_criteria[select_element] = session.get(select_element)
+                        previous_criteria[select_element] = session.get(select_element)
                     else:
                         previous_criteria[select_element] = '' 
+                else:
+                    previous_criteria[select_element] = ''
 
             if session.get('jobRoleShort'):
                 previous_jobrole_selected = session['jobRoleShort']
@@ -381,7 +385,7 @@ class IatSecondaryPage:
             job_role_json = retrieve_job_roles(get_job_roles,
                                                previous_jobrole_selected)
 
-            dropdown_options = retreive_iat_statuses(data, select_options)    
+            dropdown_options = retreive_iat_statuses(session, select_options)    
 
             return {
                 'called_from_index': from_index,
