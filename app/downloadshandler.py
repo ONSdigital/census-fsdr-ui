@@ -67,7 +67,7 @@ class DownloadsPage:
         user_role = await saml.get_role_id(request)
 
         try:
-            search_range, records_per_page = page_bounds(page_number)
+            search_range, records_per_page = page_bounds(1)
 
             get_employee_info = get_employee_records(search_range, iat = True)
             get_employee_info_json = get_employee_info.json() 
