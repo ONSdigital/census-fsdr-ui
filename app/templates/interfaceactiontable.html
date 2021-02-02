@@ -49,6 +49,12 @@
                         'submitType': "loader",
                         'url': url('InterfaceActionTable:get')
                     }) }}
+			{{ onsButton({
+			    'text': 'Download CVS',
+			    'classes': 'btn--small',
+			    'submitType': "loader",
+			    'url': 'iatDownload:get'
+			}) }}
                     <br>
                     <br>
                     {{  onsTable({

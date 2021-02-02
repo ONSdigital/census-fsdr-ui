@@ -8,6 +8,7 @@ from .saml import saml_routes
 from .searchhandler import search_routes
 from .interfaceactiontablehandler import interface_action_handler_table_routes
 from .devicetablehandler import device_table_handler_routes
+from .downloadshandler import downloads_routes
 
 extra_routes = RouteTableDef()
 
@@ -23,7 +24,7 @@ def setup(app, url_path_prefix):
     combined_routes = [
         *extra_routes, *employee_routes, *index_route, *static_routes,
         *search_routes, *saml_routes, *interface_action_handler_table_routes, 
-        *device_table_handler_routes 
+        *device_table_handler_routes, *downloads_routes
     ]
 
     module = ('app.handler')

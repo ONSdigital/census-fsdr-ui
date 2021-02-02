@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% set page_title_value = page_title %}
+{% set index_url = "/downloads" %}
+
+{%  block page %}
+    {% block preMain %}
+    {% endblock %}
+    {% block pageContent %}
+
+	<iframe width="1" height="1" frameborder="0" src="{{ download_location }}"></iframe>
+
+    {% endblock %}
+{% endblock %}

@@ -53,6 +53,12 @@
                             'submitType': "loader",
                             'name': 'action[submit]'
                         }) }}
+                        {{ onsButton({
+                            'text': 'Download CVS',
+                            'classes': 'btn--small',
+                            'submitType': "loader",
+                            'url': 'iatDownload:get'
+                        }) }}
                         {% if called_from_index == 'false' %}
                             {{ onsButton({
                                 'text': 'Clear',
