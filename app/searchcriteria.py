@@ -9,7 +9,7 @@ async def store_search_criteria(request, search_criteria):
             'jobRoleId','uniqueEmployeeId','gsuite','xma','granby','loneWorker','serviceNow',
             'device_sent_options', 'device_id','field_device_phone_number',
             'device_type','distinct_job_roles','ons_id','device_sent',
-            'employee_id']
+            'employee_id','user_missing_device']
 
     for atribute in possible_stored_atributes:
         if atribute in search_criteria.keys():
@@ -20,7 +20,7 @@ async def clear_stored_search_criteria(session):
             'jobRoleId','uniqueEmployeeId','gsuite','xma','granby','loneWorker','serviceNow',
             'device_sent_options', 'device_id','field_device_phone_number',
             'device_type','distinct_job_roles','ons_id','device_sent',
-            'employee_id']
+            'employee_id','user_missing_device']
 
     for key_to_clear in  possible_stored_atributes:
         if session.get(key_to_clear):
