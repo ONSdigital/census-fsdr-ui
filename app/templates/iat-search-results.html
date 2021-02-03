@@ -53,15 +53,7 @@
                             'submitType': "loader",
                             'name': 'action[submit]'
                         }) }}
-		    {% if download_button_enabled %}
-			{{ onsButton({
-			    'text': 'Download CVS',
-			    'classes': 'btn--small',
-			    'submitType': "loader",
-                            'url': './downloads/iat'
-			}) }}
-		     {% endif %}
-                        {% if called_from_index == 'false' %}
+		       {% if called_from_index == 'false' %}
                             {{ onsButton({
                                 'text': 'Clear',
                                 'classes': 'btn--small',
@@ -76,6 +68,14 @@
                                 'url': url('InterfaceActionTable:get')
                             }) }}
                         {% endif %}
+			{% if download_button_enabled %}
+			{{ onsButton({
+			    'text': 'Download CVS',
+			    'classes': 'btn--small',
+			    'submitType': "loader",
+                            'url': './downloads/iat'
+			}) }}
+		     {% endif %}
                         <br>
                     {% endif %}
                     {% if no_employee_data == 'true' %}

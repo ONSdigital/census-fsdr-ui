@@ -8,7 +8,7 @@ from aiohttp.web import HTTPFound, RouteTableDef
 from aiohttp_session import get_session
 from structlog import get_logger
 from app.pageutils import page_bounds
-from app.role_mattchers import download_permission
+from app.role_matchers import download_permission
 
 from app.searchcriteria import (
     store_search_criteria,

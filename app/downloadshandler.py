@@ -59,9 +59,6 @@ class DownloadsPage:
 
         user_role = await saml.get_role_id(request)
         
-        #TODO remove
-        logger.error("USER ROLE:  " + str(user_role))
-
         if download_permission(user_role):
             pass 
         else:
@@ -114,7 +111,6 @@ class DownloadsPage:
                 with open("/opt/ui/app/assets/iat/output.csv", "w") as of:  
                     of.write(str(headers))
                     of.write(str(rows))
-
 
                 download_location = "/assets/iat/output.csv"
             return {
