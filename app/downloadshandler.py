@@ -8,14 +8,7 @@ from aiohttp.web import HTTPFound, RouteTableDef
 from aiohttp_session import get_session
 from structlog import get_logger
 from app.pageutils import page_bounds
-
-from app.searchcriteria import (
-    store_search_criteria,
-    retrieve_job_roles,
-    retrieve_assignment_statuses,
-    clear_stored_search_criteria,
-    retreive_iat_statuses
-)
+from app.role_matchers import download_permission
 
 from app.searchfunctions import (
     get_all_assignment_status,
@@ -65,6 +58,15 @@ class DownloadsPage:
         await saml.ensure_logged_in(request)
 
         user_role = await saml.get_role_id(request)
+        
+        #TODO remove
+        logger.error("USER ROLE:  " + str(user_role))
+
+        if download_permission(user_role):
+            pass 
+        else:
+            return aiohttp_jinja2.render_template('error404.html', request,
+                    {'include_nav': True})
 
         try:
             search_range, records_per_page = page_bounds(1)
@@ -81,6 +83,9 @@ class DownloadsPage:
                 get_employee_info = get_employee_records(search_range, iat = True)
                 get_employee_info_json = get_employee_info.json() 
 
+                html_employee_records = iat_employee_record_table(get_employee_info_json, remove_html=True)
+                html_headers = iat_employee_table_headers()
+
         except ClientResponseError as ex:
             if ex.status == 503:
                 ip = request['client_ip']
@@ -93,12 +98,25 @@ class DownloadsPage:
 
         if get_employee_info.status_code == 200:
 
-            headers = iat_employee_table_headers()
-            employee_records = iat_employee_record_table(get_employee_info_json)
-             
-            logger.error("employee  records:\n" + str(employee_records))
+            headers = "" 
+            for html_header in html_headers:
+                headers = headers + str(html_header.get('value')) + " , "
+            headers = headers[:-3]
 
-            download_location = "./README.md"
+            rows=""
+            for employee_record  in  html_employee_records:
+                rows = str(rows) + "\n"
+                for each_array in employee_record.get('tds'):
+                    rows = str(rows) + str(each_array.get('value')) + " , "
+                rows = rows[:-3]
+            
+            if download_type == "iat":
+                with open("/opt/ui/app/assets/iat/output.csv", "w") as of:  
+                    of.write(str(headers))
+                    of.write(str(rows))
+
+
+                download_location = "/assets/iat/output.csv"
             return {
                 'download_location': download_location,
             }

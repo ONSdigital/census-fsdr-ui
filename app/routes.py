@@ -1,5 +1,7 @@
 from aiohttp.web import HTTPFound, RouteTableDef
 from aiohttp_utils.routing import add_resource_context, add_route_context
+from pathlib import Path
+from structlog import get_logger
 
 from .employeehandler import employee_routes
 from .indexhandler import index_route
@@ -12,6 +14,7 @@ from .downloadshandler import downloads_routes
 
 extra_routes = RouteTableDef()
 
+logger = get_logger('fsdr-ui')
 
 @extra_routes.get('/')
 async def root(request):
@@ -20,6 +23,11 @@ async def root(request):
 
 def setup(app, url_path_prefix):
     """Set up routes as resources so we can use the `Index:get` notation for URL lookup."""
+
+    path = str(Path(__file__).resolve()) + "/app/" 
+    path = "/opt/ui/app/assets/"
+
+    app.router.add_static("/assets", path)
 
     combined_routes = [
         *extra_routes, *employee_routes, *index_route, *static_routes,

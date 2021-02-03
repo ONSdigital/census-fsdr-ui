@@ -53,12 +53,14 @@
                             'submitType': "loader",
                             'name': 'action[submit]'
                         }) }}
-                        {{ onsButton({
-                            'text': 'Download CVS',
-                            'classes': 'btn--small',
-                            'submitType': "loader",
+		    {% if download_button_enabled %}
+			{{ onsButton({
+			    'text': 'Download CVS',
+			    'classes': 'btn--small',
+			    'submitType': "loader",
                             'url': './downloads/iat'
-                        }) }}
+			}) }}
+		     {% endif %}
                         {% if called_from_index == 'false' %}
                             {{ onsButton({
                                 'text': 'Clear',

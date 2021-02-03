@@ -23,6 +23,8 @@ RUN pipenv install --deploy --system
 
 COPY . .
 
+RUN chown -R fsdrui /opt/ui/app/assets/
+
 USER fsdrui
 EXPOSE 9293
 CMD ["python3", "run.py"]

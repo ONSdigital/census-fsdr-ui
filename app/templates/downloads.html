@@ -1,14 +1,12 @@
-{% extends 'base.html' %}
+<div onload="download()"></div>
+<a id="dl" style="display: none" 
+    href="{{download_location}}"
+    download>Failed  to download? Click Here</a>
 
-{% set page_title_value = page_title %}
-{% set index_url = "/downloads" %}
+<script>
+(function download() {
+    document.getElementById('dl').click();
+    window.history.back();
+})()
+</script>
 
-{%  block page %}
-    {% block preMain %}
-    {% endblock %}
-    {% block pageContent %}
-
-	<iframe width="1" height="1" frameborder="0" src="{{ download_location }}"></iframe>
-
-    {% endblock %}
-{% endblock %}
