@@ -48,8 +48,17 @@
                         'type': 'reset',
                         'classes': 'btn--small',
                         'submitType': "loader",
+            'newWindow':True,
                         'url': url('InterfaceActionTable:get')
                     }) }}
+            {% if download_button_enabled %}
+            {{ onsButton({
+                'text': 'Download CVS',
+                'classes': 'btn--small',
+                'submitType': "loader",
+                            'url': './downloads/iat'
+            }) }}
+             {% endif %}
                     <br>
                     <br>
                     {{  onsTable({

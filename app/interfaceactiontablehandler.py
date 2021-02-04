@@ -8,6 +8,7 @@ from aiohttp.web import HTTPFound, RouteTableDef
 from aiohttp_session import get_session
 from structlog import get_logger
 from app.pageutils import page_bounds
+from app.role_matchers import download_permission
 
 from app.searchcriteria import (
     store_search_criteria,
@@ -111,6 +112,7 @@ class InterfaceActionTable:
                 'last_page_number': int(math.floor(max_page)),
                 'distinct_job_roles': job_role_json,
                 'iat_options': dropdown_options,
+                'download_button_enabled': download_permission(user_role),
             }
         else:
             logger.warn('Database is down', client_ip=request['client_ip'])
@@ -267,6 +269,7 @@ class IatSecondaryPage:
                 'previous_service_now_select' : previous_criteria.get('serviceNow'),
                 'previous_employee_id' : previous_criteria.get('employee_id'),
                 'iat_options': dropdown_options,
+                'download_button_enabled': download_permission(user_role),
             }
         else:
             logger.warn(
@@ -412,6 +415,7 @@ class IatSecondaryPage:
                 'previous_service_now_select' : previous_criteria.get('serviceNow_select'),
                 'previous_employee_id' : previous_criteria.get('employee_id'),
                 'iat_options':dropdown_options, 
+                'download_button_enabled': download_permission(user_role),
             }
         else:
             logger.warn(

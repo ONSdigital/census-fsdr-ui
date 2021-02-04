@@ -57,11 +57,18 @@ logi_combined_regex = re.compile(
         logi_regex, cfods_regex, cfots_regex)]))  # keep up to date with above
 
 
+download_permission_regex =  re.compile('DT-SUP.-..-..')
+
 def invalid_role_id(role_id):
     msg = 'Invalid role ID: {}'.format(role_id)
     logger.warn(msg, role_id=role_id)
     raise HTTPInternalServerError(reason=msg)
 
+def download_permission(role_id):
+    if download_permission_regex.match(role_id):
+        return True
+    else:
+        return False
 
 def get_role(role_id):
     if rmt_combined_regex.match(role_id):

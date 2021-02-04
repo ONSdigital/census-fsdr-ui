@@ -1,0 +1,12 @@
+<div onload="download()"></div>
+<a id="dl" style="display: none" 
+    href="{{download_location}}"
+    download>Failed  to download? Click Here</a>
+
+<script>
+(function download() {
+    document.getElementById('dl').click();
+    window.history.back();
+})()
+</script>
+
