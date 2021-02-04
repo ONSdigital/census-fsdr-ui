@@ -20,6 +20,7 @@ RUN mkdir -p app/templates
 RUN ./scripts/load_templates.sh
 COPY Pipfile* ./
 RUN pipenv install --deploy --system
+RUN mkdir -p /opt/ui/app/assets
 
 COPY . .
 
