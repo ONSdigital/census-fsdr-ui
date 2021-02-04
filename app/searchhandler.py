@@ -276,7 +276,7 @@ class SecondaryPage:
                                 
             if session.get('user_missing_device'):
                 previous_user_missing_device = session.get('user_missing_device')
-                search_criteria['user_missing_device'] = data.get('user_missing_device')
+                search_criteria['user_missing_device'] = session.get('user_missing_device')
 
             if session.get('area'):
                 previous_area = session['area']
@@ -307,7 +307,7 @@ class SecondaryPage:
             search_criteria_with_range['rangeLow'] = low_value
 
             if previous_user_missing_device != False:
-                retrieve_emplyee_info = get_employee_records_no_device( 
+                retrieve_employee_info = get_employee_records_no_device( 
                                         search_criteria_with_range )
             else:
                 retrieve_employee_info = get_employee_records(
@@ -354,6 +354,7 @@ class SecondaryPage:
                 'previous_jobid': previous_jobid,
                 'previous_surname_filter': previous_surname,
                 'previous_user_missing_device': previous_user_missing_device,
+                'user_missing_device':  previous_user_missing_device,
             }
         else:
             logger.warn(

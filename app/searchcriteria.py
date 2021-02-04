@@ -6,15 +6,21 @@ logger = get_logger('fsdr-ui')
 async def store_search_criteria(request, search_criteria):
     session = await get_session(request)
     possible_stored_atributes =['assignmentStatus', 'jobRoleShort','area','surname','firstName','badgeNumber',
-            'jobRoleId','uniqueEmployeeId','gsuite','xma','granby','loneWorker','serviceNow']
+            'jobRoleId','uniqueEmployeeId','gsuite','xma','granby','loneWorker','serviceNow',
+            'device_sent_options', 'device_id','field_device_phone_number',
+            'device_type','distinct_job_roles','ons_id','device_sent',
+            'employee_id','user_missing_device']
 
     for atribute in possible_stored_atributes:
         if atribute in search_criteria.keys():
             session[atribute] = search_criteria.get(atribute)
 
 async def clear_stored_search_criteria(session):
-    possible_stored_atributes=['assignmentStatus', 'jobRoleShort','area','surname','firstName','badgeNumber',
-            'jobRoleId','uniqueEmployeeId','gsuite','xma','granby','loneWorker','serviceNow']
+    possible_stored_atributes =['assignmentStatus', 'jobRoleShort','area','surname','firstName','badgeNumber',
+            'jobRoleId','uniqueEmployeeId','gsuite','xma','granby','loneWorker','serviceNow',
+            'device_sent_options', 'device_id','field_device_phone_number',
+            'device_type','distinct_job_roles','ons_id','device_sent',
+            'employee_id','user_missing_device']
 
     for key_to_clear in  possible_stored_atributes:
         if session.get(key_to_clear):

@@ -153,8 +153,6 @@ class DeviceSecondaryPage:
                 else:
                     previous_criteria[select_element] = ''
 
-            logger.error("Search Criteria is:\n\n" + str(data))
-
             if search_criteria:
                 await store_search_criteria(request, search_criteria)
 
@@ -204,7 +202,6 @@ class DeviceSecondaryPage:
                 'previous_device_id': previous_criteria.get('device_id'),
                 'previous_field_device_phone_number': previous_criteria.get('field_device_phone_number'),
                 'previous_ons_id': previous_criteria.get('ons_id'),
-
                 'page_title': f'Device Table view for: {user_role}',
                 'table_headers': table_headers,
                 'device_records': device_records,
@@ -249,10 +246,10 @@ class DeviceSecondaryPage:
             select_options = ["device_sent","device_id","field_device_phone_number",
                     "device_type","ons_id"]
             for select_element in select_options:
-                if data.get(select_element):
-                    if (data.get(select_element)  != "blank") and (data.get(select_element)  != "None"):
-                        search_criteria[select_element] = data.get(select_element)
-                        previous_criteria[select_element] = data.get(select_element)
+                if session.get(select_element):
+                    if (session.get(select_element)  != "blank") and (session.get(select_element)  != "None"):
+                        search_criteria[select_element] = session.get(select_element)
+                        previous_criteria[select_element] = session.get(select_element)
                     else:
                         previous_criteria[select_element] = '' 
                 else:
@@ -262,7 +259,7 @@ class DeviceSecondaryPage:
             search_criteria.update(search_range)
 
             get_device_info = get_device_records(search_criteria)
-            get_device_info = get_device_info.json() 
+            get_device_info_json = get_device_info.json() 
             
             if len(get_device_info_json) > 0:
                 device_sum = get_device_info_json[0].get('total_devices',0)
@@ -286,7 +283,7 @@ class DeviceSecondaryPage:
         if get_device_info.status_code == 200:
             table_headers = device_table_headers()
 
-            device_records = device_record_table(
+            device_records = device_records_table(
                 get_device_info_json)
 
             device_type_dropdown_options = device_type_dropdown(previous_criteria.get('device_type'))
@@ -295,13 +292,11 @@ class DeviceSecondaryPage:
             return {
                 'called_from_index': from_index,
                 'page_title': f'Device Table view for: {user_role}',
-
                 'device_sent_options': device_sent_dropdown_options,
                 'device_type_options': device_type_dropdown_options,
                 'previous_device_id': previous_criteria.get('device_id'),
                 'previous_field_device_phone_number': previous_criteria.get('field_device_phone_number'),
                 'previous_ons_id': previous_criteria.get('ons_id'),
-
                 'table_headers': table_headers,
                 'device_records': device_records,
                 'page_number': int(page_number),
