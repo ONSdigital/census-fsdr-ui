@@ -41,6 +41,28 @@ def create_error_middleware(overrides):
 
     return middleware_handler
 
+def warn_invalid_login(request):
+    logger.warn(
+        'Attempted to login with invalid user name and/or password',
+        client_ip=request['client_ip'])
+    flash(request, NO_EMPLOYEE_DATA)
+
+    return aiohttp_jinja2.render_template('signin.html', request, {
+        'page_title': 'Sign in',
+        'include_nav': False
+    })
+
+
+def client_response_error(ex,request):
+    # Moved from individual handlers to here
+    if ex.status == 503:
+        ip = request['client_ip']
+        logger.warn('Server is unavailable', client_ip=ip)
+        flash(request, SERVICE_DOWN_MSG)
+        return jinja.render_template('error503.html', request,
+                                              {'include_nav': False})
+    else:
+        raise ex
 
 async def connection_error(request, message: str):
     logger.error('service connection error', exception=message)

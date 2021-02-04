@@ -9,7 +9,8 @@ from aiohttp.web import HTTPFound, RouteTableDef
 from aiohttp_session import get_session
 
 from app.searchcriteria import retrieve_job_roles, clear_stored_search_criteria
-from app.pageutils import page_bounds
+from app.pageutils import page_bounds, get_page
+from app.error_handlers import client_response_error, warn_invalid_login
 
 from app.searchfunctions import (
         get_employee_records, 
@@ -58,10 +59,7 @@ class MainPage:
 
         user_role = await saml.get_role_id(request)
 
-        if 'page' in request.query:
-            page_number = int(request.query['page'])
-        else:
-            page_number = 1
+        page_number = get_page(request)
 
         try:
             search_range, records_per_page = page_bounds(page_number)
@@ -78,14 +76,7 @@ class MainPage:
             get_job_roles = get_distinct_job_role_short()
 
         except ClientResponseError as ex:
-            if ex.status == 503:
-                ip = request['client_ip']
-                logger.warn('Server is unavailable', client_ip=ip)
-                flash(request, SERVICE_DOWN_MSG)
-                return aiohttp_jinja2.render_template('error503.html', request,
-                                                      {'include_nav': False})
-            else:
-                raise ex
+            client_response_error(ex, request)
 
         if get_employee_info.status_code == 200:
             table_headers = employee_table_headers()

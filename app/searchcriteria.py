@@ -27,6 +27,24 @@ async def clear_stored_search_criteria(session):
             del session[key_to_clear]
 
 
+def load_search_criteria(data, fields_to_load):
+    # "data"can be session if it's called from page 2
+    search_criteria = {}
+    previous_criteria = {}
+
+    for field in fields_to_load:
+        if data.get(field):
+            if (data.get(field)  != "blank") and (data.get(field)  != "None"):
+                search_criteria[field] = data.get(field)      
+                previous_criteria[field] = data.get(field)
+            else:
+                previous_criteria[field] = '' 
+        else:
+            previous_criteria[field] = ''
+
+    return search_criteria, previous_criteria
+
+
 def retrieve_job_roles(job_roles, previous_jobrole_selected):
     add_job_roles = []
     job_shorts = job_roles.json()

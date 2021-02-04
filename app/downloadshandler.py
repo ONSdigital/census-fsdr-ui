@@ -9,6 +9,7 @@ from aiohttp_session import get_session
 from structlog import get_logger
 from app.pageutils import page_bounds
 from app.role_matchers import download_permission
+from app.error_handlers import client_response_error, warn_invalid_login
 
 from app.searchfunctions import (
     get_all_assignment_status,
@@ -84,14 +85,7 @@ class DownloadsPage:
                 html_headers = iat_employee_table_headers()
 
         except ClientResponseError as ex:
-            if ex.status == 503:
-                ip = request['client_ip']
-                logger.warn('Server is unavailable', client_ip=ip)
-                flash(request, SERVICE_DOWN_MSG)
-                return aiohttp_jinja2.render_template('error503.html', request,
-                                                      {'include_nav': False})
-            else:
-                raise ex
+            client_response_error(ex, request)
 
         if get_employee_info.status_code == 200:
 

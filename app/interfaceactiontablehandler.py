@@ -7,11 +7,13 @@ from aiohttp.client_exceptions import (ClientResponseError)
 from aiohttp.web import HTTPFound, RouteTableDef
 from aiohttp_session import get_session
 from structlog import get_logger
-from app.pageutils import page_bounds
+from app.pageutils import page_bounds, get_page
 from app.role_matchers import download_permission
+from app.error_handlers import client_response_error, warn_invalid_login
 
 from app.searchcriteria import (
     store_search_criteria,
+    load_search_criteria,
     retrieve_job_roles,
     retrieve_assignment_statuses,
     clear_stored_search_criteria,
@@ -65,17 +67,13 @@ class InterfaceActionTable:
 
         user_role = await saml.get_role_id(request)
 
-        if 'page' in request.query:
-            page_number = int(request.query['page'])
-        else:
-            page_number = 1
+        page_number = get_page(request)
 
         try:
             search_range, records_per_page = page_bounds(page_number)
 
             get_employee_info = get_employee_records(search_range, iat = True)
             get_employee_info_json = get_employee_info.json() 
-
             
             if len(get_employee_info_json) > 0:
                 employee_sum = get_employee_info_json[0].get('total_employees',0)
@@ -86,14 +84,7 @@ class InterfaceActionTable:
             get_job_roles = get_distinct_job_role_short()
 
         except ClientResponseError as ex:
-            if ex.status == 503:
-                ip = request['client_ip']
-                logger.warn('Server is unavailable', client_ip=ip)
-                flash(request, SERVICE_DOWN_MSG)
-                return aiohttp_jinja2.render_template('error503.html', request,
-                                                      {'include_nav': False})
-            else:
-                raise ex
+            client_response_error(ex, request)
 
         if get_employee_info.status_code == 200:
             table_headers = iat_employee_table_headers()
@@ -131,10 +122,7 @@ class IatSecondaryPage:
 
         await saml.ensure_logged_in(request)
 
-        if 'page' in request.query:
-            page_number = int(request.query['page'])
-        else:
-            page_number = 1
+        page_number = get_page(request)
 
         previous_assignment_selected = ''
         previous_jobrole_selected = ''
@@ -151,9 +139,6 @@ class IatSecondaryPage:
             else:
                 from_index = 'false'
 
-            search_criteria = {}
-            previous_criteria = {}
-
             if data.get('assignment_select'):
                 previous_assignment_selected = data.get('assignment_select')
                 search_criteria['assignmentStatus'] = data.get('assignment_select')
@@ -162,17 +147,9 @@ class IatSecondaryPage:
                 previous_jobrole_selected = data.get('job_role_select')
                 search_criteria['jobRoleShort'] = data.get('job_role_select')
 
-            select_options = ["gsuite","xma","granby","loneWorker","serviceNow",
+            fields_to_load = ["gsuite","xma","granby","loneWorker","serviceNow",
                     "ons_id","employee_id"]
-            for select_element in select_options:
-                if data.get(select_element):
-                    if (data.get(select_element)  != "blank") and (data.get(select_element)  != "None"):
-                        search_criteria[select_element] = data.get(select_element)
-                        previous_criteria[select_element] = data.get(select_element)
-                    else:
-                        previous_criteria[select_element] = '' 
-                else:
-                    previous_criteria[select_element] = ''
+            search_criteria, previous_criteria = load_search_criteria(data, fields_to_load)
 
             if data.get('filter_unique_employee_id'):
                 unique_employee_id = data.get('filter_unique_employee_id')
@@ -225,7 +202,7 @@ class IatSecondaryPage:
             get_job_roles = get_distinct_job_role_short()
 
         except ClientResponseError as ex:
-            raise ex
+            client_response_error(ex, request)
 
         if get_employee_info.status_code == 200:
             table_headers = iat_employee_table_headers()
@@ -272,16 +249,7 @@ class IatSecondaryPage:
                 'download_button_enabled': download_permission(user_role),
             }
         else:
-            logger.warn(
-                'Attempted to login with invalid user name and/or password',
-                client_ip=request['client_ip'])
-            flash(request, NO_EMPLOYEE_DATA)
-            return aiohttp_jinja2.render_template('signin.html',
-                                                  request, {
-                                                      'page_title': 'Sign in',
-                                                      'include_nav': False
-                                                  },
-                                                  status=401)
+            return warn_invalid_login(request)
 
     @aiohttp_jinja2.template('iat-search-results.html')
     async def get(self, request):
@@ -290,19 +258,12 @@ class IatSecondaryPage:
         user_role = await saml.get_role_id(request)
 
         await saml.ensure_logged_in(request)
-
-        if 'page' in request.query:
-            page_number = int(request.query['page'])
-        else:
-            page_number = 1
+        page_number = get_page(request)
 
         if 'called_from_index' in request.query:
             from_index = request.query['called_from_index']
         else:
             from_index = False
-
-        search_criteria = {}
-        previous_criteria = {}
 
         previous_assignment_selected = ''
         previous_jobrole_selected = ''
@@ -317,17 +278,9 @@ class IatSecondaryPage:
                 previous_assignment_selected = session['assignmentStatus']
                 search_criteria['assignmentStatus'] = previous_assignment_selected
 
-            select_options = ["gsuite","xma","granby","loneWorker","serviceNow",
+            fields_to_load = ["gsuite","xma","granby","loneWorker","serviceNow",
                     "ons_id","employee_id"]
-            for select_element in select_options:
-                if session.get(select_element):
-                    if session.get(select_element)  != "blank":
-                        search_criteria[select_element] = session.get(select_element)
-                        previous_criteria[select_element] = session.get(select_element)
-                    else:
-                        previous_criteria[select_element] = '' 
-                else:
-                    previous_criteria[select_element] = ''
+            search_criteria, previous_criteria = load_search_criteria(session, fields_to_load)
 
             if session.get('jobRoleShort'):
                 previous_jobrole_selected = session['jobRoleShort']
@@ -368,17 +321,7 @@ class IatSecondaryPage:
 
             get_job_roles = get_distinct_job_role_short()
         except ClientResponseError as ex:
-            if ex.status == 503:
-                logger.warn('Server is unavailable',
-                            client_ip=request['client_ip'])
-                flash(request, SERVICE_DOWN_MSG)
-                return aiohttp_jinja2.render_template('error503.html', request,
-                                                      {'include_nav': False})
-            else:
-                raise ex
-
-        except ClientResponseError as ex:
-            raise ex
+            client_response_error(ex, request)
 
         if get_employee_info.status_code == 200:
             table_headers = iat_employee_table_headers()
@@ -418,12 +361,5 @@ class IatSecondaryPage:
                 'download_button_enabled': download_permission(user_role),
             }
         else:
-            logger.warn(
-                'Attempted to login with invalid user name and/or password',
-                client_ip=request['client_ip'])
-            flash(request, NO_EMPLOYEE_DATA)
-            return aiohttp_jinja2.render_template('signin.html', request, {
-                'page_title': 'Sign in',
-                'include_nav': False
-            })
+            return warn_invalid_login(request)
 

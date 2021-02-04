@@ -14,4 +14,10 @@ def page_bounds(page_number: int) -> Tuple[int, int]:
 
     return (search_range,  records_per_page)
 
-
+def get_page(request):
+    if 'page' in request.query:
+        page_number = int(request.query['page'])
+    else:
+        page_number = 1
+    
+    return(page_number)

@@ -7,10 +7,12 @@ from aiohttp.client_exceptions import (ClientResponseError)
 from aiohttp.web import HTTPFound, RouteTableDef
 from aiohttp_session import get_session
 from structlog import get_logger
-from app.pageutils import page_bounds
+from app.pageutils import page_bounds, get_page
+from app.error_handlers import client_response_error, warn_invalid_login
 
 from app.searchcriteria import (
     store_search_criteria,
+    load_search_criteria,
     retrieve_job_roles,
     retrieve_assignment_statuses,
     clear_stored_search_criteria,
@@ -66,10 +68,7 @@ class DeviceTable:
 
         user_role = await saml.get_role_id(request)
 
-        if 'page' in request.query:
-            page_number = int(request.query['page'])
-        else:
-            page_number = 1
+        page_number = get_page(request)
 
         try:
             search_range, records_per_page = page_bounds(page_number)
@@ -84,14 +83,7 @@ class DeviceTable:
                 max_page = 1 
 
         except ClientResponseError as ex:
-            if ex.status == 503:
-                ip = request['client_ip']
-                logger.warn('Server is unavailable', client_ip=ip)
-                flash(request, SERVICE_DOWN_MSG)
-                return aiohttp_jinja2.render_template('error503.html', request,
-                                                      {'include_nav': False})
-            else:
-                raise ex
+            client_response_error(ex, request)
 
         if get_device_info.status_code == 200:
             table_headers = device_table_headers()
@@ -126,10 +118,7 @@ class DeviceSecondaryPage:
 
         await saml.ensure_logged_in(request)
 
-        if 'page' in request.query:
-            page_number = int(request.query['page'])
-        else:
-            page_number = 1
+        page_number = get_page(request)
 
         try:
             if data.get('indexsearch'
@@ -138,20 +127,10 @@ class DeviceSecondaryPage:
             else:
                 from_index = 'false'
 
-            search_criteria = {}
-            previous_criteria = {}
-
-            select_options = ["device_sent","device_id","field_device_phone_number",
+            fields_to_load = ["device_sent","device_id","field_device_phone_number",
                     "device_type","ons_id"]
-            for select_element in select_options:
-                if data.get(select_element):
-                    if (data.get(select_element)  != "blank") and (data.get(select_element)  != "None"):
-                        search_criteria[select_element] = data.get(select_element)      
-                        previous_criteria[select_element] = data.get(select_element)
-                    else:
-                        previous_criteria[select_element] = '' 
-                else:
-                    previous_criteria[select_element] = ''
+
+            search_criteria, previous_criteria = load_search_criteria(data, fields_to_load)
 
             if search_criteria:
                 await store_search_criteria(request, search_criteria)
@@ -178,7 +157,7 @@ class DeviceSecondaryPage:
                 max_page = 1 
 
         except ClientResponseError as ex:
-            raise ex
+            client_response_error(ex, request)
 
         if get_device_info.status_code == 200:
             table_headers = device_table_headers()
@@ -209,16 +188,7 @@ class DeviceSecondaryPage:
                 'last_page_number': int(math.floor(max_page)),
             }
         else:
-            logger.warn(
-                'Attempted to login with invalid user name and/or password',
-                client_ip=request['client_ip'])
-            flash(request, NO_EMPLOYEE_DATA)
-            return aiohttp_jinja2.render_template('signin.html',
-                                                  request, {
-                                                      'page_title': 'Sign in',
-                                                      'include_nav': False
-                                                  },
-                                                  status=401)
+            return warn_invalid_login(request)
 
     @aiohttp_jinja2.template('device-search-results.html')
     async def get(self, request):
@@ -228,32 +198,19 @@ class DeviceSecondaryPage:
 
         await saml.ensure_logged_in(request)
 
-        if 'page' in request.query:
-            page_number = int(request.query['page'])
-        else:
-            page_number = 1
+        page_number = get_page(request)
 
         if 'called_from_index' in request.query:
             from_index = request.query['called_from_index']
         else:
             from_index = False
 
-        search_criteria = {}
-        previous_criteria = {}
-
         try:
 
-            select_options = ["device_sent","device_id","field_device_phone_number",
+            fields_to_load = ["device_sent","device_id","field_device_phone_number",
                     "device_type","ons_id"]
-            for select_element in select_options:
-                if session.get(select_element):
-                    if (session.get(select_element)  != "blank") and (session.get(select_element)  != "None"):
-                        search_criteria[select_element] = session.get(select_element)
-                        previous_criteria[select_element] = session.get(select_element)
-                    else:
-                        previous_criteria[select_element] = '' 
-                else:
-                    previous_criteria[select_element] = ''
+
+            search_criteria, previous_criteria = load_search_criteria(session, fields_to_load)
 
             search_range, records_per_page = page_bounds(page_number)
             search_criteria.update(search_range)
@@ -268,17 +225,7 @@ class DeviceSecondaryPage:
                 max_page = 1 
 
         except ClientResponseError as ex:
-            if ex.status == 503:
-                logger.warn('Server is unavailable',
-                            client_ip=request['client_ip'])
-                flash(request, SERVICE_DOWN_MSG)
-                return aiohttp_jinja2.render_template('error503.html', request,
-                                                      {'include_nav': False})
-            else:
-                raise ex
-
-        except ClientResponseError as ex:
-            raise ex
+            client_response_error(ex, request)
 
         if get_device_info.status_code == 200:
             table_headers = device_table_headers()
@@ -303,12 +250,4 @@ class DeviceSecondaryPage:
                 'last_page_number': int(math.floor(max_page)),
             }
         else:
-            logger.warn(
-                'Attempted to login with invalid user name and/or password',
-                client_ip=request['client_ip'])
-            flash(request, NO_EMPLOYEE_DATA)
-            return aiohttp_jinja2.render_template('signin.html', request, {
-                'page_title': 'Sign in',
-                'include_nav': False
-            })
-
+            return warn_invalid_login(request)
