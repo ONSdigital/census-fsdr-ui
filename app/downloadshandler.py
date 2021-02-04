@@ -113,6 +113,9 @@ class DownloadsPage:
                     of.write(str(rows))
 
                 download_location = "/assets/iat/output.csv"
+            else:
+                logger.warn(f"Unknown download type: {download_type}")
+
             return {
                 'download_location': download_location,
             }
