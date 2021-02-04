@@ -187,10 +187,10 @@ def iat_employee_record_table(employee_records_json, remove_html = False):
                 'value': employees['unique_role_id']
             },
             {
-                'value': acc_generation(str(employees['ons_email_address'])) if  remove_html == False else str(employees['ons_email_address'])
+                'value': acc_generation(str(employees['ons_email_address'])) if  not remove_html else str(employees['ons_email_address'])
             },
             {
-                'value':  acc_generation(str(employees['external_id']))      if  remove_html == False else str(employees['external_id'])
+                'value':  acc_generation(str(employees['external_id']))      if  not remove_html else str(employees['external_id'])
             },
             {
                 'value': employees['contract_start_date']
