@@ -45,7 +45,7 @@
                             'previous_ons_id': previous_ons_id,
                             'previous_surname_filter': previous_surname_filter,
                             'index_search': "IAT",
-			    'iat_options': iat_options, 
+                'iat_options': iat_options, 
                         }) }}
                         {{ onsButton({
                             'text': 'Filter Interface Action Table',
@@ -53,7 +53,7 @@
                             'submitType': "loader",
                             'name': 'action[submit]'
                         }) }}
-		       {% if called_from_index == 'false' %}
+               {% if called_from_index == 'false' %}
                             {{ onsButton({
                                 'text': 'Clear',
                                 'classes': 'btn--small',
@@ -68,14 +68,14 @@
                                 'url': url('InterfaceActionTable:get')
                             }) }}
                         {% endif %}
-			{% if download_button_enabled %}
-			{{ onsButton({
-			    'text': 'Download CVS',
-			    'classes': 'btn--small',
-			    'submitType': "loader",
+            {% if download_button_enabled %}
+            {{ onsButton({
+                'text': 'Download CVS',
+                'classes': 'btn--small',
+                'submitType': "loader",
                             'url': './downloads/iat'
-			}) }}
-		     {% endif %}
+            }) }}
+             {% endif %}
                         <br>
                     {% endif %}
                     {% if no_employee_data == 'true' %}
