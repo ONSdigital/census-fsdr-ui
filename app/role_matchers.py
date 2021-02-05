@@ -66,9 +66,9 @@ def invalid_role_id(role_id):
 
 def download_permission(role_id):
     if download_permission_regex.match(role_id):
-        return True
+        return True 
     else:
-        return False
+        return False 
 
 def get_role(role_id):
     if rmt_combined_regex.match(role_id):

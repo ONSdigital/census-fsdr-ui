@@ -7,6 +7,7 @@ from aiohttp.client_exceptions import (ClientResponseError)
 from aiohttp.web import HTTPFound, RouteTableDef
 from aiohttp_session import get_session
 from structlog import get_logger
+from app.role_matchers import download_permission
 
 from app.searchcriteria import (
     store_search_criteria,
@@ -68,12 +69,10 @@ class Search:
             return {
                 'page_title': f'Field Force view for: {user_role}',
                 'distinct_job_roles': job_role_json,
-                'all_assignment_statuses': assignment_statuses_json
+                'all_assignment_statuses': assignment_statuses_json,
+                'dst_download': download_permission(user_role),
             }
         else:
-
-            #Get all  asignement satuses  status code is  500  atm :/
-
             raise Exception(str(get_job_roles.status_code) + " " +  str(get_job_roles)  + "  " + \
                     str(get_all_assignment_statuses) + " " +  str(get_all_assignment_statuses.status_code))
 
@@ -221,6 +220,7 @@ class SecondaryPage:
                 'previous_surname_filter': previous_surname,
                 'no_employee_data': no_employee_data,
                 'user_missing_device': previous_user_missing_device,
+                'dst_download': download_permission(user_role),
             }
         else:
             logger.warn(
@@ -355,6 +355,7 @@ class SecondaryPage:
                 'previous_surname_filter': previous_surname,
                 'previous_user_missing_device': previous_user_missing_device,
                 'user_missing_device':  previous_user_missing_device,
+                'dst_download': download_permission(user_role),
             }
         else:
             logger.warn(

@@ -10,6 +10,7 @@ from structlog import get_logger
 from app.pageutils import page_bounds, get_page
 from app.role_matchers import download_permission
 from app.error_handlers import client_response_error, warn_invalid_login
+from app.role_matchers  import download_permission
 
 from app.searchcriteria import (
     store_search_criteria,
@@ -104,6 +105,7 @@ class InterfaceActionTable:
                 'distinct_job_roles': job_role_json,
                 'iat_options': dropdown_options,
                 'download_button_enabled': download_permission(user_role),
+                'dst_download': download_permission(user_role),
             }
         else:
             logger.warn('Database is down', client_ip=request['client_ip'])
@@ -247,6 +249,7 @@ class IatSecondaryPage:
                 'previous_employee_id' : previous_criteria.get('employee_id'),
                 'iat_options': dropdown_options,
                 'download_button_enabled': download_permission(user_role),
+                'dst_download': download_permission(user_role),
             }
         else:
             return warn_invalid_login(request)
@@ -359,6 +362,7 @@ class IatSecondaryPage:
                 'previous_employee_id' : previous_criteria.get('employee_id'),
                 'iat_options':dropdown_options, 
                 'download_button_enabled': download_permission(user_role),
+                'dst_download': download_permission(user_role),
             }
         else:
             return warn_invalid_login(request)

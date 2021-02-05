@@ -9,27 +9,16 @@ from aiohttp_session import get_session
 from structlog import get_logger
 from app.pageutils import page_bounds, get_page
 from app.error_handlers import client_response_error, warn_invalid_login
-from app.role_matchers import download_permission
+from app.role_matchers import  download_permission
 
 from app.searchcriteria import (
     store_search_criteria,
     load_search_criteria,
-    retrieve_job_roles,
-    retrieve_assignment_statuses,
     clear_stored_search_criteria,
-    retreive_iat_statuses,
-    device_type_dropdown,
-    device_sent_dropdown,
 )
 
 from app.searchfunctions import (
-    get_all_assignment_status,
-    get_device_records, 
     allocate_search_ranges,
-    device_records_table,
-    device_table_headers,
-    get_distinct_job_role_short,
-    get_employee_count
 )
 
 from . import (NEED_TO_SIGN_IN_MSG, NO_EMPLOYEE_DATA, SERVICE_DOWN_MSG)
@@ -41,7 +30,7 @@ import os
 
 
 logger = get_logger('fsdr-ui')
-device_table_handler_routes = RouteTableDef()
+microservices_handler_routes = RouteTableDef()
 
 
 def setup_request(request):
@@ -55,63 +44,10 @@ def log_entry(request, endpoint):
                 path=request.path)
 
 
-@device_table_handler_routes.view('/devicetable')
-class DeviceTable:
-    @aiohttp_jinja2.template('devicetable.html')
-    async def get(self, request):
-        session = await get_session(request)
 
-        await saml.ensure_logged_in(request)
-
-        await clear_stored_search_criteria(session)
-        setup_request(request)
-        log_entry(request, 'start')
-
-        user_role = await saml.get_role_id(request)
-
-        page_number = get_page(request)
-
-        try:
-            search_range, records_per_page = page_bounds(page_number)
-
-            get_device_info = get_device_records(search_range)
-            get_device_info_json = get_device_info.json() 
-
-            if len(get_device_info_json) > 0:
-                device_sum = get_device_info_json[0].get('total_devices',0)
-                max_page = math.ceil(device_sum / records_per_page)        
-            else:
-                max_page = 1 
-
-        except ClientResponseError as ex:
-            client_response_error(ex, request)
-
-        if get_device_info.status_code == 200:
-            table_headers = device_table_headers()
-
-            device_records = device_records_table(get_device_info_json)
-            device_type_dropdown_options = device_type_dropdown('blank')
-            device_sent_dropdown_options = device_sent_dropdown('blank')
-
-            return {
-                'page_title': f'Device Table view for: {user_role}',
-                'table_headers': table_headers,
-                'device_records': device_records,
-                'page_number': page_number,
-                'last_page_number': max_page,
-                'device_type_options': device_type_dropdown_options,
-                'device_sent_options': device_sent_dropdown_options,
-                'dst_download': download_permission(user_role),
-            }
-        else:
-            logger.warn('Database is down', client_ip=request['client_ip'])
-            flash(request, NO_EMPLOYEE_DATA)
-            raise HTTPFound(request.app.router['MainPage:get'].url_for())
-
-
-@device_table_handler_routes.view('/device-search-results')
-class DeviceSecondaryPage:
-    @aiohttp_jinja2.template('device-search-results.html')
+@microservices_handler_routes.view('/microservices/{microservice}')
+class MicroservicesTable:
+    @aiohttp_jinja2.template('microservices.html')
     async def post(self, request):
         session = await get_session(request)
         data = await request.post()
@@ -122,12 +58,16 @@ class DeviceSecondaryPage:
 
         page_number = get_page(request)
 
+        return {
+            'called_from_index': False,
+            'page_title': f'Device Table view for: {user_role}',
+            'dst_download': download_permission(user_role),
+            'page_number': page_number,
+            'no_device_data': True,
+            'last_page_number': 0,
+            }
+
         try:
-            if data.get('indexsearch'
-                        ) == '' or 'called_from_index' in request.query:
-                from_index = 'true'
-            else:
-                from_index = 'false'
 
             fields_to_load = ["device_sent","device_id","field_device_phone_number",
                     "device_type","ons_id"]
@@ -193,7 +133,8 @@ class DeviceSecondaryPage:
         else:
             return warn_invalid_login(request)
 
-    @aiohttp_jinja2.template('device-search-results.html')
+
+    @aiohttp_jinja2.template('microservices.html')
     async def get(self, request):
         session = await get_session(request)
 
@@ -203,10 +144,14 @@ class DeviceSecondaryPage:
 
         page_number = get_page(request)
 
-        if 'called_from_index' in request.query:
-            from_index = request.query['called_from_index']
-        else:
-            from_index = False
+        return {
+            'called_from_index': False,
+            'page_title': f'Device Table view for: {user_role}',
+            'dst_download': download_permission(user_role),
+            'page_number': page_number,
+            'no_device_data': True,
+            'last_page_number': 0,
+            }
 
         try:
 
