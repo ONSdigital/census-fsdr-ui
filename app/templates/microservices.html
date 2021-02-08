@@ -30,7 +30,7 @@
                     <h1>{{ page_title_value }}</h1>
                     {% if called_from_index == 'false' %}
                         {{ onsButton({
-                            'text': 'Back to Device Table',
+                            'text': 'Back to ' + microservice_title,
                             'classes': 'btn--small',
                             'submitType': "loader",
                             'url': 'DeviceTable:get'
@@ -38,18 +38,15 @@
                         <br>
                     {% else %}
                         {{ fsdrSearch({
-                            'index_search': "device",
+                            'index_search': "microservice",
+			    'microservice_name':microservice_name,
+			    'table_headers': table_headers,
+			    'table_records': table_records,
+			    
                 
-                'device_sent_options':device_sent_options,
-                'device_type_options':device_type_options,
-                'previous_device_sent':previous_device_sent ,
-                'previous_device_id':previous_device_id ,
-                'previous_field_device_phone_number': previous_field_device_phone_number,
-                'previous_ons_id': previous_ons_id,
-                'previous_employee_id': previous_employee_id,
                         }) }}
                         {{ onsButton({
-                            'text': 'Filter Device Table',
+                            'text': 'Filter ' + microservice_title,
                             'classes': 'btn--small',
                             'submitType': "loader",
                             'name': 'action[submit]'
@@ -71,7 +68,7 @@
                         {% endif %}
                         <br>
                     {% endif %}
-                    {% if no_device_data == 'true' %}
+                    {% if no_records == 'true' %}
                         <br>
                         {% call onsPanel({
                             "title": "No device data",
@@ -80,17 +77,17 @@
                             }) %}
                             <p>No employee records have been found</p>
                         {% endcall %}
-                    {% else %}
+                    {% else %} 
                         <br>
                         {{  onsTable({
                             "sortable": true,
                             "table_class": " table--sortable",
-                            "caption": "Devices",
+                            "caption": microservice_title,
                             "sort_by": "Sort by",
                             "aria_asc": "ascending",
                             "aria_desc": "descending",
                             "ths": table_headers,
-                            "trs": device_records 
+                            "trs": table_records, 
                             })
                         }}
 

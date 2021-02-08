@@ -43,6 +43,7 @@ def get_employee_records_no_device(user_filter=""):
                         verify=False,
                         auth=HTTPBasicAuth(FSDR_USER, FSDR_PASS))
 
+
 def get_device_records(user_filter=""):
     employee_record_url = URL(
         FSDR_URL + f'/fieldforce/byType/byRangeAndUserFilterDevice/').with_query(
@@ -63,7 +64,18 @@ def get_employee_records(user_filter="", iat=False):
                         verify=False,
                         auth=HTTPBasicAuth(FSDR_USER, FSDR_PASS))
 
+def get_microservice_records(microservice_name,user_filter=""):
+    microservice_url = URL(
+        FSDR_URL + f'/fieldforce/byMicroservice/byGsuite/').with_query(
+        user_filter
+    )
 
+    return requests.get(microservice_url,
+        verify=False,
+        auth=HTTPBasicAuth(FSDR_USER, FSDR_PASS))
+
+
+# TODO allocate_search_ranges superceeded by pageutils, this should be deleted
 async def allocate_search_ranges(user_filter, page_number):
     employee_count = get_employee_count(user_filter)
 
