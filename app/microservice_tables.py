@@ -53,7 +53,7 @@ def get_fields(service_name):
     if service_name == "gsuitetable":
         fields = [
                 Field("unique_employee_id"),
-                Field("gsuite_status"),
+                Field("gsuite_status", search_type="dropdown", dropdown_options=status_options[:]),
                 Field("gsuite_id"),
                 Field("gsuite_hash"),
                 Field("current_groups"),
