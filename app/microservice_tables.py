@@ -25,19 +25,15 @@ class Field:
             column_name = column_name
         return(column_name)
 
-    def format_dropdown_options(self,dropdown_options,selected_value=None):
+    def format_dropdown_options(self,dropdown_options,selected_value="blank"):
         if dropdown_options != None:
-            dropdown_options = [{'value':'blank', 'text':'Select a status', "disabled": True}]
+            final_dropdowns = [{'value':'blank', 'text':'Select a status', "disabled": True}]
             for option in dropdown_options:
-                dropdown_options.append(
-                        {'value': option,
-                        'text':   option,})
-
-            for each_dict in dropdown_options:
-                if each_dict['value'] == selected_value:
-                    each_dict['selected'] = True
-
-            return dropdown_options
+                entry = {'value': option, 'text': option}
+                if option == selected_value:
+                    entry['selected'] = True
+                final_dropdowns.append(entry)
+            return final_dropdowns 
 
 def get_fields(service_name):
     # Set the default parameters for some services
@@ -53,7 +49,7 @@ def get_fields(service_name):
     if service_name == "gsuitetable":
         fields = [
                 Field("unique_employee_id"),
-                Field("gsuite_status", search_type="dropdown", dropdown_options=status_options[:]),
+                Field("gsuite_status", search_type="dropdown", dropdown_options= status_options),
                 Field("gsuite_id"),
                 Field("gsuite_hash"),
                 Field("current_groups"),
