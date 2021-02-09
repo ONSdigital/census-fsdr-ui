@@ -27,7 +27,7 @@ class Field:
 
     def format_dropdown_options(self,dropdown_options,selected_value="blank"):
         if dropdown_options != None:
-            final_dropdowns = [{'value':'blank', 'text':'Select a status', "disabled": True}]
+            final_dropdowns = [{'value':'blank', 'text':'Select a status', "disabled": True, "selected": True, }]
             for option in dropdown_options:
                 entry = {'value': option, 'text': option}
                 if option == selected_value:
@@ -74,7 +74,6 @@ def get_table_records(Fields,json_records):
         record['tds'] = combined_field[:]
         formatted_records.append(record)
 
-    logger.error("FORMATTED RECORDS" + str(formatted_records))
     return formatted_records 
 
 def get_table_headers(Fields):

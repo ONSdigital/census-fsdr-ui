@@ -141,6 +141,10 @@ class IatSecondaryPage:
             else:
                 from_index = 'false'
 
+            select_options = ["gsuite","xma","granby","loneWorker","serviceNow",
+                    "ons_id","employee_id"]
+            search_criteria, previous_criteria = load_search_criteria(data, select_options )
+
             if data.get('assignment_select'):
                 previous_assignment_selected = data.get('assignment_select')
                 search_criteria['assignmentStatus'] = data.get('assignment_select')
@@ -148,10 +152,6 @@ class IatSecondaryPage:
             if data.get('job_role_select'):
                 previous_jobrole_selected = data.get('job_role_select')
                 search_criteria['jobRoleShort'] = data.get('job_role_select')
-
-            fields_to_load = ["gsuite","xma","granby","loneWorker","serviceNow",
-                    "ons_id","employee_id"]
-            search_criteria, previous_criteria = load_search_criteria(data, fields_to_load)
 
             if data.get('filter_unique_employee_id'):
                 unique_employee_id = data.get('filter_unique_employee_id')

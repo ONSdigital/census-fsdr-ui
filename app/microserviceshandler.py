@@ -86,12 +86,13 @@ class MicroservicesTable:
             search_range, records_per_page = page_bounds(page_number)
             search_criteria.update(search_range)
 
-            get_microservice_info = get_microservice_records(user_filter=search_criteria)
+            get_microservice_info = get_microservice_records(microservice_name, 
+                                                             user_filter=search_criteria)
             get_microservice_info_json = get_microservice_info.json() 
             
             if len(get_microservice_info_json) > 0:
                 microservice_sum = get_microservice_info_json[0].get('total_devices',0)
-                max_page = math.ceil(device_sum / records_per_page)        
+                max_page = math.ceil(microservice_sum / records_per_page)        
             else:
                 max_page = 1 
 
@@ -101,10 +102,11 @@ class MicroservicesTable:
         if get_microservice_info.status_code == 200:
             # for 0 response st no_records true
 
-            table_records = get_table_records(Fields, microservice_info_json)   # database name field ([gsuite_status,...
+            table_records = get_table_records(Fields, get_microservice_info_json)   # database name field ([gsuite_status,...
             
             return {
                 'called_from_index': False,
+                'Fields':Fields,
                 'microservice_name': microservice_name,
                 'microservice_title': microservice_title, 
                 'page_title': f'{microservice_title} view for: {user_role}',

@@ -16,7 +16,7 @@
     'method': 'POST',
     'id': 'searchform',
     'attributes': {
-        'action': url('DeviceSecondaryPage:post')
+        'action': '/microservices/' + microservice_name
     }
 } %}
 
@@ -45,7 +45,7 @@
 				'text': 'Clear',
 				'classes': 'btn--small',
 				'submitType': "loader",
-				'url': url('DeviceTable:get')
+				'url': '/microservices/' + microservice_name
 			    }) }}
 
                     {% if no_records == 'true' %}
