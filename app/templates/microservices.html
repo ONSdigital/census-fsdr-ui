@@ -28,21 +28,11 @@
                 <div class="table-scrollable__content">
                     <br>
                     <h1>{{ page_title_value }}</h1>
-                    {% if called_from_index == 'false' %}
-                        {{ onsButton({
-                            'text': 'Back to ' + microservice_title,
-                            'classes': 'btn--small',
-                            'submitType': "loader",
-                            'url': 'DeviceTable:get'
-                        }) }}
-                        <br>
-                    {% else %}
                         {{ fsdrSearch({
                             'index_search': "microservice",
 			    'microservice_name':microservice_name,
-			    'table_headers': table_headers,
-			    'table_records': table_records,
-			    
+			    'microservice_title':microservice_title,
+			    'Fields': Fields,
                 
                         }) }}
                         {{ onsButton({
@@ -51,23 +41,13 @@
                             'submitType': "loader",
                             'name': 'action[submit]'
                         }) }}
-                        {% if called_from_index == 'false' %}
-                            {{ onsButton({
-                                'text': 'Clear',
-                                'classes': 'btn--small',
-                                'submitType': "loader",
-                                'url': url('DeviceTable:get')
-                            }) }}
-                        {% else %}
-                            {{ onsButton({
-                                'text': 'Clear',
-                                'classes': 'btn--small',
-                                'submitType': "loader",
-                                'url': url('DeviceTable:get')
-                            }) }}
-                        {% endif %}
-                        <br>
-                    {% endif %}
+		    	{{ onsButton({
+				'text': 'Clear',
+				'classes': 'btn--small',
+				'submitType': "loader",
+				'url': url('DeviceTable:get')
+			    }) }}
+
                     {% if no_records == 'true' %}
                         <br>
                         {% call onsPanel({

@@ -97,113 +97,69 @@
 
     {% elif params.index_search == "microservice" %}
         <table>
-            <tr>
                 {{
                     onsLabel({
                         "id": 'label',
                         "for": "some-input",
-                        "text": "Filter Device Table"
+                        "text": "Filter " + params.microservice_title
                     })
                 }}
+		
+		{% set col = namespace(value=-1) %}
+		{% set row = namespace(value=0) %}
+		{% set max_col = 2 %}
+		{% for field in params.Fields %}
+			{# Update  the col/row  values for the next  searchitem  #}
+			{% if col.value == max_col %}
+				{% set row.value = row.value + 1 %}
+				{% set col.value = 0 %}
+			{% else %}
+				{% set col.value = col.value + 1 %}
+			{% endif %}
 
-                <td>
-                    {{
-                        onsSelect({
-                            "id": "device_sent",
-                            'name': "device_sent",
-                            "label": {
-                                "text": "MICROSERVICE"
-                            },
-                            "options":  params.device_sent_options 
- 
-                        })
-                    }}
-                </td>
+			{# If a  new row  required, start "tablerow" #}
+			{% if col.value == 0 %}
+				</tr>
+				<tr>
+				<td>
+			{% else %}
+				<td>
+			{% endif %}
+			
+			{# Code to generate actual searchui here #} 
+			{% if field.search_type == "input_box" %}
+				{{onsInput({
+                            		"id"   : field.database_name,
+					"name" : field.database_name,
+					"label": { "text": field.column_name },
+					"value": field.previous_value,   })}}
+			{% elif field.search_type == "dropdown" %}
+				{{onsSelect({
+					"id"   : field.database_name,
+					"name" : field.database_name,
+					"label": { "text": field.column_name },
+					"options": field.dropdown_options })}}
+			{% endif %}
 
-                <td>
-                    {{
-                        onsInput({
-                            "id": "device_id",
-                            'name': "device_id",
-                            "label": {
-                                "text": "Device  ID"
-                            },
-                            "value": params.previous_device_id
-                        })
-                    }}
-                </td>
-                <td>
-                    {{
-                        onsInput({
-                            "id": "field_device_phone_number",
-                            'name': "field_device_phone_number",
-                            "label": {
-                                "text": "Device Phone Number"
-                            },
-                            "value": params.previous_field_device_phone_number
-                        })
-                    }}
-                </td>
-                {{
-                    onsInput({
-                        "type": "hidden",
-                        "classes": "u-d-no",
-                        "id": "adlocation",
-                        "name": "adlocation",
-                        "value": adlocation,
-                        "label": {
-                            "text": "Enter some text",
-                            "classes": "u-d-no"
-                        }
-                    })
-                }}
-        </tr>
-	<tr>
-                <td>
-                    {{
-                        onsSelect({
-                            "id": "device_type",
-                            'name': "device_type",
-                            "label": {
-                                "text": "Device Type"
-                            },
-                            "options":params.device_type_options 
- 
-                        })
-                    }}
-                </td>
-		<td>
-                    {{
-                        onsInput({
-                            "id": "ons_id",
-                            'name': "ons_id",
-                            "label": {
-                                "text": "ONS ID"
-                            },
-                            "value": params.previous_ons_id
-                        })
-                    }}
-		</td>
-
-	</tr>
-         <table>
-         {{
-            onsInput({
-                "type": "hidden",
-                "classes": "u-d-no",
-                "id": "indexsearch",
-                "name": "indexsearch",
-                "value": indexsearch,
-                "label": {
-                    "text": "Enter some text",
-                    "classes": "u-d-no"
-                }
-            })
-        }}
-
-
-
-
+			{# End table row/element #} 
+			{% if col.value == 0 %}
+				<td>
+				{{onsInput({
+				"type": "hidden",
+				"classes": "u-d-no",
+				"id": "adlocation",
+				"name": "adlocation",
+				"value": adlocation,
+				"label": {
+				"text": "Enter some text",
+				"classes": "u-d-no"}})}}
+				</td>
+			{% else %}
+				</td>
+			{% endif %}
+		{% endfor %}
+		</table>
+		
     {% elif params.index_search == "device" %}
         <table>
             <tr>
