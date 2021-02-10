@@ -80,13 +80,13 @@
       <ul class="pagination__items">
           {% if current_page > 1 and totalPages >= 5 %}
               <li class="pagination__item pagination__item--previous">
-                  <a href="{{ url(params.link_url).with_query({'microservice_name':microservice_name, 'page':current_page - 1}) }}" class="pagination__link" rel="prev" aria-label="Go to the previous page (Page {{ current_page|int - 1 }})">{{ params.previous }}</a>
+                  <a href="{{ url(params.link_url, microservice_name=params.microservice_name).with_query({'page':current_page - 1}) }}" class="pagination__link" rel="prev" aria-label="Go to the previous page (Page {{ current_page|int - 1 }})">{{ params.previous }}</a>
               </li>
           {% endif %}
           {% if current_page|int >= 5 %}
               {% set first = pagination_array | first %}
               <li class="pagination__item">
-                  <a href="{{ url(params.link_url).with_query({'microservice_name':microservice_name,'page':1}) }}" class="pagination__link" aria-label="Go to the first page (Page 1)">1</a>
+                  <a href="{{ url(params.link_url, microservice_name=params.microservice_name).with_query({'page':1}) }}" class="pagination__link" aria-label="Go to the first page (Page 1)">1</a>
               </li>
           {% endif %}
           {% if current_page|int > 4 %}
@@ -95,7 +95,7 @@
           {% for page in pagination_array %}
               {% if loop.index >= middlePagesStart and loop.index <= middlePagesEnd %}
                   <li class="pagination__item{% if page.current %} pagination__item--current{% endif %}">
-                      <a href='{{ url(params.link_url).with_query({'microservice_name':microservice_name,'page':page.page}) }}' class="pagination__link"
+                      <a href='{{ url(params.link_url, microservice_name=params.microservice_name).with_query({'page':page.page}) }}' class="pagination__link"
                           {%- if page.current -%}
                               aria-current="true" aria-label="Current page ({{ position }})"
                           {%- else -%}
@@ -117,12 +117,12 @@
           {% if current_page|int < totalPages|int - 2 and totalPages >= 5 %}
               {% set lastPage = pagination_array | last %}
               <li class="pagination__item">
-                  <a href="{{ url(params.link_url).with_query({'microservice_name':microservice_name,'page':last_page - 1}) }}" class="pagination__link" aria-label="Go to the last page (Page {{ totalPages }})">{{ totalPages }}</a>
+                  <a href="{{ url(params.link_url, microservice_name=params.microservice_name).with_query({'page':last_page - 1}) }}" class="pagination__link" aria-label="Go to the last page (Page {{ totalPages }})">{{ totalPages }}</a>
               </li>
           {% endif %}
           {% if totalPages|int > 1 and totalPages|int > current_page|int and totalPages >= 5 %}
               <li class="pagination__item pagination__item--next">
-                  <a href="{{ url(params.link_url).with_query({'microservice_name':microservice_name,'page':current_page + 1}) }}" class="pagination__link" rel="next" aria-label="Go to the next page (Page {{ current_page|int }})">{{ params.next }}</a>
+                  <a href="{{ url(params.link_url, microservice_name=params.microservice_name).with_query({'page':current_page + 1}) }}" class="pagination__link" rel="next" aria-label="Go to the next page (Page {{ current_page|int }})">{{ params.next }}</a>
               </li>
           {% endif %}
       </ul>
