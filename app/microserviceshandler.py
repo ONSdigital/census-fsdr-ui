@@ -61,9 +61,13 @@ class MicroservicesTable:
         user_role = await saml.get_role_id(request)
 
         await saml.ensure_logged_in(request)
-
-        microservice_title = request.match_info['microservice_name'].replace("table"," Table").title()
         microservice_name = request.match_info['microservice_name']
+
+        if 'clear' in microservice_name:
+            microservice_name = microservice_name.replace('clear','')
+            await clear_stored_search_criteria(session,microservice_name)
+
+        microservice_title = microservice_name.replace("table"," Table").title()
         page_number = get_page(request)
 
         try:
@@ -76,7 +80,7 @@ class MicroservicesTable:
             Fields = load_cookie_into_fields(Fields, search_criteria)
 
             if search_criteria:
-                await store_search_criteria(request, search_criteria)
+                await store_search_criteria(request, previous_criteria, fields_to_load)
 
             if search_criteria == '' and from_index == 'true':
                 raise HTTPFound(request.app.router['MicroservicesTable:get'].url_for())
@@ -130,9 +134,13 @@ class MicroservicesTable:
         user_role = await saml.get_role_id(request)
 
         await saml.ensure_logged_in(request)
-
-        microservice_title = request.match_info['microservice_name'].replace("table"," Table").title()
         microservice_name = request.match_info['microservice_name']
+
+        if 'clear' in microservice_name:
+            microservice_name = microservice_name.replace('clear','')
+            await clear_stored_search_criteria(session,microservice_name)
+
+        microservice_title = microservice_name.replace("table"," Table").title()
         page_number = get_page(request)
 
         try:

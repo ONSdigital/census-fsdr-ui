@@ -64,8 +64,6 @@ def get_employee_records(user_filter="", iat=False):
                         auth=HTTPBasicAuth(FSDR_USER, FSDR_PASS))
 
 def get_microservice_records(endpoint_name,user_filter=""):
-    #TODO remove
-    logger.error("ENdpoint name is: " + str(endpoint_name))
     microservice_url = URL(
         FSDR_URL + f'/fieldforce/byMicroservice/{endpoint_name}/').with_query(
         user_filter

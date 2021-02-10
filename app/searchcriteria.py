@@ -1,26 +1,34 @@
 from aiohttp_session import get_session
 from structlog import get_logger
+from .microservice_tables import get_fields
 
 logger = get_logger('fsdr-ui')
 
-async def store_search_criteria(request, search_criteria):
+async def store_search_criteria(request, search_criteria, fields_to_load=[]):
     session = await get_session(request)
     possible_stored_atributes =['assignmentStatus', 'jobRoleShort','area','surname','firstName','badgeNumber',
             'jobRoleId','uniqueEmployeeId','gsuite','xma','granby','loneWorker','serviceNow',
             'device_sent_options', 'device_id','field_device_phone_number',
             'device_type','distinct_job_roles','ons_id','device_sent',
-            'employee_id','user_missing_device']
+            'employee_id','user_missing_device','unique_employee_id']
+
+    possible_stored_atributes = possible_stored_atributes + fields_to_load 
 
     for atribute in possible_stored_atributes:
         if atribute in search_criteria.keys():
             session[atribute] = search_criteria.get(atribute)
 
-async def clear_stored_search_criteria(session):
+async def clear_stored_search_criteria(session, microservice_name=''):
     possible_stored_atributes =['assignmentStatus', 'jobRoleShort','area','surname','firstName','badgeNumber',
             'jobRoleId','uniqueEmployeeId','gsuite','xma','granby','loneWorker','serviceNow',
             'device_sent_options', 'device_id','field_device_phone_number',
             'device_type','distinct_job_roles','ons_id','device_sent',
-            'employee_id','user_missing_device']
+            'employee_id','user_missing_device','unique_employee_id']
+
+    if microservice_name != '':
+        Fields = get_fields(microservice_name)
+        database_names = [field.database_name for field in Fields]
+        possible_stored_atributes = possible_stored_atributes + database_names
 
     for key_to_clear in  possible_stored_atributes:
         if session.get(key_to_clear):
