@@ -44,11 +44,13 @@ FEATURE_POLICY = [
     "unsized-media 'none';",
 ]
 
+
 def _format_csp(csp_dict):
-    return ' '.join([
-        f"{section} {' '.join(content)};"
-        for section, content in csp_dict.items()
-    ])
+  return ' '.join([
+      f"{section} {' '.join(content)};"
+      for section, content in csp_dict.items()
+  ])
+
 
 DEFAULT_RESPONSE_HEADERS = {
     'Strict-Transport-Security': 'max-age=31536000 includeSubDomains',
@@ -72,71 +74,70 @@ logger = get_logger('fsdr-ui')
 
 
 def get_random_string(length):
-    allowed_chars = (string.ascii_lowercase + string.ascii_uppercase +
-                     string.digits)
-    return ''.join(rnd.choice(allowed_chars) for _ in range(length))
+  allowed_chars = (string.ascii_lowercase + string.ascii_uppercase +
+                   string.digits)
+  return ''.join(rnd.choice(allowed_chars) for _ in range(length))
 
 
 @web.middleware
 async def nonce_middleware(request, handler):
-    request.csp_nonce = get_random_string(16)
-    return await handler(request)
+  request.csp_nonce = get_random_string(16)
+  return await handler(request)
 
 
 async def on_prepare(request: web.BaseRequest, response: web.StreamResponse):
-    for header, value in DEFAULT_RESPONSE_HEADERS.items():
-        if isinstance(value, str):
-            response.headers[header] = value
-        else:
-            logger.error('Invalid type for header content')
+  for header, value in DEFAULT_RESPONSE_HEADERS.items():
+    if isinstance(value, str):
+      response.headers[header] = value
+    else:
+      logger.error('Invalid type for header content')
 
 
 async def check_permission(request):
-    """
+  """
     Check request permission.
     Raise HTTPForbidden if not previously remembered.
     """
-    session = await get_session(request)
-    try:
-        identity = session[SESSION_KEY]
-        logger.info('permission granted',
-                    identity=identity,
-                    url=request.rel_url.human_repr(),
-                    client_ip=request['client_ip'])
-    except KeyError:
-        flash(request, VALIDATION_FAILURE_MSG)
-        logger.warn('permission denied',
-                    url=request.rel_url.human_repr(),
-                    client_ip=request['client_ip'])
-        raise HTTPForbidden
+  session = await get_session(request)
+  try:
+    identity = session[SESSION_KEY]
+    logger.info('permission granted',
+                identity=identity,
+                url=request.rel_url.human_repr(),
+                client_ip=request['client_ip'])
+  except KeyError:
+    flash(request, VALIDATION_FAILURE_MSG)
+    logger.warn('permission denied',
+                url=request.rel_url.human_repr(),
+                client_ip=request['client_ip'])
+    raise HTTPForbidden
 
 
 async def forget(request):
-    """
+  """
     Forget identity.
     Modify session to remove previously remembered identity.
     """
-    session = await get_session(request)
-    try:
-        identity = session[SESSION_KEY]
-        session.pop(SESSION_KEY, None)
-        logger.info('identity forgotten',
-                    identity=identity,
-                    client_ip=request['client_ip'])
-    except KeyError:
-        logger.warn('identity not previously remembered',
-                    url=request.rel_url.human_repr(),
-                    client_ip=request['client_ip'])
+  session = await get_session(request)
+  try:
+    identity = session[SESSION_KEY]
+    session.pop(SESSION_KEY, None)
+    logger.info('identity forgotten',
+                identity=identity,
+                client_ip=request['client_ip'])
+  except KeyError:
+    logger.warn('identity not previously remembered',
+                url=request.rel_url.human_repr(),
+                client_ip=request['client_ip'])
 
 
 async def remember(identity, request):
-    """
+  """
     Remember identity.
     Modify session with remembered identity.
     """
-    session = await get_session(request)
-    session[SESSION_KEY] = identity
-    logger.info('identity remembered',
-                client_ip=request['client_ip'],
-                identity=identity)
-
+  session = await get_session(request)
+  session[SESSION_KEY] = identity
+  logger.info('identity remembered',
+              client_ip=request['client_ip'],
+              identity=identity)

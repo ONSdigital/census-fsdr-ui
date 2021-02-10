@@ -3,6 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Formatter
+.style.yapf
+
 # Deployment Files
 build_and_deploy_DONOTADDMETOGITHUB.sh
 
