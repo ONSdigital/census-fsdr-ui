@@ -71,7 +71,8 @@ def download_permission(role_id):
 
 def get_role(role_id):
   if rmt_combined_regex.match(role_id):
-    return RoleEnum.RMT
+    # This is not an error. All RMT views should go to FSSS view.
+    return RoleEnum.FSSS
   # Logistics
   elif logi_combined_regex.match(role_id):
     return RoleEnum.LOGISTICS

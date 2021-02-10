@@ -33,6 +33,7 @@
         {% set pagination_array = [] %}
 
         {% for x in range(last_page|int) %}
+	    {# TODO  does this assignment set 'var' to None? #}
             {% if x == 0 %}
                 {% set pagination_array = [{"page": 1, "called_from_index": params.called_from_index, "current": false}] %}
             {% elif x == params.page_number %}
