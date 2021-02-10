@@ -59,7 +59,6 @@ def get_employee_records(user_filter="", iat=False):
         FSDR_URL + f'/fieldforce/byType/byRangeAndUserFilter{"Iat/" if iat else "/"}').with_query(
         user_filter
     )
-
     return requests.get(employee_record_url,
                         verify=False,
                         auth=HTTPBasicAuth(FSDR_USER, FSDR_PASS))

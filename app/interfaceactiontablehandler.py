@@ -281,9 +281,9 @@ class IatSecondaryPage:
                 previous_assignment_selected = session['assignmentStatus']
                 search_criteria['assignmentStatus'] = previous_assignment_selected
 
-            fields_to_load = ["gsuite","xma","granby","loneWorker","serviceNow",
+            select_options = ["gsuite","xma","granby","loneWorker","serviceNow",
                     "ons_id","employee_id"]
-            search_criteria, previous_criteria = load_search_criteria(session, fields_to_load)
+            search_criteria, previous_criteria = load_search_criteria(session, select_options)
 
             if session.get('jobRoleShort'):
                 previous_jobrole_selected = session['jobRoleShort']
