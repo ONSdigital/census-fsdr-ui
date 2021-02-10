@@ -2,7 +2,7 @@
 
 {% from 'components/lists/_macro.njk' import onsList %}
 {% from 'components/input/_macro.njk' import onsInput %}
-{% from "custom/pagination/_macro.njk" import onsPagination %}
+{% from "custom/dynamic_pagination/_macro.njk" import onsPagination %}
 {% from 'components/panel/_macro.njk' import onsPanel %}
 {% from "components/table/_macro.njk" import onsTable %}
 {% from "custom/fsdrsearch/_macro.njk" import fsdrSearch %}
@@ -72,16 +72,17 @@
                         }}
 
                         <div class="page_numbering" align="center">
-				                        {{
-                            onsPagination({
-                                "called_from_index": True,
-                                "previous": "Previous",
-                                "next": "Next",
-                                "last_page_number": last_page_number,
-                                "page_number": page_number,
-                                "link_url": 'DeviceTable:get'
-                            })
-                        }}
+		{{
+                onsPagination({
+                "called_from_index": True,
+                "previous": "Previous",
+                "next": "Next",
+                "last_page_number": last_page_number,
+                "page_number": page_number,
+		"link_url": 'MicroservicesTable:get',
+		"microservice_name": microservice_name,
+                })
+                }}
 
                         </div>
                     {% endif %}
