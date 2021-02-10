@@ -72,17 +72,17 @@
                         }}
 
                         <div class="page_numbering" align="center">
-                            {{
-                                onsPagination({
-                                    "previous_selection": previous_selection,
-                                    "called_from_index": called_from_index,
-                                    "previous": "Previous",
-                                    "next": "Next",
-                                    "last_page_number": last_page_number,
-                                    "page_number": page_number,
-                                    "link_url": 'DeviceSecondaryPage:post'
-                                    })
-                            }}
+				                        {{
+                            onsPagination({
+                                "called_from_index": True,
+                                "previous": "Previous",
+                                "next": "Next",
+                                "last_page_number": last_page_number,
+                                "page_number": page_number,
+                                "link_url": 'DeviceTable:get'
+                            })
+                        }}
+
                         </div>
                     {% endif %}
                 </div>

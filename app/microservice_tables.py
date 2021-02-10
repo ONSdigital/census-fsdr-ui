@@ -25,15 +25,34 @@ class Field:
             column_name = column_name
         return(column_name)
 
-    def format_dropdown_options(self,dropdown_options,selected_value="blank"):
+    def format_dropdown_options(self,dropdown_options,selected_value='blank'):
         if dropdown_options != None:
-            final_dropdowns = [{'value':'blank', 'text':'Select a status', "disabled": True, "selected": True, }]
+            final_dropdowns = [{'value':'blank', 'text':'Select a status', "disabled": True, }]
             for option in dropdown_options:
                 entry = {'value': option, 'text': option}
-                if option == selected_value:
-                    entry['selected'] = True
                 final_dropdowns.append(entry)
+            
+            for each_dict in final_dropdowns:
+                if each_dict['value'] == selected_value:
+                    each_dict['selected'] = True
+ 
             return final_dropdowns 
+
+    def refresh_selected_dropdown(self, selected_value):
+        dropdown_values = [i.get('value') for i in self.dropdown_options ]
+        self.dropdown_options = self.format_dropdown_options(
+                dropdown_values,
+                selected_value=selected_value)
+
+
+def load_cookie_into_fields(Fields,previous_criteria):
+    for field in Fields:
+        if field.database_name in previous_criteria.keys():
+            if  field.search_type == "input_box":
+                field.previous_value = previous_criteria.get(field.database_name)
+            elif field.search_type == "dropdown":
+                field.refresh_selected_dropdown(previous_criteria.get(field.database_name))
+    return Fields
 
 def get_fields(service_name):
     # Set the default parameters for some services
@@ -54,6 +73,46 @@ def get_fields(service_name):
                 Field("gsuite_hash"),
                 Field("current_groups"),
                 ]
+    elif service_name == "xmatable":
+        fields = [
+                Field("unique_employee_id"),
+                Field("xma_id"),
+                Field("xma_hash"),
+                ]
+    elif service_name == "lwstable":
+        fields = [
+                Field("unique_employee_id"),
+                Field("lws_hash"),
+                ]
+    elif service_name == "servicenowtable":
+        fields = [
+                Field("unique_employee_id"),
+                Field("service_now_id"),
+                Field("service_now_hash"),
+                ]
+    elif service_name == "updatestatetable":
+        fields = [
+                Field("unique_employee_id"),
+                Field("logistics"),
+                Field("employee"),
+                ]
+    elif service_name == "adecco":
+        fields = [
+                Field("unique_employee_id"),
+                Field("adecco_hash"),
+                ]
+    elif service_name == "requestlogtable":
+        fields = [
+                Field("id"),
+                Field("target_service"),
+                Field("date_time"),
+                ]
+    elif service_name == "chromebooktable":
+        fields = [
+                Field("device_serial_number"),
+                Field("ons_id"),
+                ]
+
     return(fields)
 
 def get_fields_to_load(Fields):
