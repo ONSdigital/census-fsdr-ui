@@ -324,7 +324,7 @@ class IatSecondaryPage:
 
             get_job_roles = get_distinct_job_role_short()
         except ClientResponseError as ex:
-            client_response_error(ex, request)
+            return client_response_error(ex, request)
 
         if get_employee_info.status_code == 200:
             table_headers = iat_employee_table_headers()

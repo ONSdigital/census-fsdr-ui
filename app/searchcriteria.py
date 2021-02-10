@@ -26,8 +26,8 @@ async def clear_stored_search_criteria(session, microservice_name=''):
             'employee_id','user_missing_device','unique_employee_id']
 
     if microservice_name != '':
-        Fields = get_fields(microservice_name)
-        database_names = [field.database_name for field in Fields]
+        field_classes = get_fields(microservice_name)
+        database_names = [field.database_name for field in field_classes]
         possible_stored_atributes = possible_stored_atributes + database_names
 
     for key_to_clear in  possible_stored_atributes:

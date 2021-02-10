@@ -65,10 +65,7 @@ def invalid_role_id(role_id):
     raise HTTPInternalServerError(reason=msg)
 
 def download_permission(role_id):
-    if download_permission_regex.match(role_id):
-        return True 
-    else:
-        return False 
+    return download_permission_regex.match(role_id)
 
 def get_role(role_id):
     if rmt_combined_regex.match(role_id):

@@ -72,12 +72,12 @@ class MicroservicesTable:
 
         try:
 
-            Fields = get_fields(microservice_name) 
-            table_headers = get_table_headers(Fields) # formatted for table use
-            fields_to_load = get_fields_to_load(Fields)
+            field_classes = get_fields(microservice_name) 
+            table_headers = get_table_headers(field_classes) # formatted for table use
+            fields_to_load = get_fields_to_load(field_classes)
 
             search_criteria, previous_criteria = load_search_criteria(data, fields_to_load)
-            Fields = load_cookie_into_fields(Fields, search_criteria)
+            field_classes = load_cookie_into_fields(field_classes, search_criteria)
 
             if search_criteria:
                 await store_search_criteria(request, previous_criteria, fields_to_load)
@@ -113,7 +113,7 @@ class MicroservicesTable:
             
             return {
                 'called_from_index': False,
-                'Fields':Fields,
+                'Fields':field_classes,
                 'microservice_name': microservice_name,
                 'microservice_title': microservice_title, 
                 'page_title': f'{microservice_title} view for: {user_role}',
@@ -144,12 +144,12 @@ class MicroservicesTable:
         page_number = get_page(request)
 
         try:
-            Fields = get_fields(microservice_name) 
-            table_headers = get_table_headers(Fields) # formatted for table use
-            fields_to_load = get_fields_to_load(Fields)
+            field_classes = get_fields(microservice_name) 
+            table_headers = get_table_headers(field_classes) # formatted for table use
+            fields_to_load = get_fields_to_load(field_classes)
 
             search_criteria, previous_criteria = load_search_criteria(session, fields_to_load)
-            Fields = load_cookie_into_fields(Fields, search_criteria)
+            field_classes = load_cookie_into_fields(field_classes, search_criteria)
             
             search_range, records_per_page = page_bounds(page_number)
             search_criteria.update(search_range)
@@ -170,7 +170,7 @@ class MicroservicesTable:
             table_records = get_table_records(Fields, get_microservice_info_json)   # database name field ([gsuite_status,...
             return {
                 'called_from_index': False,
-                'Fields':Fields,
+                'Fields':field_classes,
                 'microservice_name':microservice_name,
                 'microservice_title': microservice_title,
                 'page_title': f'{microservice_title} view for: {user_role}',

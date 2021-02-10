@@ -45,14 +45,14 @@ class Field:
                 selected_value=selected_value)
 
 
-def load_cookie_into_fields(Fields,previous_criteria):
-    for field in Fields:
+def load_cookie_into_fields(field_classes,previous_criteria):
+    for field in field_classes:
         if field.database_name in previous_criteria.keys():
             if  field.search_type == "input_box":
                 field.previous_value = previous_criteria.get(field.database_name)
             elif field.search_type == "dropdown":
                 field.refresh_selected_dropdown(previous_criteria.get(field.database_name))
-    return Fields
+    return field_classes
 
 def get_fields(service_name):
     # Set the default parameters for some services
@@ -64,69 +64,67 @@ def get_fields(service_name):
             "LEFT",
             "COMPLETE",]
 
-    fields =  []
     if service_name == "gsuitetable":
-        fields = [
+        return( [
                 Field("unique_employee_id"),
                 Field("gsuite_status", search_type="dropdown", dropdown_options= status_options),
                 Field("gsuite_id"),
                 Field("gsuite_hash"),
                 Field("current_groups"),
-                ]
+                ])
     elif service_name == "xmatable":
-        fields = [
+        return( [
                 Field("unique_employee_id"),
                 Field("xma_id"),
                 Field("xma_hash"),
-                ]
+                ])
     elif service_name == "lwstable":
-        fields = [
+        return( [
                 Field("unique_employee_id"),
                 Field("lws_hash"),
-                ]
+                ])
     elif service_name == "servicenowtable":
-        fields = [
+        return( [
                 Field("unique_employee_id"),
                 Field("service_now_id"),
                 Field("service_now_hash"),
-                ]
+                ])
     elif service_name == "updatestatetable":
-        fields = [
+        return( [
                 Field("unique_employee_id"),
                 Field("logistics"),
                 Field("employee"),
-                ]
+                ])
     elif service_name == "adecco":
-        fields = [
+        return( [
                 Field("unique_employee_id"),
                 Field("adecco_hash"),
-                ]
+                ])
     elif service_name == "requestlogtable":
-        fields = [
+        return( [
                 Field("id"),
                 Field("target_service"),
                 Field("date_time"),
-                ]
+                ])
     elif service_name == "chromebooktable":
-        fields = [
+        return( [
                 Field("device_serial_number"),
                 Field("ons_id"),
-                ]
+                ])
+    return ([])
 
-    return(fields)
-
-def get_fields_to_load(Fields):
+def get_fields_to_load(field_classes):
     fields_to_load = []
-    for field in Fields:
+    for field in field_classes:
         fields_to_load.append(field.database_name)
     return(fields_to_load)
 
-def get_table_records(Fields,json_records):
+def get_table_records(field_classes,json_records):
     formatted_records = []
     for each_record in json_records:
         record = {'tds': None}
         combined_field = []
-        for each_field in Fields:
+        for each_field in field_classes:
             combined_field.append( {
                 'value': each_record[each_field.database_name],
             },)
@@ -135,10 +133,10 @@ def get_table_records(Fields,json_records):
 
     return formatted_records 
 
-def get_table_headers(Fields):
+def get_table_headers(field_classes):
     # TODO update so accordion is created if needed
     headers = []
-    for field in Fields:
+    for field in field_classes:
         headers.append(
                 {
                 'value': str(field.column_name),

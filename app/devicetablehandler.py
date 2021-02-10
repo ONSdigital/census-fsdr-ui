@@ -159,7 +159,7 @@ class DeviceSecondaryPage:
                 max_page = 1 
 
         except ClientResponseError as ex:
-            client_response_error(ex, request)
+            return client_response_error(ex, request)
 
         if get_device_info.status_code == 200:
             table_headers = device_table_headers()
@@ -228,7 +228,7 @@ class DeviceSecondaryPage:
                 max_page = 1 
 
         except ClientResponseError as ex:
-            client_response_error(ex, request)
+            return client_response_error(ex, request)
 
         if get_device_info.status_code == 200:
             table_headers = device_table_headers()
