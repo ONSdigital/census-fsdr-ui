@@ -104,7 +104,7 @@ class MicroservicesTable:
                 max_page = 1 
 
         except ClientResponseError as ex:
-            client_response_error(ex, request)
+            return client_response_error(ex, request)
 
         if get_microservice_info.status_code == 200:
             # for 0 response st no_records true
@@ -164,7 +164,7 @@ class MicroservicesTable:
                 max_page = 1 
 
         except ClientResponseError as ex:
-            client_response_error(ex, request)
+            return client_response_error(ex, request)
 
         if get_microservice_info.status_code == 200:
             table_records = get_table_records(Fields, get_microservice_info_json)   # database name field ([gsuite_status,...
