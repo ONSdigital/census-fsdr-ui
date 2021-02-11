@@ -32,7 +32,7 @@ class Field:
       final_dropdowns = [{
           'value': 'blank',
           'text': 'Select a status',
-          "disabled": True,
+          'disabled': True,
       }]
       for option in dropdown_options:
         entry = {'value': option, 'text': option}
@@ -46,6 +46,7 @@ class Field:
 
   def refresh_selected_dropdown(self, selected_value):
     dropdown_values = [i.get('value') for i in self.dropdown_options]
+    dropdown_values.remove('blank')
     self.dropdown_options = self.format_dropdown_options(
         dropdown_values, selected_value=selected_value)
 
@@ -70,6 +71,7 @@ def get_fields(service_name):
       "LEAVER",
       "LEFT",
       "COMPLETE",
+      "SUSPENDED",
   ]
 
   if service_name == "gsuitetable":
@@ -113,7 +115,13 @@ def get_fields(service_name):
   elif service_name == "requestlogtable":
     return ([
         Field("id"),
-        Field("target_service"),
+        Field("target_service",
+          search_type="dropdown",
+          dropdown_options=[
+            "NISRA_EXTRACT",
+            "ADECCO",
+            "NISRA",
+            "logistics",]),
         Field("date_time"),
     ])
   elif service_name == "chromebooktable":
@@ -136,7 +144,6 @@ def get_table_records(field_classes, json_records):
   for each_record in json_records:
     record = {'tds': None}
     combined_field = []
-    # TODO update so accordion is created if needed
     for each_field in field_classes:
       combined_field.append({
           'value': each_record[each_field.database_name] if not each_field.accordion else acc_generation(str(each_record[each_field.database_name])),
