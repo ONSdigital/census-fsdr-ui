@@ -43,18 +43,18 @@ hr_combined_regex = re.compile(
     'PT-FP[HPR].-..-..')  # keep up to date with above
 
 hq_fo_ccs_regex = re.compile('F.-....-..-..')  # unused, see below
+cfods_regex = re.compile('DT-....-..-..')
 fsss_regex = re.compile(
     '(ZT-HSA.-.|LT-CFS1-Z|DT-SUP.-.).-..')  # unused, see below
 fsss_combined_regex = re.compile(
-    '(ZT-HSA.-.|LT-CFS1-Z|DT-SUP.-.|F.-....-.).-..'
+    '(ZT-HSA.-.|LT-CFS1-Z|DT-SUP.-.|F.-....-.|DT-....-.).-..'
 )  # keep up to date with above
 
 logi_regex = re.compile('LT-LOG.-..-..')
-cfods_regex = re.compile('DT-....-..-..')
 cfots_regex = re.compile('FT-FSD.-..-..')
 logi_combined_regex = re.compile(
-    '({}|{}|{})'.format(*[n.pattern for n in (
-        logi_regex, cfods_regex, cfots_regex)]))  # keep up to date with above
+    '({}|{})'.format(*[n.pattern for n in (
+        logi_regex, cfots_regex)]))  # keep up to date with above
 
 
 download_permission_regex =  re.compile('DT-SUP.-..-..')
@@ -72,7 +72,8 @@ def download_permission(role_id):
 
 def get_role(role_id):
     if rmt_combined_regex.match(role_id):
-        return RoleEnum.RMT
+        # This is not an error. All RMT people should be given FSSS view. Do not change.
+        return RoleEnum.FSSS
     # Logistics
     elif logi_combined_regex.match(role_id):
         return RoleEnum.LOGISTICS
