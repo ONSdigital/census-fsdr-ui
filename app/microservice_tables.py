@@ -1,4 +1,5 @@
 from structlog import get_logger
+from app.tabutils import acc_generation
 
 logger = get_logger('fsdr-ui')
 
@@ -73,7 +74,7 @@ def get_fields(service_name):
 
   if service_name == "gsuitetable":
     return ([
-        Field("unique_employee_id"),
+        Field("unique_employee_id", accordion=True),
         Field("gsuite_status",
               search_type="dropdown",
               dropdown_options=status_options),
@@ -135,9 +136,10 @@ def get_table_records(field_classes, json_records):
   for each_record in json_records:
     record = {'tds': None}
     combined_field = []
+    # TODO update so accordion is created if needed
     for each_field in field_classes:
       combined_field.append({
-          'value': each_record[each_field.database_name],
+          'value': each_record[each_field.database_name] if not each_field.accordion else acc_generation(str(each_record[each_field.database_name])),
       }, )
     record['tds'] = combined_field[:]
     formatted_records.append(record)
@@ -146,7 +148,6 @@ def get_table_records(field_classes, json_records):
 
 
 def get_table_headers(field_classes):
-  # TODO update so accordion is created if needed
   headers = []
   for field in field_classes:
     headers.append({
