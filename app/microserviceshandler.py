@@ -26,7 +26,6 @@ from app.searchcriteria import (
 )
 
 from app.searchfunctions import (
-    allocate_search_ranges,
     get_microservice_records,
 )
 

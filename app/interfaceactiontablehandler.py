@@ -20,7 +20,7 @@ from app.searchcriteria import (store_search_criteria, load_search_criteria,
                                 retreive_iat_statuses)
 
 from app.searchfunctions import (get_all_assignment_status,
-                                 get_employee_records, allocate_search_ranges,
+                                 get_employee_records,
                                  iat_employee_record_table,
                                  iat_employee_table_headers,
                                  get_distinct_job_role_short,
