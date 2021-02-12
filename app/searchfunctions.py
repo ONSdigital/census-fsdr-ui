@@ -174,6 +174,11 @@ def iat_employee_table_headers():
           'value': 'Service Now',
           'aria_sort': 'none'
       },
+      {
+          'value': 'Setup',
+          'aria_sort': 'none'
+      },
+
   ]
 
   return add_headers
@@ -214,6 +219,12 @@ def iat_employee_record_table(employee_records_json, remove_html=False):
             },
             {
                 'value': employees['service_now_status']
+            },
+            {
+                'value':
+                "True" if
+                (employees['setup'] == "t") else "False"
+
             },
         ]
     })
