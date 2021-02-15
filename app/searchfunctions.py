@@ -69,26 +69,6 @@ def get_microservice_records(endpoint_name, user_filter=""):
                       verify=False,
                       auth=HTTPBasicAuth(FSDR_USER, FSDR_PASS))
 
-
-# TODO allocate_search_ranges superceeded by pageutils, this should be deleted
-async def allocate_search_ranges(user_filter, page_number):
-  employee_count = get_employee_count(user_filter)
-
-  max_page = (int(employee_count.text) / 50) - 1
-  if page_number >= max_page:
-    page_number = int(math.floor(max_page))
-  if page_number == 0:
-    low_value = 1
-    high_value = 50
-  elif page_number > 1:
-    low_value = 50 * page_number
-    high_value = low_value + 50
-  else:
-    low_value = page_number
-    high_value = 50
-  return high_value, low_value, page_number, max_page
-
-
 def employee_table_headers():
   add_headers = [{
       'value': 'Badge No',
@@ -108,7 +88,6 @@ def employee_table_headers():
   }]
 
   return add_headers
-
 
 def employee_record_table(employee_records_json):
   add_employees = []
@@ -174,6 +153,11 @@ def iat_employee_table_headers():
           'value': 'Service Now',
           'aria_sort': 'none'
       },
+      {
+          'value': 'Setup',
+          'aria_sort': 'none'
+      },
+
   ]
 
   return add_headers
@@ -214,6 +198,12 @@ def iat_employee_record_table(employee_records_json, remove_html=False):
             },
             {
                 'value': employees['service_now_status']
+            },
+            {
+                'value':
+                "True" if
+                (employees['setup'] == "t") else "False"
+
             },
         ]
     })

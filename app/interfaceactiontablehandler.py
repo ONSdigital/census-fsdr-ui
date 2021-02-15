@@ -16,10 +16,11 @@ from app.searchcriteria import (store_search_criteria, load_search_criteria,
                                 retrieve_job_roles,
                                 retrieve_assignment_statuses,
                                 clear_stored_search_criteria,
+                                device_sent_dropdown,
                                 retreive_iat_statuses)
 
 from app.searchfunctions import (get_all_assignment_status,
-                                 get_employee_records, allocate_search_ranges,
+                                 get_employee_records,
                                  iat_employee_record_table,
                                  iat_employee_table_headers,
                                  get_distinct_job_role_short,
@@ -89,6 +90,7 @@ class InterfaceActionTable:
 
       select_options = ["gsuite", "xma", "granby", "loneWorker", "serviceNow"]
       dropdown_options = retreive_iat_statuses({}, select_options)
+      true_or_false_options= device_sent_dropdown('')
       return {
           'page_title': f'Interface Action Table view for: {user_role}',
           'table_headers': table_headers,
@@ -97,6 +99,7 @@ class InterfaceActionTable:
           'last_page_number': int(math.floor(max_page)),
           'distinct_job_roles': job_role_json,
           'iat_options': dropdown_options,
+          'boolean_dropdown': true_or_false_options,
           'download_button_enabled': download_permission(user_role),
           'dst_download': download_permission(user_role),
       }
@@ -216,6 +219,7 @@ class IatSecondaryPage:
                                                previous_jobrole_selected)
 
       dropdown_options = retreive_iat_statuses(data, select_options)
+      true_or_false_options= device_sent_dropdown(previous_criteria.get("setup"))
 
       return {
           'called_from_index': from_index,
@@ -242,6 +246,7 @@ class IatSecondaryPage:
           'previous_service_now_select': previous_criteria.get('serviceNow'),
           'previous_employee_id': previous_criteria.get('employee_id'),
           'iat_options': dropdown_options,
+          'boolean_dropdown': true_or_false_options,
           'download_button_enabled': download_permission(user_role),
           'dst_download': download_permission(user_role),
       }
@@ -331,6 +336,7 @@ class IatSecondaryPage:
                                          previous_jobrole_selected)
 
       dropdown_options = retreive_iat_statuses(session, select_options)
+      true_or_false_options= device_sent_dropdown(previous_criteria.get("setup"))
 
       return {
           'called_from_index': from_index,
@@ -358,6 +364,7 @@ class IatSecondaryPage:
           previous_criteria.get('serviceNow_select'),
           'previous_employee_id': previous_criteria.get('employee_id'),
           'iat_options': dropdown_options,
+          'boolean_dropdown': true_or_false_options,
           'download_button_enabled': download_permission(user_role),
           'dst_download': download_permission(user_role),
       }

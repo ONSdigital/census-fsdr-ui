@@ -9,7 +9,7 @@ from aiohttp_session import get_session
 from structlog import get_logger
 from app.pageutils import page_bounds, get_page
 from app.error_handlers import client_response_error, warn_invalid_login
-from app.role_matchers import download_permission
+from app.role_matchers import download_permission, microservices_permissions
 
 from app.microservice_tables import (
     get_table_headers,
@@ -26,7 +26,6 @@ from app.searchcriteria import (
 )
 
 from app.searchfunctions import (
-    allocate_search_ranges,
     get_microservice_records,
 )
 
@@ -67,6 +66,12 @@ class MicroservicesTable:
     if 'clear' in microservice_name:
       microservice_name = microservice_name.replace('clear', '')
       await clear_stored_search_criteria(session, microservice_name)
+
+    if not microservices_permissions:
+      return aiohttp_jinja2.render_template('error403.html',
+                                            request,
+                                            {'no_search_criteria': 'True'},
+                                            status=403)
 
     microservice_title = microservice_name.replace("table", " Table").title()
     page_number = get_page(request)
@@ -144,6 +149,12 @@ class MicroservicesTable:
     if 'clear' in microservice_name:
       microservice_name = microservice_name.replace('clear', '')
       await clear_stored_search_criteria(session, microservice_name)
+
+    if not microservices_permissions:
+      return aiohttp_jinja2.render_template('error403.html',
+                                            request,
+                                            {'no_search_criteria': 'True'},
+                                            status=403)
 
     microservice_title = microservice_name.replace("table", " Table").title()
     page_number = get_page(request)

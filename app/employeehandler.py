@@ -184,7 +184,6 @@ class EmployeeInformation():
           'employee_job_role_history': job_role,
           'employee_record': employee_info,
           'employee_status': employee_status,
-          'dst_download': role_matchers.download_permission(user_role),
       }
     except ValueError:
       return {

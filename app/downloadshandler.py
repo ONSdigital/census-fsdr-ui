@@ -12,7 +12,7 @@ from app.role_matchers import download_permission
 from app.error_handlers import client_response_error, warn_invalid_login
 
 from app.searchfunctions import (get_all_assignment_status,
-                                 get_employee_records, allocate_search_ranges,
+                                 get_employee_records,
                                  iat_employee_record_table,
                                  iat_employee_table_headers,
                                  get_distinct_job_role_short,

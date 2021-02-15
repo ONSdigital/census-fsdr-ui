@@ -6,6 +6,7 @@ import aiohttp_jinja2
 from aiohttp.client_exceptions import (ClientResponseError)
 from aiohttp.web import HTTPFound, RouteTableDef
 from aiohttp_session import get_session
+from app.pageutils import page_bounds, get_page
 from structlog import get_logger
 from app.role_matchers import download_permission
 
@@ -15,7 +16,7 @@ from app.searchcriteria import (store_search_criteria, retrieve_job_roles,
 
 from app.searchfunctions import (get_all_assignment_status,
                                  get_employee_records_no_device,
-                                 get_employee_records, allocate_search_ranges,
+                                 get_employee_records,
                                  employee_record_table, employee_table_headers,
                                  get_distinct_job_role_short)
 
@@ -85,10 +86,7 @@ class SecondaryPage:
 
     await saml.ensure_logged_in(request)
 
-    if 'page' in request.query:
-      page_number = int(request.query['page'])
-    else:
-      page_number = 1
+    page_number = get_page(request)
 
     previous_assignment_selected = ''
     previous_jobrole_selected = ''
@@ -155,20 +153,21 @@ class SecondaryPage:
                                               {'no_search_criteria': 'True'},
                                               status=405)
 
-      high_value, low_value, page_number, max_page = await allocate_search_ranges(
-          search_criteria, page_number)
-
-      search_criteria_with_range = search_criteria.copy()
-
-      search_criteria_with_range['rangeHigh'] = high_value
-      search_criteria_with_range['rangeLow'] = low_value
+      search_range, records_per_page = page_bounds(page_number)
+      search_criteria.update(search_range)
 
       if previous_user_missing_device != False:
         retrieve_employee_info = get_employee_records_no_device(
-            search_criteria_with_range)
+            search_criteria)
       else:
         retrieve_employee_info = get_employee_records(
-            search_criteria_with_range)
+            search_criteria)
+
+      if len(retrieve_employee_info.json()) > 0:
+        emp_sum = retrieve_employee_info.json()[0].get('total_employees', 0)
+        max_page = math.ceil(emp_sum / records_per_page)
+      else:
+        max_page = 1
 
       if data.get('user_missing_device'):
         previous_user_missing_device = data.get('user_missing_device')
@@ -232,10 +231,7 @@ class SecondaryPage:
 
     await saml.ensure_logged_in(request)
 
-    if 'page' in request.query:
-      page_number = int(request.query['page'])
-    else:
-      page_number = 1
+    page_number = get_page(request)
 
     if 'called_from_index' in request.query:
       from_index = request.query['called_from_index']
@@ -287,20 +283,21 @@ class SecondaryPage:
         previous_jobid = session['jobRoleId']
         search_criteria['jobRoleId'] = previous_jobid
 
-      high_value, low_value, page_number, max_page = await allocate_search_ranges(
-          search_criteria, page_number)
-
-      search_criteria_with_range = search_criteria.copy()
-
-      search_criteria_with_range['rangeHigh'] = high_value
-      search_criteria_with_range['rangeLow'] = low_value
+      search_range, records_per_page = page_bounds(page_number)
+      search_criteria.update(search_range)
 
       if previous_user_missing_device != False:
         retrieve_employee_info = get_employee_records_no_device(
-            search_criteria_with_range)
+            search_criteria)
       else:
         retrieve_employee_info = get_employee_records(
-            search_criteria_with_range)
+            search_criteria)
+
+      if len(retrieve_employee_info.json()) > 0:
+        emp_sum = retrieve_employee_info.json()[0].get('total_employees', 0)
+        max_page = math.ceil(emp_sum / records_per_page)
+      else:
+        max_page = 1
 
       get_job_roles = get_distinct_job_role_short()
 
