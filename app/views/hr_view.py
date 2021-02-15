@@ -2,6 +2,41 @@ from app.employee_view_functions import process_device_details, format_line_mana
 from app.tabutils import tab_generation, format_to_uk_dates
 from app.fieldmapping import map_employee_name
 
+EMP_INFO_FIELDS = {
+    'Unique Employee ID': 'uniqueEmployeeId',
+    'Unique Employee ID': 'uniqueEmployeeId',
+    'Address': 'address',
+    'Postcode': 'postcode',
+    'Country': 'country',
+    'County': 'county',
+    'Personal Email Account': 'personalEmailAddress',
+    'Personal Mobile Number': 'telephoneNumberContact1',
+    # 'Home Phone Number': 'telephoneNumberContact2',
+    'Emergency Contact Name': 'emergencyContactFullName',
+    'Emergency Contact Number': 'emergencyContactMobileNo',
+    'Mobility': 'mobility',
+    'Badge Number': 'idBadgeNo',
+    'Weekly Hours': 'weeklyHours',
+    'Date of Birth': 'dob',
+    'ONS ID': 'onsId',
+}
+
+JOB_ROLE_FIELDS = {
+    # 'Job Role Type': 'jobRoleType',
+    'Job Role': 'jobRole',
+    'Job Role ID': 'uniqueRoleId',
+    'Job Role Short': 'jobRoleShort',
+    'Area Location': 'areaLocation',
+    'Assignment Status': 'assignmentStatus',
+}
+
+JOB_ROLE_DATE_FIELDS = {
+    'Contract Start Date': 'contractStartDate',
+    'Contract End Date': 'contractEndDate',
+    # 'Operational Start Date': 'contractStartDate',
+    # 'Operational End Date': 'operationalEndDate',
+}
+
 
 def get_employee_tabs(employee_info, current_job_role, device_information):
   def get_emp_info(name, on_false={}, on_missing='Unspecified'):
@@ -32,60 +67,19 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
   tab_glance = tab_generation('At a Glance', glance_data)
 
   employee_data = {
-      'Unique Employee ID':
-      get_emp_info('uniqueEmployeeId'),
-      'Name':
-      employee_name,
-      'Preferred Name':
-      preferred_name,
-      'Address':
-      get_emp_info('address'),
-      'Postcode':
-      get_emp_info('postcode'),
-      'Country':
-      get_emp_info('country'),
-      'County':
-      get_emp_info('county'),
-      'Personal Email Account':
-      get_emp_info('personalEmailAddress'),
-      'Personal Mobile Number':
-      get_emp_info('telephoneNumberContact1'),
-      # 'Home Phone Number': employee_info['telephoneNumberContact2'],
-      'Emergency Contact Name':
-      get_emp_info('emergencyContactFullName'),
-      'Emergency Contact Number':
-      get_emp_info('emergencyContactMobileNo'),
-      'Mobility':
-      get_emp_info('mobility'),
-      # 'Job Role Type': current_job_role['jobRoleType'],
-      'Job Role':
-      current_job_role['jobRole'],
-      'Job Role ID':
-      current_job_role['uniqueRoleId'],
-      'Job Role Short':
-      current_job_role['jobRoleShort'],
-      'Line Manager':
-      line_manager,
-      'Badge Number':
-      get_emp_info('idBadgeNo'),
-      'Area Location':
-      current_job_role['areaLocation'],
-      'Weekly Hours':
-      get_emp_info('weeklyHours'),
-      'Contract Start Date':
-      format_to_uk_dates(current_job_role['contractStartDate']),
-      'Contract End Date':
-      format_to_uk_dates(current_job_role['contractEndDate']),
-      # 'Operational Start Date': format_to_uk_dates(current_job_role['contractStartDate']),
-      # 'Operational End Date': format_to_uk_dates(current_job_role['operationalEndDate']),
-      'Assignment Status':
-      current_job_role['assignmentStatus'],
-      'Date of Birth':
-      get_emp_info('dob'),
-      'ONS ID':
-      get_emp_info('onsId'),
+      'Name': employee_name,
+      'Preferred Name': preferred_name,
+      'Line Manager': line_manager,
       'ONS Mobile Number': (phone and phone['Device Phone Number']) or '',
   }
+  for mapField, empField in EMP_INFO_FIELDS.items():
+    employee_data[mapField] = get_emp_info(empField)
+  for mapField, jobField in JOB_ROLE_FIELDS.items():
+    employee_data[mapField] = current_job_role.get(jobField)
+  for mapField, jobField in JOB_ROLE_DATE_FIELDS.items():
+    field = current_job_role.get(jobField)
+    employee_data[mapField] = format_to_uk_dates(field)
+
   tab_employment_status = tab_generation('Employment Status', employee_data)
 
   all_tabs = [{'all_info': tab_glance + tab_employment_status}]
