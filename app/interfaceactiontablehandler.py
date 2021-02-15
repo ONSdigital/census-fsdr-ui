@@ -138,7 +138,7 @@ class IatSecondaryPage:
 
       select_options = [
           "gsuite", "xma", "granby", "loneWorker", "serviceNow", "ons_id",
-          "employee_id"
+          "employee_id","setup",
       ]
       search_criteria, previous_criteria = load_search_criteria(
           data, select_options)
@@ -189,6 +189,9 @@ class IatSecondaryPage:
 
       search_range, records_per_page = page_bounds(page_number)
       search_criteria.update(search_range)
+
+      #TODO remove 
+      logger.error("SEARCH CRITERIA IS : " + str(search_criteria))
 
       get_employee_info = get_employee_records(search_criteria, iat=True)
       get_employee_info_json = get_employee_info.json()
@@ -282,7 +285,7 @@ class IatSecondaryPage:
 
       select_options = [
           "gsuite", "xma", "granby", "loneWorker", "serviceNow", "ons_id",
-          "employee_id"
+          "employee_id", "setup",
       ]
       search_criteria, previous_criteria = load_search_criteria(
           session, select_options)
@@ -313,6 +316,9 @@ class IatSecondaryPage:
 
       search_range, records_per_page = page_bounds(page_number)
       search_criteria.update(search_range)
+
+      #TODO remove 
+      logger.error("SEARCH CRITERIA IS : " + str(search_criteria))
 
       get_employee_info = get_employee_records(search_criteria, iat=True)
       get_employee_info_json = get_employee_info.json()
