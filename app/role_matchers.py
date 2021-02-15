@@ -58,7 +58,9 @@ logi_combined_regex = re.compile('({}|{}|{})'.format(
 
 download_permission_regex = re.compile('DT-SUP.-..-..')
 
-def microservices_permissions(user_role, microservice_name):
+def microservices_permissions(role_id, microservice_name):
+  # Currently very similar to download_permission, but may be 
+  # adjusted later when other tables are brought into microservies format
   microservice_tables_dt_sup = [
       "gsuite",
       "xma",
@@ -70,8 +72,7 @@ def microservices_permissions(user_role, microservice_name):
       ]
   
   if download_permission_regex.match(role_id):
-    if microservice_name in mixroservice_tables_dt_sup:
-      return True
+      return True 
 
   return False
 
