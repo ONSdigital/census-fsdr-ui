@@ -10,18 +10,18 @@ logger = get_logger('fsdr-ui')
 # keep the following locations up to date with this Enum:
 #  app.employee_view_router.role_id_to_router
 class RoleEnum(Enum):
-    # RMT
-    RMT = auto()
-    # Logistics
-    LOGISTICS = auto()
-    # HQ, FO, CCS, FSSS
-    FSSS = auto()
-    # HR, Payroll, Recruitment
-    HR = auto()
+  # RMT
+  RMT = auto()
+  # Logistics
+  LOGISTICS = auto()
+  # HQ, FO, CCS, FSSS
+  FSSS = auto()
+  # HR, Payroll, Recruitment
+  HR = auto()
 
-    @property
-    def extract_type(self):
-        return self.name
+  @property
+  def extract_type(self):
+    return self.name
 
 
 rmt_regex = re.compile('R.-....(-..(-..)?)?')
@@ -52,38 +52,55 @@ fsss_combined_regex = re.compile(
 
 logi_regex = re.compile('LT-LOG.-..-..')
 cfots_regex = re.compile('FT-FSD.-..-..')
+
 logi_combined_regex = re.compile(
     '({}|{})'.format(*[n.pattern for n in (
         logi_regex, cfots_regex)]))  # keep up to date with above
 
+download_permission_regex = re.compile('DT-SUP.-..-..')
 
-download_permission_regex =  re.compile('DT-SUP.-..-..')
+
+def microservices_permissions(role_id, microservice_name):
+  # Currently very similar to download_permission, but may be
+  # adjusted later when other tables are brought into microservies format
+  microservice_tables_dt_sup = [
+      "gsuite",
+      "xma",
+      "lws",
+      "servicenow",
+      "update",
+      "requestlog",
+      "chromebook",
+  ]
+
+  if download_permission_regex.match(role_id):
+    return True
+
+  return False
+
 
 def invalid_role_id(role_id):
-    msg = 'Invalid role ID: {}'.format(role_id)
-    logger.warn(msg, role_id=role_id)
-    raise HTTPInternalServerError(reason=msg)
+  msg = 'Invalid role ID: {}'.format(role_id)
+  logger.warn(msg, role_id=role_id)
+  raise HTTPInternalServerError(reason=msg)
+
 
 def download_permission(role_id):
-    if download_permission_regex.match(role_id):
-        return True
-    else:
-        return False
+  return download_permission_regex.match(role_id)
 
 def get_role(role_id):
-    if rmt_combined_regex.match(role_id):
-        # This is not an error. All RMT people should be given FSSS view. Do not change.
-        return RoleEnum.FSSS
-    # Logistics
-    elif logi_combined_regex.match(role_id):
-        return RoleEnum.LOGISTICS
-    # HQ, FO, CCS, FSSS
-    elif fsss_combined_regex.match(role_id):
-        return RoleEnum.FSSS
-    # HR, Payroll, Recruitment
-    elif hr_combined_regex.match(role_id):
-        return RoleEnum.HR
-    # Failed to match
-    else:
-        invalid_role_id(role_id)
-
+  if rmt_combined_regex.match(role_id):
+    # This is not an error. All RMT views should go to FSSS view.
+    return RoleEnum.FSSS
+  # Logistics
+  elif logi_combined_regex.match(role_id):
+    return RoleEnum.LOGISTICS
+  # HQ, FO, CCS, FSSS
+  elif fsss_combined_regex.match(role_id):
+    return RoleEnum.FSSS
+  # HR, Payroll, Recruitment
+  elif hr_combined_regex.match(role_id):
+    return RoleEnum.HR
+  # Failed to match
+  else:
+    invalid_role_id(role_id)

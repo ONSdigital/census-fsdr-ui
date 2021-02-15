@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% from 'components/lists/_macro.njk' import onsList %}
+{% from 'components/input/_macro.njk' import onsInput %}
+{% from "custom/dynamic_pagination/_macro.njk" import onsPagination %}
+{% from 'components/panel/_macro.njk' import onsPanel %}
+{% from "components/table/_macro.njk" import onsTable %}
+{% from "custom/fsdrsearch/_macro.njk" import fsdrSearch %}
+{% from "components/metadata/_macro.njk" import onsMetadata %}
+{% from "custom/tabs/_macro.njk" import onsTabs %}
+
+{% set page_title_value = page_title %}
+{% set search_url = "/device-search-results" %}
+
+{% set form =  {
+    'method': 'POST',
+    'id': 'searchform',
+    'attributes': {
+        'action': '/microservices/' + microservice_name
+    }
+} %}
+
+{% block pageContent %}
+    {% block main %}
+        <div class="grid">
+            <div class="grid__col col-2@m"></div>
+            <div class="grid__col col-8@m">
+                <div class="table-scrollable__content">
+                    <br>
+                    <h1>{{ page_title_value }}</h1>
+                        {{ fsdrSearch({
+                            'index_search': "microservice",
+			    'microservice_name':microservice_name,
+			    'microservice_title':microservice_title,
+			    'Fields': Fields,
+                
+                        }) }}
+                        {{ onsButton({
+                            'text': 'Filter ' + microservice_title,
+                            'classes': 'btn--small',
+                            'submitType': "loader",
+                            'name': 'action[submit]'
+                        }) }}
+		    	{{ onsButton({
+				'text': 'Clear',
+				'classes': 'btn--small',
+				'submitType': "loader",
+				'url': '/microservices/' + microservice_name + 'clear'
+			    }) }}
+
+                    {% if no_records == 'true' %}
+                        <br>
+                        {% call onsPanel({
+                            "title": "No device data",
+                            "titleTag": "h1",
+                            "type": "error"
+                            }) %}
+                            <p>No employee records have been found</p>
+                        {% endcall %}
+                    {% else %} 
+                        <br>
+                        {{  onsTable({
+                            "sortable": true,
+                            "table_class": " table--sortable",
+                            "caption": microservice_title,
+                            "sort_by": "Sort by",
+                            "aria_asc": "ascending",
+                            "aria_desc": "descending",
+                            "ths": table_headers,
+                            "trs": table_records, 
+                            })
+                        }}
+
+                        <div class="page_numbering" align="center">
+		{{
+                onsPagination({
+                "called_from_index": True,
+                "previous": "Previous",
+                "next": "Next",
+                "last_page_number": last_page_number,
+                "page_number": page_number,
+		"link_url": 'MicroservicesTable:get',
+		"microservice_name": microservice_name,
+                })
+                }}
+
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="grid__col col-2@m"></div>
+        </div>
+    {% endblock %}
+{% endblock %}
+</script>

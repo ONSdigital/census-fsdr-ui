@@ -95,6 +95,71 @@
             })
         }}
 
+    {% elif params.index_search == "microservice" %}
+        <table>
+                {{
+                    onsLabel({
+                        "id": 'label',
+                        "for": "some-input",
+                        "text": "Filter " + params.microservice_title
+                    })
+                }}
+		
+		{% set col = namespace(value=-1) %}
+		{% set row = namespace(value=0) %}
+		{% set max_col = 2 %}
+		{% for field in params.Fields %}
+			{# Update  the col/row  values for the next  searchitem  #}
+			{% if col.value == max_col %}
+				{% set row.value = row.value + 1 %}
+				{% set col.value = 0 %}
+			{% else %}
+				{% set col.value = col.value + 1 %}
+			{% endif %}
+
+			{# If a  new row  required, start "tablerow" #}
+			{% if col.value == 0 %}
+				</tr>
+				<tr>
+				<td>
+			{% else %}
+				<td>
+			{% endif %}
+			
+			{# Code to generate actual searchui here #} 
+			{% if field.search_type == "input_box" %}
+				{{onsInput({
+                            		"id"   : field.database_name,
+					"name" : field.database_name,
+					"label": { "text": field.column_name },
+					"value": field.previous_value,   })}}
+			{% elif field.search_type == "dropdown" %}
+				{{onsSelect({
+					"id"   : field.database_name,
+					"name" : field.database_name,
+					"label": { "text": field.column_name },
+					"options": field.dropdown_options })}}
+			{% endif %}
+
+			{# End table row/element #} 
+			{% if col.value == 0 %}
+				<td>
+				{{onsInput({
+				"type": "hidden",
+				"classes": "u-d-no",
+				"id": "adlocation",
+				"name": "adlocation",
+				"value": adlocation,
+				"label": {
+				"text": "Enter some text",
+				"classes": "u-d-no"}})}}
+				</td>
+			{% else %}
+				</td>
+			{% endif %}
+		{% endfor %}
+		</table>
+		
     {% elif params.index_search == "device" %}
         <table>
             <tr>
@@ -241,7 +306,7 @@
                 <td>
                     {{
                         onsInput({
-                            "id": "text",
+                            "id": "employee_id",
                             'name': "employee_id",
                             "label": {
                                 "text": "Employee ID"
@@ -328,6 +393,19 @@
                         })
                     }}
                 </td>
+		<td>
+                    {{
+                        onsSelect({
+                            "id": "select_setup",
+                            'name': "setup",
+                            "label": {
+                                "text": "Setup"
+                            },
+                            "options": params.boolean_dropdown,
+                        })
+                    }}
+
+
                </td>
 
 	</tr>
