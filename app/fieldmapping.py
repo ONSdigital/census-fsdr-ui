@@ -49,9 +49,9 @@ def map_employee_history_table_headers(user_role, full_history):
     if role_matchers.fsss_combined_regex.match(user_role):
       mapping = {}
       for mapField, histField in COMMON_FIELDS.items():
-        mapping[mapField] = history.get(histField, None)
+        mapping[mapField] = history.get(histField)
       for mapField, histField in FSSS_FIELDS.items():
-        mapping[mapField] = history.get(histField, None)
+        mapping[mapField] = history.get(histField)
       mapping['Name'] = map_employee_name(history)
 
       mapping_entries.append(mapping)
@@ -60,13 +60,12 @@ def map_employee_history_table_headers(user_role, full_history):
       # TODO this may be a duplicate
       mapping = {}
       for mapField, histField in COMMON_FIELDS.items():
-        mapping[mapField] = history.get(histField, None)
+        mapping[mapField] = history.get(histField)
       for mapField, histField in HR_FIELDS.items():
-        mapping[mapField] = history.get(histField, None)
+        mapping[mapField] = history.get(histField)
       mapping['Name'] = map_employee_name(history)
-      history['Address'] = ' '.join(v for v in (history['address1'],
-                                                history['address2'])
-                                    if v is not None)
+      addr_fields = (history.get('address1'), history.get('address2'))
+      mapping['Address'] = ' '.join(v for v in addr_fields if v is not None)
 
       mapping_entries.append(mapping)
 
@@ -80,10 +79,10 @@ def map_employee_history_job_role_table_headers(
   for job_roles in employee_history_job_role_table:
     mapping = {}
     for mapField, jrField in JOB_ROLE_FIELDS.items():
-      mapping[mapField] = job_roles.get(jrField, None)
+      mapping[mapField] = job_roles.get(jrField)
     for mapField, jrField in JOB_ROLE_DATE_FIELDS.items():
-      mapping[mapField] = format_to_uk_dates(job_roles.get(jrField, None))
-    mapping['Active Job'] = 'Yes' if job_roles.get('active', None) else 'No'
+      mapping[mapField] = format_to_uk_dates(job_roles.get(jrField))
+    mapping['Active Job'] = 'Yes' if job_roles.get('active') else 'No'
 
     mapping_entries.append(mapping)
 
@@ -91,6 +90,6 @@ def map_employee_history_job_role_table_headers(
 
 
 def map_employee_name(history):
-  maybe_names = (history.get('firstName', None), history.get('surname', None))
+  maybe_names = (history.get('firstName'), history.get('surname'))
   names = (n for n in maybe_names if n and n != '-')
   return ' '.join(names)
