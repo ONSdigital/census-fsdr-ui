@@ -37,7 +37,6 @@ JOB_ROLE_DATE_FIELDS = {
     # 'Operational End Date': 'operationalEndDate',
 }
 
-
 def get_employee_tabs(employee_info, current_job_role, device_information):
   def get_emp_info(name, on_false={}, on_missing='Unspecified'):
     # This first line is odd, but basically triggers whenever the
