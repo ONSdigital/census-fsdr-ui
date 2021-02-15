@@ -2,6 +2,30 @@ from app.employee_view_functions import process_device_details, format_line_mana
 from app.tabutils import tab_generation, table_generation, format_to_uk_dates
 from app.fieldmapping import map_employee_name
 
+JOB_ROLE_DATE_FIELDS = {
+    'Contract Start Date': 'contractStartDate',
+    'Contract End Date': 'contractEndDate',
+    'Operational Start Date': 'contractStartDate',
+    'Operational End Date': 'operationalEndDate',
+}
+
+EMP_JOB_ROLE_FIELDS = {
+      'Postcode': 'postcode',
+      'County': 'county',
+      'Country': 'country',
+      'Mobility': 'mobility',
+      'Weekly Hours': 'weeklyHours',
+}
+
+EMP_CONTACT_FIELDS = {
+    'Address': 'address',
+    'Personal Mobile Number': 'telephoneNumberContact1',
+    'Home Phone Number': 'telephoneNumberContact2',
+    'Personal Email Account': 'personalEmailAddress',
+    'Emergency Contact Name': 'emergencyContactFullName',
+    'Emergency Contact Number': 'emergencyContactMobileNo',
+}
+
 
 def get_device_types(devices):
   types_of_device = ""
@@ -34,54 +58,41 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
       'Unique Employee ID': get_emp_info('uniqueEmployeeId'),
       'Name': employee_name,
       'Preferred Name': preferred_name,
-      # Gender refferenced here in GUI designs, but not in required excell spreadsheet, therefore ignored
+      # Gender refferenced here in GUI designs, but not in required Excel spreadsheet, therefore ignored
       'ONS Mobile Number': (phone and phone['Device Phone Number']) or '',
       'ONS ID': get_emp_info('onsId'),  #This is Email address
   }
   tab_detail = tab_generation('Details for Field Worker', data_detail)
 
   data_employment = {
-      'Assignment Status':
-      current_job_role['assignmentStatus'],
+      'Assignment Status': current_job_role.get('assignmentStatus'),
       # "Status" in GUI here
-      'Contract Start Date':
-      format_to_uk_dates(current_job_role['contractStartDate']),
-      'Contract End Date':
-      format_to_uk_dates(current_job_role['contractEndDate']),
-      'Operational Start Date':
-      format_to_uk_dates(current_job_role['contractStartDate']),
-      'Operational End Date':
-      format_to_uk_dates(current_job_role['operationalEndDate']),
       # "Ingest date" in GUI here
   }
+  for mapField, jobField in JOB_ROLE_DATE_FIELDS.items():
+    field = current_job_role.get(jobField)
+    data_employment[mapField] = format_to_uk_dates(field)
+
   tab_employment = tab_generation('Employment Status', data_employment)
 
   data_job_role = {
-      'Job Role ID': current_job_role['uniqueRoleId'],
-      'Postcode': get_emp_info('postcode'),
-      'County': get_emp_info('county'),
-      'Country': get_emp_info('country'),
-      'Job Role Short': current_job_role['jobRoleShort'],
-      'Job Role': current_job_role['jobRole'],
+      'Job Role ID': current_job_role.get('uniqueRoleId'),
+      'Job Role Short': current_job_role.get('jobRoleShort'),
+      'Job Role': current_job_role.get('jobRole'),
       # device build
       'Line Manager': line_manager,
       # Area Location
-      'Mobility': get_emp_info('mobility'),
-      'Weekly Hours': get_emp_info('weeklyHours'),
       # Area group
       # Coordinator group
       # Organisation unit
   }
+  for mapField, empField in EMP_JOB_ROLE_FIELDS.items():
+    data_job_role[mapField] = get_emp_info(empField)
   tab_job_role = tab_generation('Job Role for Field Worker', data_job_role)
 
-  data_contact = {
-      'Address': get_emp_info('address'),
-      'Personal Mobile Number': get_emp_info('telephoneNumberContact1'),
-      'Home Phone Number': get_emp_info('telephoneNumberContact2', None),
-      'Personal Email Account': get_emp_info('personalEmailAddress'),
-      'Emergency Contact Name': get_emp_info('emergencyContactFullName'),
-      'Emergency Contact Number': get_emp_info('emergencyContactMobileNo'),
-  }
+  data_contact = {}
+  for mapField, empField in EMP_CONTACT_FIELDS.items():
+    data_contact[mapField] = get_emp_info(empField)
   tab_contact = tab_generation('Personal Contact Details', data_contact)
 
   data_devices = {
@@ -93,12 +104,12 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
   tab_devices = tab_generation('Devices for Field Worker', data_devices)
 
   data_other = {
-      'Job Role Type': current_job_role['jobRoleType'],
+      'Job Role Type': current_job_role.get('jobRoleType'),
       'Badge Number': get_emp_info('idBadgeNo'),
       # Unused fields:
       #'Status': get_emp_info('status'),
-      #'Coordinator Group': current_job_role['coordGroup'],
-      #'Organisation Unit': current_job_role['uniqueRoleId'],
+      #'Coordinator Group': current_job_role.get('coordGroup'),
+      #'Organisation Unit': current_job_role.get('uniqueRoleId'),
       #'Ingest Date': get_emp_info('ingestDate'),
       'Chromebook Asset ID': (chr_book and chr_book['Device ID']) or None,
       'Device Type': get_device_types(devices),
