@@ -58,6 +58,22 @@ logi_combined_regex = re.compile('({}|{}|{})'.format(
 
 download_permission_regex = re.compile('DT-SUP.-..-..')
 
+def microservices_permissions(user_role, microservice_name):
+  microservice_tables_dt_sup = [
+      "gsuite",
+      "xma",
+      "lws",
+      "servicenow",
+      "update",
+      "requestlog",
+      "chromebook",
+      ]
+  
+  if download_permission_regex.match(role_id):
+    if microservice_name in mixroservice_tables_dt_sup:
+      return True
+
+  return False
 
 def invalid_role_id(role_id):
   msg = 'Invalid role ID: {}'.format(role_id)
