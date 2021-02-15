@@ -23,8 +23,7 @@ from app.searchcriteria import (
 )
 
 from app.searchfunctions import (get_all_assignment_status, get_device_records,
-                                 device_records_table,
-                                 device_table_headers,
+                                 device_records_table, device_table_headers,
                                  get_distinct_job_role_short,
                                  get_employee_count)
 

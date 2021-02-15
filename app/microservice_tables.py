@@ -116,12 +116,13 @@ def get_fields(service_name):
     return ([
         Field("id"),
         Field("target_service",
-          search_type="dropdown",
-          dropdown_options=[
-            "NISRA_EXTRACT",
-            "ADECCO",
-            "NISRA",
-            "logistics",]),
+              search_type="dropdown",
+              dropdown_options=[
+                  "NISRA_EXTRACT",
+                  "ADECCO",
+                  "NISRA",
+                  "logistics",
+              ]),
         Field("date_time"),
     ])
   elif service_name == "chromebooktable":
@@ -145,9 +146,12 @@ def get_table_records(field_classes, json_records):
     record = {'tds': None}
     combined_field = []
     for each_field in field_classes:
-      combined_field.append({
-          'value': each_record[each_field.database_name] if not each_field.accordion else acc_generation(str(each_record[each_field.database_name])),
-      }, )
+      combined_field.append(
+          {
+              'value':
+              each_record[each_field.database_name] if not each_field.accordion
+              else acc_generation(str(each_record[each_field.database_name])),
+          }, )
     record['tds'] = combined_field[:]
     formatted_records.append(record)
 

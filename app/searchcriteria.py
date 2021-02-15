@@ -8,12 +8,30 @@ logger = get_logger('fsdr-ui')
 async def store_search_criteria(request, search_criteria, fields_to_load=[]):
   session = await get_session(request)
   possible_stored_atributes = [
-      'assignmentStatus', 'jobRoleShort', 'area', 'surname', 'firstName',
-      'badgeNumber', 'jobRoleId', 'uniqueEmployeeId', 'gsuite', 'xma',
-      'granby', 'loneWorker', 'serviceNow', 'device_sent_options', 'device_id',
-      'field_device_phone_number', 'device_type', 'distinct_job_roles',
-      'ons_id', 'device_sent', 'employee_id', 'user_missing_device',
-      'unique_employee_id','setup',
+      'assignmentStatus',
+      'jobRoleShort',
+      'area',
+      'surname',
+      'firstName',
+      'badgeNumber',
+      'jobRoleId',
+      'uniqueEmployeeId',
+      'gsuite',
+      'xma',
+      'granby',
+      'loneWorker',
+      'serviceNow',
+      'device_sent_options',
+      'device_id',
+      'field_device_phone_number',
+      'device_type',
+      'distinct_job_roles',
+      'ons_id',
+      'device_sent',
+      'employee_id',
+      'user_missing_device',
+      'unique_employee_id',
+      'setup',
   ]
 
   possible_stored_atributes = possible_stored_atributes + fields_to_load
@@ -25,12 +43,30 @@ async def store_search_criteria(request, search_criteria, fields_to_load=[]):
 
 async def clear_stored_search_criteria(session, microservice_name=''):
   possible_stored_atributes = [
-      'assignmentStatus', 'jobRoleShort', 'area', 'surname', 'firstName',
-      'badgeNumber', 'jobRoleId', 'uniqueEmployeeId', 'gsuite', 'xma',
-      'granby', 'loneWorker', 'serviceNow', 'device_sent_options', 'device_id',
-      'field_device_phone_number', 'device_type', 'distinct_job_roles',
-      'ons_id', 'device_sent', 'employee_id', 'user_missing_device',
-      'unique_employee_id','setup',
+      'assignmentStatus',
+      'jobRoleShort',
+      'area',
+      'surname',
+      'firstName',
+      'badgeNumber',
+      'jobRoleId',
+      'uniqueEmployeeId',
+      'gsuite',
+      'xma',
+      'granby',
+      'loneWorker',
+      'serviceNow',
+      'device_sent_options',
+      'device_id',
+      'field_device_phone_number',
+      'device_type',
+      'distinct_job_roles',
+      'ons_id',
+      'device_sent',
+      'employee_id',
+      'user_missing_device',
+      'unique_employee_id',
+      'setup',
   ]
 
   if microservice_name != '':

@@ -102,6 +102,7 @@ async def not_found_error(request):
                                },
                                status=404)
 
+
 async def forbidden(request):
   return jinja.render_template('error403.html',
                                request, {'include_nav': False},

@@ -69,6 +69,7 @@ def get_microservice_records(endpoint_name, user_filter=""):
                       verify=False,
                       auth=HTTPBasicAuth(FSDR_USER, FSDR_PASS))
 
+
 def employee_table_headers():
   add_headers = [{
       'value': 'Badge No',
@@ -88,6 +89,7 @@ def employee_table_headers():
   }]
 
   return add_headers
+
 
 def employee_record_table(employee_records_json):
   add_employees = []
@@ -157,7 +159,6 @@ def iat_employee_table_headers():
           'value': 'Setup',
           'aria_sort': 'none'
       },
-
   ]
 
   return add_headers
@@ -200,10 +201,7 @@ def iat_employee_record_table(employee_records_json, remove_html=False):
                 'value': employees['service_now_status']
             },
             {
-                'value':
-                "True" if
-                (employees['setup'] == "t") else "False"
-
+                'value': "True" if (employees['setup'] == "t") else "False"
             },
         ]
     })

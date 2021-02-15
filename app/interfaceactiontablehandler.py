@@ -16,8 +16,7 @@ from app.searchcriteria import (store_search_criteria, load_search_criteria,
                                 retrieve_job_roles,
                                 retrieve_assignment_statuses,
                                 clear_stored_search_criteria,
-                                device_sent_dropdown,
-                                retreive_iat_statuses)
+                                device_sent_dropdown, retreive_iat_statuses)
 
 from app.searchfunctions import (get_all_assignment_status,
                                  get_employee_records,
@@ -90,7 +89,7 @@ class InterfaceActionTable:
 
       select_options = ["gsuite", "xma", "granby", "loneWorker", "serviceNow"]
       dropdown_options = retreive_iat_statuses({}, select_options)
-      true_or_false_options= device_sent_dropdown('')
+      true_or_false_options = device_sent_dropdown('')
       return {
           'page_title': f'Interface Action Table view for: {user_role}',
           'table_headers': table_headers,
@@ -137,8 +136,14 @@ class IatSecondaryPage:
         from_index = 'false'
 
       select_options = [
-          "gsuite", "xma", "granby", "loneWorker", "serviceNow", "ons_id",
-          "employee_id","setup",
+          "gsuite",
+          "xma",
+          "granby",
+          "loneWorker",
+          "serviceNow",
+          "ons_id",
+          "employee_id",
+          "setup",
       ]
       search_criteria, previous_criteria = load_search_criteria(
           data, select_options)
@@ -190,7 +195,7 @@ class IatSecondaryPage:
       search_range, records_per_page = page_bounds(page_number)
       search_criteria.update(search_range)
 
-      #TODO remove 
+      #TODO remove
       logger.error("SEARCH CRITERIA IS : " + str(search_criteria))
 
       get_employee_info = get_employee_records(search_criteria, iat=True)
@@ -222,7 +227,8 @@ class IatSecondaryPage:
                                                previous_jobrole_selected)
 
       dropdown_options = retreive_iat_statuses(data, select_options)
-      true_or_false_options= device_sent_dropdown(previous_criteria.get("setup"))
+      true_or_false_options = device_sent_dropdown(
+          previous_criteria.get("setup"))
 
       return {
           'called_from_index': from_index,
@@ -284,8 +290,14 @@ class IatSecondaryPage:
         search_criteria['assignmentStatus'] = previous_assignment_selected
 
       select_options = [
-          "gsuite", "xma", "granby", "loneWorker", "serviceNow", "ons_id",
-          "employee_id", "setup",
+          "gsuite",
+          "xma",
+          "granby",
+          "loneWorker",
+          "serviceNow",
+          "ons_id",
+          "employee_id",
+          "setup",
       ]
       search_criteria, previous_criteria = load_search_criteria(
           session, select_options)
@@ -317,7 +329,7 @@ class IatSecondaryPage:
       search_range, records_per_page = page_bounds(page_number)
       search_criteria.update(search_range)
 
-      #TODO remove 
+      #TODO remove
       logger.error("SEARCH CRITERIA IS : " + str(search_criteria))
 
       get_employee_info = get_employee_records(search_criteria, iat=True)
@@ -342,7 +354,8 @@ class IatSecondaryPage:
                                          previous_jobrole_selected)
 
       dropdown_options = retreive_iat_statuses(session, select_options)
-      true_or_false_options= device_sent_dropdown(previous_criteria.get("setup"))
+      true_or_false_options = device_sent_dropdown(
+          previous_criteria.get("setup"))
 
       return {
           'called_from_index': from_index,

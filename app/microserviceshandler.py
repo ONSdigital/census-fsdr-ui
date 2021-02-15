@@ -26,8 +26,7 @@ from app.searchcriteria import (
 )
 
 from app.searchfunctions import (
-    get_microservice_records,
-)
+    get_microservice_records, )
 
 from . import (NEED_TO_SIGN_IN_MSG, NO_EMPLOYEE_DATA, SERVICE_DOWN_MSG)
 from . import saml
@@ -66,9 +65,9 @@ class MicroservicesTable:
     if 'clear' in microservice_name:
       microservice_name = microservice_name.replace('clear', '')
       await clear_stored_search_criteria(session, microservice_name)
-   
+
     if microservices_permissions(user_role, microservice_name) == False:
-      request['client_ip'] = request.get('client_ip',"No IP Provided")  
+      request['client_ip'] = request.get('client_ip', "No IP Provided")
       return await forbidden(request)
 
     microservice_title = microservice_name.replace("table", " Table").title()
@@ -149,7 +148,7 @@ class MicroservicesTable:
       await clear_stored_search_criteria(session, microservice_name)
 
     if microservices_permissions(user_role, microservice_name) == False:
-      request['client_ip'] = request.get('client_ip',"No IP Provided")  
+      request['client_ip'] = request.get('client_ip', "No IP Provided")
       return await forbidden(request)
 
     microservice_title = microservice_name.replace("table", " Table").title()
