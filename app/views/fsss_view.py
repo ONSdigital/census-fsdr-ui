@@ -10,11 +10,11 @@ JOB_ROLE_DATE_FIELDS = {
 }
 
 EMP_JOB_ROLE_FIELDS = {
-      'Postcode': 'postcode',
-      'County': 'county',
-      'Country': 'country',
-      'Mobility': 'mobility',
-      'Weekly Hours': 'weeklyHours',
+    'Postcode': 'postcode',
+    'County': 'county',
+    'Country': 'country',
+    'Mobility': 'mobility',
+    'Weekly Hours': 'weeklyHours',
 }
 
 EMP_CONTACT_FIELDS = {
@@ -90,8 +90,8 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
   tab_job_role = tab_generation('Job Role for Field Worker', data_job_role)
 
   data_contact = {
-      'Address': map_full_address_details(employee_info)
-      }
+      'Address': map_full_address_details(employee_info),
+  }
 
   for mapField, empField in EMP_CONTACT_FIELDS.items():
     data_contact[mapField] = get_emp_info(empField)
