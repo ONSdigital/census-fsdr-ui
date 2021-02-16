@@ -98,7 +98,8 @@ def map_full_address_details(employee_info):
       'postcode',
       ]
 
-  complete_address = ", ".join(str(employee_info.get(part, '')) for part in address_parts)
+  emp_info_parts = {part:str(employee_info.get(part)) for part in address_parts}
+  complete_address = ", ".join(val for (part,val) in emp_info_parts.items() if val and val != '-')
 
   return complete_address 
 
