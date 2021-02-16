@@ -90,7 +90,6 @@ def map_employee_history_job_role_table_headers(
 
 
 def map_full_address_details(employee_info):
-  complete_address = ''
   address_parts = [
       'address1',
       'address2',
