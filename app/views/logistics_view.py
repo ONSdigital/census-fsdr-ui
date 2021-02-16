@@ -22,12 +22,10 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
 
   mob_number = device_numbers[0] if len(device_numbers) > 0 else ''
 
-  employee_info['address'] = map_full_address_details(employee_info)
-
   employment_glance = {
       'Unique Employee ID': get_emp_info('uniqueEmployeeId'),
       'Name': employee_name,
-      'Address': get_emp_info('address'),
+      'Address': map_full_address_details(employee_info),
       'Town/City': get_emp_info('town'),
       'Postcode': get_emp_info('postcode'),
       'Country': get_emp_info('country'),

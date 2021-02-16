@@ -21,8 +21,6 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
 
   mob_number = device_numbers[0] if len(device_numbers) > 0 else ''
 
-  employee_info['address'] = map_full_address_details(employee_info)
-
   employment_glance = {
       'Unique Employee ID': get_emp_info('uniqueEmployeeId'),
       'Name': employee_name,
@@ -46,14 +44,10 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
   }
 
   emp_status = {
-      'Assignment Status':
-      current_job_role['assignmentStatus'],
-      'Status':
-      current_job_role['crStatus'],
-      'Contract Start Date':
-      format_to_uk_dates(current_job_role['contractStartDate']),
-      'Contract End Date':
-      format_to_uk_dates(current_job_role['contractEndDate']),
+      'Assignment Status': current_job_role['assignmentStatus'],
+      'Status': current_job_role['crStatus'],
+      'Contract Start Date': format_to_uk_dates(current_job_role['contractStartDate']),
+      'Contract End Date': format_to_uk_dates(current_job_role['contractEndDate']),
   }
 
   emp_personal_details = {

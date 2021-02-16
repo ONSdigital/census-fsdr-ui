@@ -18,7 +18,6 @@ EMP_JOB_ROLE_FIELDS = {
 }
 
 EMP_CONTACT_FIELDS = {
-    'Address': 'address',
     'Personal Mobile Number': 'telephoneNumberContact1',
     'Home Phone Number': 'telephoneNumberContact2',
     'Personal Email Account': 'personalEmailAddress',
@@ -53,8 +52,6 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
   employee_name = map_employee_name(employee_info)
 
   preferred_name = get_emp_info('preferredName', on_false='None')
-
-  employee_info['address'] = map_full_address_details(employee_info)
 
   data_detail = {
       'Unique Employee ID': get_emp_info('uniqueEmployeeId'),
@@ -92,7 +89,10 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
     data_job_role[mapField] = get_emp_info(empField)
   tab_job_role = tab_generation('Job Role for Field Worker', data_job_role)
 
-  data_contact = {}
+  data_contact = {
+      'Address': map_full_address_details(employee_info)
+      }
+
   for mapField, empField in EMP_CONTACT_FIELDS.items():
     data_contact[mapField] = get_emp_info(empField)
   tab_contact = tab_generation('Personal Contact Details', data_contact)

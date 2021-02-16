@@ -97,8 +97,9 @@ def map_full_address_details(employee_info):
       'country',
       'postcode',
       ]
-  for address_part in address_parts:
-    complete_address = complete_address + str( employee_info.get(address_part,'') ) + ",  "
+
+  complete_address = ", ".join(str(employee_info.get(part, '')) for part in address_parts)
+
   return complete_address 
 
 def map_employee_name(history):
