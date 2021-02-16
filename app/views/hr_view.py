@@ -56,8 +56,6 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
 
   line_manager = format_line_manager(current_job_role)
 
-  employee_info['address'] = map_full_address_details(employee_info)
-
   glance_data = {
       'Unique Employee ID': get_emp_info('uniqueEmployeeId'),
       'Name': employee_name,
