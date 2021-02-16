@@ -1,6 +1,6 @@
 from app.employee_view_functions import process_device_details, format_line_manager, extract_device_phone, extract_device_chromebook
 from app.tabutils import tab_generation, table_generation, format_to_uk_dates
-from app.fieldmapping import map_employee_name
+from app.fieldmapping import map_employee_name, map_full_address_details
 
 JOB_ROLE_DATE_FIELDS = {
     'Contract Start Date': 'contractStartDate',
@@ -10,15 +10,14 @@ JOB_ROLE_DATE_FIELDS = {
 }
 
 EMP_JOB_ROLE_FIELDS = {
-      'Postcode': 'postcode',
-      'County': 'county',
-      'Country': 'country',
-      'Mobility': 'mobility',
-      'Weekly Hours': 'weeklyHours',
+    'Postcode': 'postcode',
+    'County': 'county',
+    'Country': 'country',
+    'Mobility': 'mobility',
+    'Weekly Hours': 'weeklyHours',
 }
 
 EMP_CONTACT_FIELDS = {
-    'Address': 'address',
     'Personal Mobile Number': 'telephoneNumberContact1',
     'Home Phone Number': 'telephoneNumberContact2',
     'Personal Email Account': 'personalEmailAddress',
@@ -90,7 +89,10 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
     data_job_role[mapField] = get_emp_info(empField)
   tab_job_role = tab_generation('Job Role for Field Worker', data_job_role)
 
-  data_contact = {}
+  data_contact = {
+      'Address': map_full_address_details(employee_info),
+  }
+
   for mapField, empField in EMP_CONTACT_FIELDS.items():
     data_contact[mapField] = get_emp_info(empField)
   tab_contact = tab_generation('Personal Contact Details', data_contact)

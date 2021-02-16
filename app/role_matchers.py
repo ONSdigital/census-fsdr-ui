@@ -54,8 +54,9 @@ logi_regex = re.compile('LT-LOG.-..-..')
 cfots_regex = re.compile('FT-FSD.-..-..')
 
 logi_combined_regex = re.compile(
-    '({}|{})'.format(*[n.pattern for n in (
-        logi_regex, cfots_regex)]))  # keep up to date with above
+    '({}|{})'.format(*[n.pattern
+                       for n in (logi_regex,
+                                 cfots_regex)]))  # keep up to date with above
 
 download_permission_regex = re.compile('DT-SUP.-..-..')
 
@@ -87,6 +88,7 @@ def invalid_role_id(role_id):
 
 def download_permission(role_id):
   return download_permission_regex.match(role_id)
+
 
 def get_role(role_id):
   if rmt_combined_regex.match(role_id):
