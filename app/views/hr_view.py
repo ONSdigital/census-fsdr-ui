@@ -1,6 +1,6 @@
 from app.employee_view_functions import process_device_details, format_line_manager, extract_device_phone, extract_device_chromebook
 from app.tabutils import tab_generation, format_to_uk_dates
-from app.fieldmapping import map_employee_name
+from app.fieldmapping import map_employee_name, map_full_address_details
 
 EMP_INFO_FIELDS = {
     'Unique Employee ID': 'uniqueEmployeeId',
@@ -55,6 +55,8 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
   preferred_name = get_emp_info('preferredName', on_false='None')
 
   line_manager = format_line_manager(current_job_role)
+
+  employee_info['address'] = map_full_address_details(employee_info)
 
   glance_data = {
       'Unique Employee ID': get_emp_info('uniqueEmployeeId'),

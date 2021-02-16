@@ -88,6 +88,18 @@ def map_employee_history_job_role_table_headers(
 
   return table_generation(mapping_entries)
 
+def map_full_address_details(employee_info):
+  complete_address = ''
+  address_parts  = [
+      'address1',
+      'address2',
+      'town',
+      'country',
+      'postcode',
+      ]
+  for address_part in address_parts:
+    complete_address = complete_address + str( employee_info.get(address_part,'') ) + ",  "
+  return complete_address 
 
 def map_employee_name(history):
   maybe_names = (history.get('firstName'), history.get('surname'))
