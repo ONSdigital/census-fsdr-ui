@@ -29,7 +29,8 @@ def setup(app, url_path_prefix):
   path = str(Path(__file__).resolve()) + "/app/"
   path = "/opt/ui/app/assets/"
 
-  app.router.add_static("/assets", path)
+  # TODO remove show_index, or set to False
+  app.router.add_static("/assets", path, show_index=True)
 
   combined_routes = [
       *extra_routes,
