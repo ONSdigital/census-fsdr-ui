@@ -164,8 +164,7 @@ class EmployeeInformation():
       if role_matchers.hr_combined_regex.match(role_id):
         page_title = f'Employee: {employee_name}'
       else:
-        page_title = f'Employee: {employee_name}  ' + (
-            ('(' + employee_badge + ')') if employee_badge else '')
+        page_title = f'Employee: {employee_name} {f"({employee_badge})" if employee_badge else ""}'
 
     extract_type = role_matchers.get_role(role_id).extract_type
 
