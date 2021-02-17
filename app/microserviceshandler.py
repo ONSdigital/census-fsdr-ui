@@ -7,7 +7,7 @@ from aiohttp.client_exceptions import (ClientResponseError)
 from aiohttp.web import HTTPFound, RouteTableDef
 from aiohttp_session import get_session
 from structlog import get_logger
-from app.pageutils import page_bounds, get_page
+from app.pageutils import page_bounds, get_page, result_message
 from app.error_handlers import client_response_error, forbidden
 from app.role_matchers import download_permission, microservices_permissions
 
@@ -107,6 +107,7 @@ class MicroservicesTable:
             'total_records', 0)
         max_page = math.ceil(microservice_sum / records_per_page)
       else:
+        microservice_sum = 0
         max_page = 1
 
     except ClientResponseError as ex:
@@ -120,16 +121,28 @@ class MicroservicesTable:
       )  # database name field ([gsuite_status,...
 
       return {
-          'called_from_index': False,
-          'Fields': field_classes,
-          'microservice_name': microservice_name,
-          'microservice_title': microservice_title,
-          'page_title': f'{microservice_title} view for: {user_role}',
-          'dst_download': download_permission(user_role),
-          'page_number': page_number,
-          'last_page_number': max_page,
-          'table_headers': table_headers,
-          'table_records': table_records,
+          'called_from_index':
+          False,
+          'Fields':
+          field_classes,
+          'microservice_name':
+          microservice_name,
+          'microservice_title':
+          microservice_title,
+          'result_message':
+          result_message(search_range, microservice_sum, microservice_title),
+          'page_title':
+          f'{microservice_title} view for: {user_role}',
+          'dst_download':
+          download_permission(user_role),
+          'page_number':
+          page_number,
+          'last_page_number':
+          max_page,
+          'table_headers':
+          table_headers,
+          'table_records':
+          table_records,
       }
     else:
       return warn_invalid_login(request)
@@ -186,16 +199,28 @@ class MicroservicesTable:
           field_classes, get_microservice_info_json
       )  # database name field ([gsuite_status,...
       return {
-          'called_from_index': False,
-          'Fields': field_classes,
-          'microservice_name': microservice_name,
-          'microservice_title': microservice_title,
-          'page_title': f'{microservice_title} view for: {user_role}',
-          'dst_download': download_permission(user_role),
-          'page_number': page_number,
-          'last_page_number': max_page,
-          'table_headers': table_headers,
-          'table_records': table_records,
+          'called_from_index':
+          False,
+          'Fields':
+          field_classes,
+          'microservice_name':
+          microservice_name,
+          'microservice_title':
+          microservice_title,
+          'result_message':
+          result_message(search_range, microservice_sum, microservice_title),
+          'page_title':
+          f'{microservice_title} view for: {user_role}',
+          'dst_download':
+          download_permission(user_role),
+          'page_number':
+          page_number,
+          'last_page_number':
+          max_page,
+          'table_headers':
+          table_headers,
+          'table_records':
+          table_records,
       }
     else:
       return warn_invalid_login(request)

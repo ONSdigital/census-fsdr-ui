@@ -7,7 +7,7 @@ from aiohttp.client_exceptions import (ClientResponseError)
 from aiohttp.web import HTTPFound, RouteTableDef
 from aiohttp_session import get_session
 from structlog import get_logger
-from app.pageutils import page_bounds, get_page
+from app.pageutils import page_bounds, get_page, result_message
 from app.error_handlers import client_response_error, warn_invalid_login
 from app.role_matchers import download_permission
 
@@ -22,10 +22,14 @@ from app.searchcriteria import (
     device_sent_dropdown,
 )
 
-from app.searchfunctions import (get_all_assignment_status, get_device_records,
-                                 device_records_table, device_table_headers,
-                                 get_distinct_job_role_short,
-                                 get_employee_count)
+from app.searchfunctions import (
+    get_all_assignment_status,
+    get_device_records,
+    device_records_table,
+    device_table_headers,
+    get_distinct_job_role_short,
+    get_employee_count,
+)
 
 from . import (NEED_TO_SIGN_IN_MSG, NO_EMPLOYEE_DATA, SERVICE_DOWN_MSG)
 from . import saml
@@ -75,6 +79,7 @@ class DeviceTable:
         device_sum = get_device_info_json[0].get('total_devices', 0)
         max_page = math.ceil(device_sum / records_per_page)
       else:
+        device_sum = 0
         max_page = 1
 
     except ClientResponseError as ex:
@@ -88,14 +93,24 @@ class DeviceTable:
       device_sent_dropdown_options = device_sent_dropdown('blank')
 
       return {
-          'page_title': f'Device Table view for: {user_role}',
-          'table_headers': table_headers,
-          'device_records': device_records,
-          'page_number': page_number,
-          'last_page_number': max_page,
-          'device_type_options': device_type_dropdown_options,
-          'device_sent_options': device_sent_dropdown_options,
-          'dst_download': download_permission(user_role),
+          'page_title':
+          f'Device Table view for: {user_role}',
+          'table_headers':
+          table_headers,
+          'device_records':
+          device_records,
+          'page_number':
+          page_number,
+          'last_page_number':
+          max_page,
+          'result_message':
+          result_message(search_range, device_sum, "Device Table"),
+          'device_type_options':
+          device_type_dropdown_options,
+          'device_sent_options':
+          device_sent_dropdown_options,
+          'dst_download':
+          download_permission(user_role),
       }
     else:
       logger.warn('Database is down', client_ip=request['client_ip'])
@@ -151,6 +166,7 @@ class DeviceSecondaryPage:
         device_sum = get_device_info_json[0].get('total_devices', 0)
         max_page = math.ceil(device_sum / records_per_page)
       else:
+        device_sum = 0
         max_page = 1
 
     except ClientResponseError as ex:
@@ -173,6 +189,8 @@ class DeviceSecondaryPage:
           previous_criteria.get('device_sent'))
 
       return {
+          'result_message':
+          result_message(search_range, device_sum, "Device Table"),
           'called_from_index':
           from_index,
           'device_sent_options':
@@ -236,6 +254,7 @@ class DeviceSecondaryPage:
         device_sum = get_device_info_json[0].get('total_devices', 0)
         max_page = math.ceil(device_sum / records_per_page)
       else:
+        device_sum = 0
         max_page = 1
 
     except ClientResponseError as ex:
@@ -252,6 +271,8 @@ class DeviceSecondaryPage:
           previous_criteria.get('device_sent'))
 
       return {
+          'result_message':
+          result_message(search_range, device_sum, "Device Table"),
           'called_from_index':
           from_index,
           'page_title':

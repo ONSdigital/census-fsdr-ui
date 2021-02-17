@@ -9,7 +9,7 @@ from aiohttp.web import HTTPFound, RouteTableDef
 from aiohttp_session import get_session
 
 from app.searchcriteria import retrieve_job_roles, clear_stored_search_criteria
-from app.pageutils import page_bounds, get_page
+from app.pageutils import page_bounds, get_page, result_message
 from app.error_handlers import client_response_error, warn_invalid_login
 from app.role_matchers import download_permission
 
@@ -68,6 +68,7 @@ class MainPage:
         employee_sum = get_employee_info_json[0].get('total_employees', 0)
         max_page = math.ceil(employee_sum / records_per_page)
       else:
+        employee_sum = 0
         max_page = 1
 
       get_job_roles = get_distinct_job_role_short()
@@ -83,13 +84,22 @@ class MainPage:
       job_role_json = retrieve_job_roles(get_job_roles, '')
 
       return {
-          'page_title': f'Field Force view for: {user_role}',
-          'table_headers': table_headers,
-          'employee_records': employee_records,
-          'page_number': page_number,
-          'last_page_number': int(math.floor(max_page)),
-          'distinct_job_roles': job_role_json,
-          'dst_download': download_permission(user_role),
+          'result_message':
+          result_message(search_range, employee_sum, "Employee Table"),
+          'page_title':
+          f'Field Force view for: {user_role}',
+          'table_headers':
+          table_headers,
+          'employee_records':
+          employee_records,
+          'page_number':
+          page_number,
+          'last_page_number':
+          int(math.floor(max_page)),
+          'distinct_job_roles':
+          job_role_json,
+          'dst_download':
+          download_permission(user_role),
       }
     else:
       logger.warn('Database is down', client_ip=request['client_ip'])
