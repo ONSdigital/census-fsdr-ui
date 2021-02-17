@@ -101,7 +101,6 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
       'Mobile Asset ID': (phone and phone['Device ID']) or None,
       # Device phone number
       'Unique Employee ID': get_emp_info('uniqueEmployeeId'),
-      # Device Type
       'Chromebook Asset ID': (chr_book and chr_book['Device ID']) or None,
       'Device Type': get_device_types(devices),
   }
