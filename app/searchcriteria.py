@@ -86,7 +86,7 @@ def device_sent_dropdown(dropdown_value):
       {
           'value': 'blank',
           'text': 'Select a value',
-          "disabled": True
+          'disabled': True
       },
       {
           'value': 'True',

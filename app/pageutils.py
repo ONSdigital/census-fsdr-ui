@@ -31,6 +31,6 @@ def result_message(search_range, total, title):
 
   range_high = search_range.get('rangeHigh', 0)
   range_low = search_range.get('rangeLow', 0)
-  max_i = min(total, range_high)
-  min_i = min(total, range_low)
-  return f'{title} Showing {min_i} to {max_i} of total {total} results'
+  upper = min(total, range_high)
+  lower = min(total, range_low)
+  return f'{title} Showing {lower} to {upper} of total {total} results'
