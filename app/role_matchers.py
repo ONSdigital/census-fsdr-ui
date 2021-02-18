@@ -75,7 +75,7 @@ def microservices_permissions(role_id, microservice_name):
   ]
 
   accessable_to_all = [
-      "device",
+      "devicetable",
   ]
 
   if download_permission_regex.match(role_id):
