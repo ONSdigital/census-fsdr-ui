@@ -74,7 +74,14 @@ def microservices_permissions(role_id, microservice_name):
       "chromebook",
   ]
 
+  accessable_to_all = [
+      "devicetable",
+  ]
+
   if download_permission_regex.match(role_id):
+    return True
+
+  if microservice_name in accessable_to_all:
     return True
 
   return False

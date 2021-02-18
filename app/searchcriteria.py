@@ -79,6 +79,32 @@ async def clear_stored_search_criteria(session, microservice_name=''):
       del session[key_to_clear]
 
 
+def device_sent_dropdown(dropdown_value):
+  if dropdown_value == '':
+    dropdown_value = "blank"
+  dropdown_options = [
+      {
+          'value': 'blank',
+          'text': 'Select a value',
+          'disabled': True
+      },
+      {
+          'value': 'True',
+          'text': 'True'
+      },
+      {
+          'value': 'False',
+          'text': 'False'
+      },
+  ]
+
+  for each_dict in dropdown_options:
+    if each_dict['value'] == dropdown_value:
+      each_dict['selected'] = True
+
+  return dropdown_options
+
+
 def load_search_criteria(data, fields_to_load):
   # "data"can be session if it's called from page 2
   search_criteria = {}
@@ -157,58 +183,6 @@ def set_status(dropdown_value):
       {
           'value': 'COMPLETE',
           'text': 'COMPLETE'
-      },
-  ]
-
-  for each_dict in dropdown_options:
-    if each_dict['value'] == dropdown_value:
-      each_dict['selected'] = True
-
-  return dropdown_options
-
-
-def device_type_dropdown(dropdown_value):
-  if dropdown_value == '':
-    dropdown_value = "blank"
-  dropdown_options = [
-      {
-          'value': 'blank',
-          'text': 'Select a value',
-          "disabled": True
-      },
-      {
-          'value': 'CHROMEBOOK',
-          'text': 'CHROMEBOOK'
-      },
-      {
-          'value': 'PHONE',
-          'text': 'PHONE'
-      },
-  ]
-
-  for each_dict in dropdown_options:
-    if each_dict['value'] == dropdown_value:
-      each_dict['selected'] = True
-
-  return dropdown_options
-
-
-def device_sent_dropdown(dropdown_value):
-  if dropdown_value == '':
-    dropdown_value = "blank"
-  dropdown_options = [
-      {
-          'value': 'blank',
-          'text': 'Select a value',
-          "disabled": True
-      },
-      {
-          'value': 'True',
-          'text': 'True'
-      },
-      {
-          'value': 'False',
-          'text': 'False'
       },
   ]
 

@@ -181,6 +181,7 @@ class MicroservicesTable:
             'total_records', 0)
         max_page = math.ceil(microservice_sum / records_per_page)
       else:
+        microservice_sum = 0
         max_page = 1
 
     except ClientResponseError as ex:

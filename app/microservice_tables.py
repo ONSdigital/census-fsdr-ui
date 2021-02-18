@@ -74,6 +74,11 @@ def get_fields(service_name):
       "SUSPENDED",
   ]
 
+  boolean_dropdown_options = [
+      'True',
+      'False',
+  ]
+
   if service_name == "gsuitetable":
     return ([
         Field("unique_employee_id", accordion=True),
@@ -130,6 +135,27 @@ def get_fields(service_name):
         Field("device_serial_number"),
         Field("ons_id"),
     ])
+  elif service_name == "devicetable":
+    return ([
+        Field("device_id"),
+        Field(
+            "field_device_phone_number",
+            column_name="Phone Number",
+        ),
+        Field("device_type",
+              search_type="dropdown",
+              dropdown_options=[
+                  "PHONE",
+                  "CHROMEBOOK",
+              ]),
+        Field(
+            "device_sent",
+            search_type="dropdown",
+            dropdown_options=boolean_dropdown_options,
+        ),
+        Field("ons_email_address", column_name="ONS ID"),
+    ])
+
   return ([])
 
 
