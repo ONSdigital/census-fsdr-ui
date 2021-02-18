@@ -47,7 +47,7 @@
 				'submitType': "loader",
 				'url': '/microservices/' + microservice_name + 'clear'
 			    }) }}
-
+		    <br>
                     {% if no_records == 'true' %}
                         <br>
                         {% call onsPanel({
@@ -62,7 +62,7 @@
                         {{  onsTable({
                             "sortable": true,
                             "table_class": " table--sortable",
-                            "caption": microservice_title,
+                            "caption": result_message,
                             "sort_by": "Sort by",
                             "aria_asc": "ascending",
                             "aria_desc": "descending",

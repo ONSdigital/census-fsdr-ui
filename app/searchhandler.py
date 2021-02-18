@@ -6,7 +6,7 @@ import aiohttp_jinja2
 from aiohttp.client_exceptions import (ClientResponseError)
 from aiohttp.web import HTTPFound, RouteTableDef
 from aiohttp_session import get_session
-from app.pageutils import page_bounds, get_page
+from app.pageutils import page_bounds, get_page, result_message
 from structlog import get_logger
 from app.role_matchers import download_permission
 
@@ -191,6 +191,8 @@ class SecondaryPage:
                                                previous_jobrole_selected)
 
       return {
+          'result_message': result_message(search_range, emp_sum,
+                                           "Field Workers"),
           'called_from_index': from_index,
           'page_title': f'Field Force view for: {user_role}',
           'table_headers': table_headers,
@@ -295,6 +297,7 @@ class SecondaryPage:
         emp_sum = retrieve_employee_info.json()[0].get('total_employees', 0)
         max_page = math.ceil(emp_sum / records_per_page)
       else:
+        emp_sum = 0
         max_page = 1
 
       get_job_roles = get_distinct_job_role_short()
@@ -320,6 +323,8 @@ class SecondaryPage:
                                          previous_jobrole_selected)
 
       return {
+          'result_message': result_message(search_range, emp_sum,
+                                           "Field Workers"),
           'called_from_index': from_index,
           'page_title': f'Field Force view for: {user_role}',
           'table_headers': table_headers,

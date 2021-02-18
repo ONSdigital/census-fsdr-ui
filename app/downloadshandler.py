@@ -1,5 +1,7 @@
 import json
 import math
+import uuid
+import glob
 
 import aiohttp_jinja2
 
@@ -100,11 +102,21 @@ class DownloadsPage:
         rows = rows[:-3]
 
       if download_type == "iat":
-        with open("/opt/ui/app/assets/iat/output.csv", "w") as of:
+        path = "/opt/ui/app/assets/iat/"
+
+        # Delete all files in /opt/ui/app/assets/iat
+        files = glob.glob(path + '*')
+        for f in files:
+          os.remove(f)
+
+        # Create unique file name
+        file_name = f'{uuid.uuid4()}.csv'
+
+        with open(path + file_name, "w+") as of:
           of.write(str(headers))
           of.write(str(rows))
 
-        download_location = "/assets/iat/output.csv"
+        download_location = "/assets/iat/" + file_name
       else:
         logger.warn(f"Unknown download type: {download_type}")
 

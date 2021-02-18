@@ -7,23 +7,29 @@ from aiohttp.client_exceptions import (ClientResponseError)
 from aiohttp.web import HTTPFound, RouteTableDef
 from aiohttp_session import get_session
 from structlog import get_logger
-from app.pageutils import page_bounds, get_page
+from app.pageutils import page_bounds, get_page, result_message
 from app.role_matchers import download_permission
 from app.error_handlers import client_response_error, warn_invalid_login
 from app.role_matchers import download_permission
 
-from app.searchcriteria import (store_search_criteria, load_search_criteria,
-                                retrieve_job_roles,
-                                retrieve_assignment_statuses,
-                                clear_stored_search_criteria,
-                                device_sent_dropdown, retreive_iat_statuses)
+from app.searchcriteria import (
+    store_search_criteria,
+    load_search_criteria,
+    retrieve_job_roles,
+    retrieve_assignment_statuses,
+    clear_stored_search_criteria,
+    device_sent_dropdown,
+    retreive_iat_statuses,
+)
 
-from app.searchfunctions import (get_all_assignment_status,
-                                 get_employee_records,
-                                 iat_employee_record_table,
-                                 iat_employee_table_headers,
-                                 get_distinct_job_role_short,
-                                 get_employee_count)
+from app.searchfunctions import (
+    get_all_assignment_status,
+    get_employee_records,
+    iat_employee_record_table,
+    iat_employee_table_headers,
+    get_distinct_job_role_short,
+    get_employee_count,
+)
 
 from . import (NEED_TO_SIGN_IN_MSG, NO_EMPLOYEE_DATA, SERVICE_DOWN_MSG)
 from . import saml
@@ -73,6 +79,7 @@ class InterfaceActionTable:
         employee_sum = get_employee_info_json[0].get('total_employees', 0)
         max_page = math.ceil(employee_sum / records_per_page)
       else:
+        employee_sum = 0
         max_page = 1
 
       get_job_roles = get_distinct_job_role_short()
@@ -90,7 +97,12 @@ class InterfaceActionTable:
       select_options = ["gsuite", "xma", "granby", "loneWorker", "serviceNow"]
       dropdown_options = retreive_iat_statuses({}, select_options)
       true_or_false_options = device_sent_dropdown('')
+
+      result_message_str = result_message(search_range, employee_sum,
+                                          "IAT Table")
+
       return {
+          'result_message': result_message_str,
           'page_title': f'Interface Action Table view for: {user_role}',
           'table_headers': table_headers,
           'employee_records': employee_records,
@@ -195,9 +207,6 @@ class IatSecondaryPage:
       search_range, records_per_page = page_bounds(page_number)
       search_criteria.update(search_range)
 
-      #TODO remove
-      logger.error("SEARCH CRITERIA IS : " + str(search_criteria))
-
       get_employee_info = get_employee_records(search_criteria, iat=True)
       get_employee_info_json = get_employee_info.json()
 
@@ -205,6 +214,7 @@ class IatSecondaryPage:
         employee_sum = get_employee_info_json[0].get('total_employees', 0)
         max_page = math.ceil(employee_sum / records_per_page)
       else:
+        employee_sum = 0
         max_page = 1
 
       get_job_roles = get_distinct_job_role_short()
@@ -230,7 +240,10 @@ class IatSecondaryPage:
       true_or_false_options = device_sent_dropdown(
           previous_criteria.get("setup"))
 
+      result_message_str = result_message(search_range, employee_sum,
+                                          "IAT Table")
       return {
+          'result_message': result_message_str,
           'called_from_index': from_index,
           'page_title': f'Interface Action Table view for: {user_role}',
           'table_headers': table_headers,
@@ -329,9 +342,6 @@ class IatSecondaryPage:
       search_range, records_per_page = page_bounds(page_number)
       search_criteria.update(search_range)
 
-      #TODO remove
-      logger.error("SEARCH CRITERIA IS : " + str(search_criteria))
-
       get_employee_info = get_employee_records(search_criteria, iat=True)
       get_employee_info_json = get_employee_info.json()
 
@@ -339,6 +349,7 @@ class IatSecondaryPage:
         employee_sum = get_employee_info_json[0].get('total_employees', 0)
         max_page = math.ceil(employee_sum / records_per_page)
       else:
+        employee_sum = 0
         max_page = 1
 
       get_job_roles = get_distinct_job_role_short()
@@ -357,7 +368,10 @@ class IatSecondaryPage:
       true_or_false_options = device_sent_dropdown(
           previous_criteria.get("setup"))
 
+      result_message_str = result_message(search_range, employee_sum,
+                                          "IAT Table")
       return {
+          'result_message': result_message_str,
           'called_from_index': from_index,
           'page_title': f'Interface Action Table view for: {user_role}',
           'table_headers': table_headers,

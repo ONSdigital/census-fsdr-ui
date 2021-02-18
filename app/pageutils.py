@@ -24,3 +24,13 @@ def get_page(request):
     page_number = 1
 
   return (page_number)
+
+
+def result_message(search_range, total, title):
+  """Construct a result message for a microservice called `title`."""
+
+  range_high = search_range.get('rangeHigh', 0)
+  range_low = search_range.get('rangeLow', 0)
+  max_i = max(total, range_high)
+  min_i = min(total, range_low)
+  return f'{title} Showing {min_i} to {max_i} of total {total} results'
