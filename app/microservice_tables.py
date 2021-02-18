@@ -75,8 +75,8 @@ def get_fields(service_name):
   ]
 
   boolean_dropdown_options = [
-    'True',
-    'False',
+      'True',
+      'False',
   ]
 
   if service_name == "gsuitetable":
