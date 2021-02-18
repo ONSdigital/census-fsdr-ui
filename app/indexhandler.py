@@ -83,23 +83,17 @@ class MainPage:
 
       job_role_json = retrieve_job_roles(get_job_roles, '')
 
+      result_message_str = result_message(search_range, employee_sum,
+                                          "Employee Table")
       return {
-          'result_message':
-          result_message(search_range, employee_sum, "Employee Table"),
-          'page_title':
-          f'Field Force view for: {user_role}',
-          'table_headers':
-          table_headers,
-          'employee_records':
-          employee_records,
-          'page_number':
-          page_number,
-          'last_page_number':
-          int(math.floor(max_page)),
-          'distinct_job_roles':
-          job_role_json,
-          'dst_download':
-          download_permission(user_role),
+          'result_message': result_message_str,
+          'page_title': f'Field Force view for: {user_role}',
+          'table_headers': table_headers,
+          'employee_records': employee_records,
+          'page_number': page_number,
+          'last_page_number': int(math.floor(max_page)),
+          'distinct_job_roles': job_role_json,
+          'dst_download': download_permission(user_role),
       }
     else:
       logger.warn('Database is down', client_ip=request['client_ip'])

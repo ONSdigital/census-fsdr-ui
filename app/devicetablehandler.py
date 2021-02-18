@@ -92,25 +92,18 @@ class DeviceTable:
       device_type_dropdown_options = device_type_dropdown('blank')
       device_sent_dropdown_options = device_sent_dropdown('blank')
 
+      result_message_str = result_message(search_range, device_sum,
+                                          "Device Table")
       return {
-          'page_title':
-          f'Device Table view for: {user_role}',
-          'table_headers':
-          table_headers,
-          'device_records':
-          device_records,
-          'page_number':
-          page_number,
-          'last_page_number':
-          max_page,
-          'result_message':
-          result_message(search_range, device_sum, "Device Table"),
-          'device_type_options':
-          device_type_dropdown_options,
-          'device_sent_options':
-          device_sent_dropdown_options,
-          'dst_download':
-          download_permission(user_role),
+          'page_title': f'Device Table view for: {user_role}',
+          'table_headers': table_headers,
+          'device_records': device_records,
+          'page_number': page_number,
+          'last_page_number': max_page,
+          'result_message': result_message_str,
+          'device_type_options': device_type_dropdown_options,
+          'device_sent_options': device_sent_dropdown_options,
+          'dst_download': download_permission(user_role),
       }
     else:
       logger.warn('Database is down', client_ip=request['client_ip'])
@@ -188,9 +181,11 @@ class DeviceSecondaryPage:
       device_sent_dropdown_options = device_sent_dropdown(
           previous_criteria.get('device_sent'))
 
+      result_message_str = result_message(search_range, device_sum,
+                                          "Device Table")
       return {
           'result_message':
-          result_message(search_range, device_sum, "Device Table"),
+          result_message_str,
           'called_from_index':
           from_index,
           'device_sent_options':
@@ -270,9 +265,11 @@ class DeviceSecondaryPage:
       device_sent_dropdown_options = device_sent_dropdown(
           previous_criteria.get('device_sent'))
 
+      result_message_str = result_message(search_range, device_sum,
+                                          "Device Table")
       return {
           'result_message':
-          result_message(search_range, device_sum, "Device Table"),
+          result_message_str,
           'called_from_index':
           from_index,
           'page_title':

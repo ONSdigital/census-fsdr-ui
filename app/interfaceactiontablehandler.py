@@ -97,9 +97,12 @@ class InterfaceActionTable:
       select_options = ["gsuite", "xma", "granby", "loneWorker", "serviceNow"]
       dropdown_options = retreive_iat_statuses({}, select_options)
       true_or_false_options = device_sent_dropdown('')
+
+      result_message_str = result_message(search_range, employee_sum,
+                                          "IAT Table")
+
       return {
-          'result_message': result_message(search_range, employee_sum,
-                                           "IAT Table"),
+          'result_message': result_message_str,
           'page_title': f'Interface Action Table view for: {user_role}',
           'table_headers': table_headers,
           'employee_records': employee_records,
@@ -237,9 +240,10 @@ class IatSecondaryPage:
       true_or_false_options = device_sent_dropdown(
           previous_criteria.get("setup"))
 
+      result_message_str = result_message(search_range, employee_sum,
+                                          "IAT Table")
       return {
-          'result_message': result_message(search_range, employee_sum,
-                                           "IAT Table"),
+          'result_message': result_message_str,
           'called_from_index': from_index,
           'page_title': f'Interface Action Table view for: {user_role}',
           'table_headers': table_headers,
@@ -364,9 +368,10 @@ class IatSecondaryPage:
       true_or_false_options = device_sent_dropdown(
           previous_criteria.get("setup"))
 
+      result_message_str = result_message(search_range, employee_sum,
+                                          "IAT Table")
       return {
-          'result_message': result_message(search_range, employee_sum,
-                                           "IAT Table"),
+          'result_message': result_message_str,
           'called_from_index': from_index,
           'page_title': f'Interface Action Table view for: {user_role}',
           'table_headers': table_headers,

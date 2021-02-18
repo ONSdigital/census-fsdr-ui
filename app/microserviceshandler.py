@@ -120,29 +120,21 @@ class MicroservicesTable:
           field_classes, get_microservice_info_json
       )  # database name field ([gsuite_status,...
 
+      result_message_str = result_message(search_range, microservice_sum,
+                                          microservice_title)
+
       return {
-          'called_from_index':
-          False,
-          'Fields':
-          field_classes,
-          'microservice_name':
-          microservice_name,
-          'microservice_title':
-          microservice_title,
-          'result_message':
-          result_message(search_range, microservice_sum, microservice_title),
-          'page_title':
-          f'{microservice_title} view for: {user_role}',
-          'dst_download':
-          download_permission(user_role),
-          'page_number':
-          page_number,
-          'last_page_number':
-          max_page,
-          'table_headers':
-          table_headers,
-          'table_records':
-          table_records,
+          'called_from_index': False,
+          'Fields': field_classes,
+          'microservice_name': microservice_name,
+          'microservice_title': microservice_title,
+          'result_message': result_message_str,
+          'page_title': f'{microservice_title} view for: {user_role}',
+          'dst_download': download_permission(user_role),
+          'page_number': page_number,
+          'last_page_number': max_page,
+          'table_headers': table_headers,
+          'table_records': table_records,
       }
     else:
       return warn_invalid_login(request)
@@ -198,29 +190,20 @@ class MicroservicesTable:
       table_records = get_table_records(
           field_classes, get_microservice_info_json
       )  # database name field ([gsuite_status,...
+      result_message_str = result_message(search_range, microservice_sum,
+                                          microservice_title)
       return {
-          'called_from_index':
-          False,
-          'Fields':
-          field_classes,
-          'microservice_name':
-          microservice_name,
-          'microservice_title':
-          microservice_title,
-          'result_message':
-          result_message(search_range, microservice_sum, microservice_title),
-          'page_title':
-          f'{microservice_title} view for: {user_role}',
-          'dst_download':
-          download_permission(user_role),
-          'page_number':
-          page_number,
-          'last_page_number':
-          max_page,
-          'table_headers':
-          table_headers,
-          'table_records':
-          table_records,
+          'called_from_index': False,
+          'Fields': field_classes,
+          'microservice_name': microservice_name,
+          'microservice_title': microservice_title,
+          'result_message': result_message_str,
+          'page_title': f'{microservice_title} view for: {user_role}',
+          'dst_download': download_permission(user_role),
+          'page_number': page_number,
+          'last_page_number': max_page,
+          'table_headers': table_headers,
+          'table_records': table_records,
       }
     else:
       return warn_invalid_login(request)

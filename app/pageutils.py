@@ -26,5 +26,7 @@ def get_page(request):
   return (page_number)
 
 
-def result_message(search_range, total_returned_records, microservice_title):
-  return f'{microservice_title} \nShowing {search_range.get("rangeLow",0)} to { total_returned_records if search_range.get("rangeHigh",0) > total_returned_records else search_range.get("rangeHigh",0) } of total {total_returned_records}'
+def result_message(search_range, total, microservice_title):
+  high_range = total if search_range.get(
+      "rangeHigh", 0) > total else search_range.get("rangeHigh", 0)
+  return f'{microservice_title} Showing {search_range.get("rangeLow",0)} to { high_range } of total {total} results'
