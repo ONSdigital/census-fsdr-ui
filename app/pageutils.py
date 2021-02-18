@@ -26,7 +26,11 @@ def get_page(request):
   return (page_number)
 
 
-def result_message(search_range, total, microservice_title):
-  high_range = total if search_range.get(
-      "rangeHigh", 0) > total else search_range.get("rangeHigh", 0)
-  return f'{microservice_title} Showing {search_range.get("rangeLow",0)} to { high_range } of total {total} results'
+def result_message(search_range, total, title):
+  """Construct a result message for a microservice called `title`"""
+
+  range_high = search_range.get('rangeHigh', 0)
+  range_low = search_range.get('rangeLow', 0)
+  max_i = max(total, range_high)
+  min_i = min(total, range_low)
+  return f'{title} Showing {min_i} to {max_i} of total {total} results'
