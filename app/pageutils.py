@@ -27,7 +27,7 @@ def get_page(request):
 
 
 def result_message(search_range, total, title):
-  """Construct a result message for a microservice called `title`"""
+  """Construct a result message for a microservice called `title`."""
 
   range_high = search_range.get('rangeHigh', 0)
   range_low = search_range.get('rangeLow', 0)
