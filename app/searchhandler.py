@@ -166,6 +166,7 @@ class SecondaryPage:
         emp_sum = retrieve_employee_info.json()[0].get('total_employees', 0)
         max_page = math.ceil(emp_sum / records_per_page)
       else:
+        emp_sum = 0
         max_page = 1
 
       if data.get('user_missing_device'):
