@@ -47,6 +47,14 @@
 				'submitType': "loader",
 				'url': '/microservices/' + microservice_name + 'clear'
 			    }) }}
+			{% if download_button_enabled %}
+				{{ onsButton({
+					'text': 'Download CSV',
+					'classes': 'btn--small',
+					'submitType': "loader",
+					'url': './downloads/iat'
+				}) }}
+			{% endif %}
 		    <br>
                     {% if no_records == 'true' %}
                         <br>

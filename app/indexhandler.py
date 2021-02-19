@@ -61,7 +61,7 @@ class MainPage:
     try:
       search_range, records_per_page = page_bounds(page_number)
 
-      get_employee_info = get_employee_records(search_range, iat=True)
+      get_employee_info = get_employee_records(search_range)
       get_employee_info_json = get_employee_info.json()
 
       if len(get_employee_info_json) > 0:

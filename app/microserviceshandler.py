@@ -123,8 +123,14 @@ class MicroservicesTable:
       result_message_str = result_message(search_range, microservice_sum,
                                           microservice_title)
 
+      download_perm = download_permission(
+          user_role,
+          microservice_name,
+      )
+
       return {
           'called_from_index': False,
+          'download_button_enabled': download_perm,
           'Fields': field_classes,
           'microservice_name': microservice_name,
           'microservice_title': microservice_title,
@@ -193,9 +199,16 @@ class MicroservicesTable:
       )  # database name field ([gsuite_status,...
       result_message_str = result_message(search_range, microservice_sum,
                                           microservice_title)
+
+      download_perm = download_permission(
+          user_role,
+          microservice_name,
+      )
+
       return {
           'called_from_index': False,
           'Fields': field_classes,
+          'download_button_enabled': download_perm,
           'microservice_name': microservice_name,
           'microservice_title': microservice_title,
           'result_message': result_message_str,
