@@ -168,6 +168,8 @@ def get_fields(service_name):
         Field("ons_email_address", column_name="ONS ID"),
     ])
   elif service_name == "iattable":
+    job_role_dropdown_options = get_distinct_job_role_short().json()
+    job_role_dropdown_options.remove(None)
     return ([
         Field("unique_role_id",
               column_name="Role ID",
@@ -175,7 +177,7 @@ def get_fields(service_name):
         Field("job_role_short",
               column_name="Job Role",
               search_type="dropdown",
-              dropdown_options=get_distinct_job_role_short().json(),
+              dropdown_options=job_role_dropdown_options,
               show_as_table_header=False),
         Field(
             "ons_email_address",
