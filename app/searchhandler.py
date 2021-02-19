@@ -8,7 +8,7 @@ from aiohttp.web import HTTPFound, RouteTableDef
 from aiohttp_session import get_session
 from app.pageutils import page_bounds, get_page, result_message
 from structlog import get_logger
-from app.role_matchers import download_permission
+from app.role_matchers import has_download_permission
 
 from app.searchcriteria import (store_search_criteria, retrieve_job_roles,
                                 retrieve_assignment_statuses,
@@ -64,7 +64,7 @@ class Search:
           'page_title': f'Field Force view for: {user_role}',
           'distinct_job_roles': job_role_json,
           'all_assignment_statuses': assignment_statuses_json,
-          'dst_download': download_permission(user_role),
+          'dst_download': has_download_permission(user_role),
       }
     else:
       raise Exception(str(get_job_roles.status_code) + " " +  str(get_job_roles)  + "  " + \
@@ -166,6 +166,7 @@ class SecondaryPage:
         emp_sum = retrieve_employee_info.json()[0].get('total_employees', 0)
         max_page = math.ceil(emp_sum / records_per_page)
       else:
+        emp_sum = 0
         max_page = 1
 
       if data.get('user_missing_device'):
@@ -210,7 +211,7 @@ class SecondaryPage:
           'previous_surname_filter': previous_surname,
           'no_employee_data': no_employee_data,
           'user_missing_device': previous_user_missing_device,
-          'dst_download': download_permission(user_role),
+          'dst_download': has_download_permission(user_role),
       }
     else:
       logger.warn('Attempted to login with invalid user name and/or password',
@@ -342,7 +343,7 @@ class SecondaryPage:
           'previous_surname_filter': previous_surname,
           'previous_user_missing_device': previous_user_missing_device,
           'user_missing_device': previous_user_missing_device,
-          'dst_download': download_permission(user_role),
+          'dst_download': has_download_permission(user_role),
       }
     else:
       logger.warn('Attempted to login with invalid user name and/or password',

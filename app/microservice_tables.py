@@ -1,5 +1,8 @@
+import json
+
 from structlog import get_logger
 from app.tabutils import acc_generation
+from app.searchfunctions import get_distinct_job_role_short
 
 logger = get_logger('fsdr-ui')
 
@@ -11,7 +14,10 @@ class Field:
                search_options=None,
                column_name=None,
                accordion=False,
-               dropdown_options=None):
+               dropdown_options=None,
+               search_box_visible=True,
+               format_as_boolean=False,
+               show_as_table_header=True):
 
     self.database_name = database_name
     self.column_name = self.create_column_name(column_name)
@@ -19,6 +25,9 @@ class Field:
     self.dropdown_options = self.format_dropdown_options(dropdown_options)
     self.accordion = accordion
     self.previous_value = ""
+    self.show_as_table_header = show_as_table_header
+    self.search_box_visible = search_box_visible
+    self.format_as_boolean = format_as_boolean
 
   def create_column_name(self, column_name):
     if column_name == None:
@@ -63,7 +72,7 @@ def load_cookie_into_fields(field_classes, previous_criteria):
 
 
 def get_fields(service_name):
-  # Set the default parameters for some services
+  # Set default Dropdown Values
   status_options = [
       "CREATE",
       "SETUP",
@@ -81,7 +90,10 @@ def get_fields(service_name):
 
   if service_name == "gsuitetable":
     return ([
-        Field("unique_employee_id", accordion=True),
+        Field(
+            "unique_employee_id",
+            accordion=True,
+        ),
         Field("gsuite_status",
               search_type="dropdown",
               dropdown_options=status_options),
@@ -155,6 +167,61 @@ def get_fields(service_name):
         ),
         Field("ons_email_address", column_name="ONS ID"),
     ])
+  elif service_name == "iattable":
+    job_role_dropdown_options = get_distinct_job_role_short().json()
+    job_role_dropdown_options.remove(None)
+    return ([
+        Field("unique_role_id",
+              column_name="Role ID",
+              search_box_visible=False),
+        Field("job_role_short",
+              column_name="Job Role",
+              search_type="dropdown",
+              dropdown_options=job_role_dropdown_options,
+              show_as_table_header=False),
+        Field(
+            "ons_email_address",
+            column_name="ONS ID",
+            accordion=True,
+        ),
+        Field(
+            "unique_employee_id",
+            column_name="Employee ID",
+            accordion=True,
+        ),
+        Field(
+            "gsuite_status",
+            search_type="dropdown",
+            dropdown_options=status_options,
+        ),
+        Field(
+            "xma_status",
+            search_type="dropdown",
+            dropdown_options=status_options,
+        ),
+        Field(
+            "granby_status",
+            search_type="dropdown",
+            dropdown_options=status_options,
+        ),
+        Field(
+            "lone_worker_solution_status",
+            search_type="dropdown",
+            dropdown_options=status_options,
+            column_name="Lone Worker Status",
+        ),
+        Field(
+            "service_now_status",
+            search_type="dropdown",
+            dropdown_options=status_options,
+        ),
+        Field(
+            "setup",
+            search_type="dropdown",
+            dropdown_options=boolean_dropdown_options,
+            format_as_boolean=True,
+        ),
+    ])
 
   return ([])
 
@@ -171,13 +238,17 @@ def get_table_records(field_classes, json_records):
   for each_record in json_records:
     record = {'tds': None}
     combined_field = []
-    for each_field in field_classes:
-      combined_field.append(
-          {
-              'value':
-              each_record[each_field.database_name] if not each_field.accordion
-              else acc_generation(str(each_record[each_field.database_name])),
-          }, )
+    for field in field_classes:
+      if field.show_as_table_header:
+        record_field_data = each_record[field.database_name]
+        if field.format_as_boolean:
+          record_field_data = "True" if record_field_data == "t" else "False"
+        combined_field.append(
+            {
+                'value':
+                record_field_data if not field.accordion else acc_generation(
+                    str(record_field_data)),
+            }, )
     record['tds'] = combined_field[:]
     formatted_records.append(record)
 
@@ -187,9 +258,10 @@ def get_table_records(field_classes, json_records):
 def get_table_headers(field_classes):
   headers = []
   for field in field_classes:
-    headers.append({
-        'value': str(field.column_name),
-        'aria_sort': 'none',
-    })
+    if field.show_as_table_header:
+      headers.append({
+          'value': str(field.column_name),
+          'aria_sort': 'none',
+      })
 
   return (headers)

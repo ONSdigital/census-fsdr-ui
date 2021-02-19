@@ -9,7 +9,7 @@ from aiohttp_session import get_session
 from structlog import get_logger
 from app.pageutils import page_bounds, get_page, result_message
 from app.error_handlers import client_response_error, forbidden
-from app.role_matchers import download_permission, microservices_permissions
+from app.role_matchers import has_download_permission, microservices_permissions
 
 from app.microservice_tables import (
     get_table_headers,
@@ -123,14 +123,20 @@ class MicroservicesTable:
       result_message_str = result_message(search_range, microservice_sum,
                                           microservice_title)
 
+      download_perm = has_download_permission(
+          user_role,
+          microservice_name,
+      )
+
       return {
           'called_from_index': False,
+          'download_button_enabled': download_perm,
           'Fields': field_classes,
           'microservice_name': microservice_name,
           'microservice_title': microservice_title,
           'result_message': result_message_str,
           'page_title': f'{microservice_title} view for: {user_role}',
-          'dst_download': download_permission(user_role),
+          'dst_download': has_download_permission(user_role),
           'page_number': page_number,
           'last_page_number': max_page,
           'table_headers': table_headers,
@@ -193,14 +199,21 @@ class MicroservicesTable:
       )  # database name field ([gsuite_status,...
       result_message_str = result_message(search_range, microservice_sum,
                                           microservice_title)
+
+      download_perm = has_download_permission(
+          user_role,
+          microservice_name,
+      )
+
       return {
           'called_from_index': False,
           'Fields': field_classes,
+          'download_button_enabled': download_perm,
           'microservice_name': microservice_name,
           'microservice_title': microservice_title,
           'result_message': result_message_str,
           'page_title': f'{microservice_title} view for: {user_role}',
-          'dst_download': download_permission(user_role),
+          'dst_download': has_download_permission(user_role),
           'page_number': page_number,
           'last_page_number': max_page,
           'table_headers': table_headers,

@@ -8,7 +8,6 @@ from .indexhandler import index_route
 from .handler import static_routes
 from .saml import saml_routes
 from .searchhandler import search_routes
-from .interfaceactiontablehandler import interface_action_handler_table_routes
 from .downloadshandler import downloads_routes
 from .microserviceshandler import microservices_handler_routes
 
@@ -37,7 +36,6 @@ def setup(app, url_path_prefix):
       *static_routes,
       *search_routes,
       *saml_routes,
-      *interface_action_handler_table_routes,
       *downloads_routes,
       *microservices_handler_routes,
   ]

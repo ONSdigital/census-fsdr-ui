@@ -62,8 +62,7 @@ download_permission_regex = re.compile('DT-SUP.-..-..')
 
 
 def microservices_permissions(role_id, microservice_name):
-  # Currently very similar to download_permission, but may be
-  # adjusted later when other tables are brought into microservies format
+  # Defines permissions for each table
   microservice_tables_dt_sup = [
       "gsuite",
       "xma",
@@ -76,6 +75,7 @@ def microservices_permissions(role_id, microservice_name):
 
   accessable_to_all = [
       "devicetable",
+      "iattable",
   ]
 
   if download_permission_regex.match(role_id):
@@ -93,8 +93,17 @@ def invalid_role_id(role_id):
   raise HTTPInternalServerError(reason=msg)
 
 
-def download_permission(role_id):
-  return download_permission_regex.match(role_id)
+def has_download_permission(role_id, microservice_name="index"):
+  authorised_downloads = [
+      "index",
+      "iattable",
+  ]
+
+  if download_permission_regex.match(role_id):
+    if microservice_name in authorised_downloads:
+      return True
+
+  return False
 
 
 def get_role(role_id):
