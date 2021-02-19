@@ -59,9 +59,7 @@ class DownloadsPage:
 
     user_role = await saml.get_role_id(request)
 
-    if has_download_permission(user_role):
-      pass
-    else:
+    if not has_download_permission(user_role):
       return aiohttp_jinja2.render_template('error404.html', request,
                                             {'include_nav': True})
 
