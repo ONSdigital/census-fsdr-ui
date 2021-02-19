@@ -93,7 +93,7 @@ def invalid_role_id(role_id):
   raise HTTPInternalServerError(reason=msg)
 
 
-def download_permission(role_id, microservice_name="index"):
+def has_download_permission(role_id, microservice_name="index"):
   authorised_downloads = [
       "index",
       "iattable",

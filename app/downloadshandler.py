@@ -10,7 +10,7 @@ from aiohttp.web import HTTPFound, RouteTableDef
 from aiohttp_session import get_session
 from structlog import get_logger
 from app.pageutils import page_bounds
-from app.role_matchers import download_permission
+from app.role_matchers import has_download_permission
 from app.error_handlers import client_response_error, warn_invalid_login
 
 from app.searchfunctions import (get_all_assignment_status,
@@ -59,7 +59,7 @@ class DownloadsPage:
 
     user_role = await saml.get_role_id(request)
 
-    if download_permission(user_role):
+    if has_download_permission(user_role):
       pass
     else:
       return aiohttp_jinja2.render_template('error404.html', request,

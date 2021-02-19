@@ -191,5 +191,5 @@ class EmployeeInformation():
           'employee_status': employee_status,
           'employee_record': employee_info,
           'employee_device': "No device",
-          'dst_download': role_matchers.download_permission(user_role),
+          'dst_download': role_matchers.has_download_permission(user_role),
       }
