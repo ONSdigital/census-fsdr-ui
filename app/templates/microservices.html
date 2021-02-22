@@ -10,13 +10,12 @@
 {% from "custom/tabs/_macro.njk" import onsTabs %}
 
 {% set page_title_value = page_title %}
-{% set search_url = "/device-search-results" %}
 
 {% set form =  {
     'method': 'POST',
     'id': 'searchform',
     'attributes': {
-        'action': '/microservices/' + microservice_name
+        'action': current_view.url
     }
 } %}
 
@@ -30,13 +29,13 @@
                     <h1>{{ page_title_value }}</h1>
                         {{ fsdrSearch({
                             'index_search': "microservice",
-			    'microservice_name':microservice_name,
-			    'microservice_title':microservice_title,
+			    'microservice_name': current_view.database_name,
+			    'microservice_title':current_view.display_name,
 			    'Fields': Fields,
                 
                         }) }}
                         {{ onsButton({
-                            'text': 'Filter ' + microservice_title,
+                            'text': 'Filter ' + current_view.display_name,
                             'classes': 'btn--small',
                             'submitType': "loader",
                             'name': 'action[submit]'
@@ -45,14 +44,14 @@
 				'text': 'Clear',
 				'classes': 'btn--small',
 				'submitType': "loader",
-				'url': '/microservices/' + microservice_name + 'clear'
+				'url': current_view.url_clear
 			    }) }}
-			{% if download_button_enabled %}
+			{% if current_view.download_available %}
 				{{ onsButton({
 					'text': 'Download CSV',
 					'classes': 'btn--small',
 					'submitType': "loader",
-					'url': '/downloads/' + microservice_name
+					'url': '/downloads/' + current_view.database_name
 				}) }}
 			{% endif %}
 		    <br>
@@ -88,7 +87,7 @@
                 "last_page_number": last_page_number,
                 "page_number": page_number,
 		"link_url": 'MicroservicesTable:get',
-		"microservice_name": microservice_name,
+		"microservice_name": current_view.display_name,
                 })
                 }}
 
