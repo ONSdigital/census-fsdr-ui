@@ -50,10 +50,10 @@ def get_device_records(user_filter=""):
                       auth=HTTPBasicAuth(FSDR_USER, FSDR_PASS))
 
 
-def get_employee_records(user_filter="", iat=False):
+def get_employee_records(user_filter=""):
   employee_record_url = URL(
       FSDR_URL +
-      f'/fieldforce/byType/byRangeAndUserFilter{"Iat/" if iat else "/"}'
+      f'/fieldforce/byType/byRangeAndUserFilter/'
   ).with_query(user_filter)
   return requests.get(employee_record_url,
                       verify=False,
@@ -113,56 +113,6 @@ def employee_record_table(employee_records_json):
   return add_employees
 
 
-#Below is the layout generator for the interface action table
-#  iat = Interface Action Table
-
-
-def iat_employee_table_headers():
-  add_headers = [
-      {
-          'value': 'Role ID',
-          'aria_sort': 'none'
-      },
-      {
-          'value': 'ONS ID',
-          'aria_sort': 'none'
-      },
-      {
-          'value': 'Employee ID',
-          'aria_sort': 'none'
-      },
-      {
-          'value': 'Start Date',
-          'aria_sort': 'none'
-      },
-      {
-          'value': 'Gsuite',
-          'aria_sort': 'none'
-      },
-      {
-          'value': 'XMA',
-          'aria_sort': 'none'
-      },
-      {
-          'value': 'Granby',
-          'aria_sort': 'none'
-      },
-      {
-          'value': 'Lone Worker',
-          'aria_sort': 'none'
-      },
-      {
-          'value': 'Service Now',
-          'aria_sort': 'none'
-      },
-      {
-          'value': 'Setup',
-          'aria_sort': 'none'
-      },
-  ]
-
-  return add_headers
-
 
 def iat_employee_record_table(employee_records_json, remove_html=False):
   add_employees = []
@@ -209,57 +159,3 @@ def iat_employee_record_table(employee_records_json, remove_html=False):
   return add_employees
 
 
-# Device Table below
-def device_table_headers():
-  add_headers = [
-      {
-          'value': 'Device ID',
-          'aria_sort': 'none'
-      },
-      {
-          'value': 'Phone Number',
-          'aria_sort': 'none'
-      },
-      {
-          'value': 'Device Type',
-          'aria_sort': 'none'
-      },
-      {
-          'value': 'Device  Sent',
-          'aria_sort': 'none'
-      },
-      {
-          'value': 'ONS ID',
-          'aria_sort': 'none'
-      },
-  ]
-
-  return add_headers
-
-
-def device_records_table(device_records_json):
-  add_devices = []
-  for devices in device_records_json:
-    add_devices.append({
-        'tds': [
-            {
-                'value': devices['device_id']
-            },
-            {
-                'value': devices['field_device_phone_number']
-            },
-            {
-                'value': devices['device_type']
-            },
-            {
-                'value':
-                devices['device_sent'] if
-                (devices['device_sent'] != False) else "False"
-            },
-            {
-                'value': devices['ons_email_address']
-            },
-        ]
-    })
-
-  return add_devices
