@@ -112,7 +112,7 @@ class DownloadsPage:
         rows = rows[:-3]
 
       if microservice_name == "iattable":
-        path = "/tmp/assets/"
+        path = "/tmp/fsdrui_assets/"
 
         # Create unique file name
         file_name = f'{uuid.uuid4()}.csv'
@@ -122,7 +122,7 @@ class DownloadsPage:
           of.write(str(headers))
           of.write(str(rows))
 
-        download_location = "/assets/" + file_name
+        download_location = "/fsdrui_assets/" + file_name
       else:
         logger.warn(f"Unknown download type: {microservice_name}")
 
