@@ -1,5 +1,6 @@
 import json
 import math
+import os
 
 import aiohttp_jinja2
 
@@ -9,7 +10,8 @@ from aiohttp_session import get_session
 from structlog import get_logger
 from app.pageutils import page_bounds, get_page, result_message
 from app.error_handlers import client_response_error, forbidden
-from app.role_matchers import has_download_permission, microservices_permissions
+from app.role_matchers import microservices_permissions
+from app.microservice_views import get_views, get_html
 
 from app.microservice_tables import (
     get_table_headers,
@@ -73,6 +75,11 @@ class MicroservicesTable:
     microservice_title = microservice_name.replace("table", " Table").title()
     page_number = get_page(request)
 
+    # Delete previous download if present
+    if 'file_download_full_path' in session.keys():
+      os.remove(session.get('file_download_full_path', ''))
+      del session['file_download_full_path']
+
     try:
 
       field_classes = get_fields(microservice_name)
@@ -123,20 +130,17 @@ class MicroservicesTable:
       result_message_str = result_message(search_range, microservice_sum,
                                           microservice_title)
 
-      download_perm = has_download_permission(
-          user_role,
-          microservice_name,
-      )
+      views, current_view_index = get_views(user_role, microservice_name)
+      header_html = get_html(user_role, views)
 
       return {
+          'views': views,
+          'header_html': header_html,
+          'current_view': views[current_view_index],
           'called_from_index': False,
-          'download_button_enabled': download_perm,
           'Fields': field_classes,
-          'microservice_name': microservice_name,
-          'microservice_title': microservice_title,
           'result_message': result_message_str,
           'page_title': f'{microservice_title} view for: {user_role}',
-          'dst_download': has_download_permission(user_role),
           'page_number': page_number,
           'last_page_number': max_page,
           'table_headers': table_headers,
@@ -164,6 +168,11 @@ class MicroservicesTable:
 
     microservice_title = microservice_name.replace("table", " Table").title()
     page_number = get_page(request)
+
+    # Delete previous download if present
+    if 'file_download_full_path' in session.keys():
+      os.remove(session.get('file_download_full_path', ''))
+      del session['file_download_full_path']
 
     try:
       field_classes = get_fields(microservice_name)
@@ -200,20 +209,17 @@ class MicroservicesTable:
       result_message_str = result_message(search_range, microservice_sum,
                                           microservice_title)
 
-      download_perm = has_download_permission(
-          user_role,
-          microservice_name,
-      )
+      views, current_view_index = get_views(user_role, microservice_name)
+      header_html = get_html(user_role, views)
 
       return {
+          'views': views,
+          'header_html': header_html,
+          'current_view': views[current_view_index],
           'called_from_index': False,
           'Fields': field_classes,
-          'download_button_enabled': download_perm,
-          'microservice_name': microservice_name,
-          'microservice_title': microservice_title,
           'result_message': result_message_str,
           'page_title': f'{microservice_title} view for: {user_role}',
-          'dst_download': has_download_permission(user_role),
           'page_number': page_number,
           'last_page_number': max_page,
           'table_headers': table_headers,

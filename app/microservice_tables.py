@@ -233,7 +233,7 @@ def get_fields_to_load(field_classes):
   return (fields_to_load)
 
 
-def get_table_records(field_classes, json_records):
+def get_table_records(field_classes, json_records, remove_html=False):
   formatted_records = []
   for each_record in json_records:
     record = {'tds': None}
@@ -243,19 +243,18 @@ def get_table_records(field_classes, json_records):
         record_field_data = each_record[field.database_name]
         if field.format_as_boolean:
           record_field_data = "True" if record_field_data == "t" else "False"
-        combined_field.append(
-            {
-                'value':
-                record_field_data if not field.accordion else acc_generation(
-                    str(record_field_data)),
-            }, )
+        if (field.accordion and not remove_html):
+          record_field_data = acc_generation(str(record_field_data))
+        combined_field.append({
+            'value': record_field_data,
+        }, )
     record['tds'] = combined_field[:]
     formatted_records.append(record)
 
   return formatted_records
 
 
-def get_table_headers(field_classes):
+def get_table_headers(field_classes, remove_html=False):
   headers = []
   for field in field_classes:
     if field.show_as_table_header:

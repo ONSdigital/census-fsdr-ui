@@ -8,7 +8,7 @@ from aiohttp.web import HTTPFound, RouteTableDef
 from aiohttp_session import get_session
 from app.pageutils import page_bounds, get_page, result_message
 from structlog import get_logger
-from app.role_matchers import has_download_permission
+from app.microservice_views import get_views, get_html
 
 from app.searchcriteria import (store_search_criteria, retrieve_job_roles,
                                 retrieve_assignment_statuses,
@@ -60,11 +60,15 @@ class Search:
       assignment_statuses_json = retrieve_assignment_statuses(
           get_all_assignment_statuses)
 
+      views, current_view_index = get_views(user_role, None)
+      header_html = get_html(user_role, views)
+
       return {
+          'views': views,
+          'header_html': header_html,
           'page_title': f'Field Force view for: {user_role}',
           'distinct_job_roles': job_role_json,
           'all_assignment_statuses': assignment_statuses_json,
-          'dst_download': has_download_permission(user_role),
       }
     else:
       raise Exception(str(get_job_roles.status_code) + " " +  str(get_job_roles)  + "  " + \
@@ -191,7 +195,12 @@ class SecondaryPage:
       job_role_short_json = retrieve_job_roles(get_job_roles,
                                                previous_jobrole_selected)
 
+      views, current_view_index = get_views(user_role, None)
+      header_html = get_html(user_role, views)
+
       return {
+          'views': views,
+          'header_html': header_html,
           'result_message': result_message(search_range, emp_sum,
                                            "Field Workers"),
           'called_from_index': from_index,
@@ -211,7 +220,6 @@ class SecondaryPage:
           'previous_surname_filter': previous_surname,
           'no_employee_data': no_employee_data,
           'user_missing_device': previous_user_missing_device,
-          'dst_download': has_download_permission(user_role),
       }
     else:
       logger.warn('Attempted to login with invalid user name and/or password',
@@ -323,7 +331,12 @@ class SecondaryPage:
       job_role_json = retrieve_job_roles(get_job_roles,
                                          previous_jobrole_selected)
 
+      views, current_view_index = get_views(user_role, None)
+      header_html = get_html(user_role, views)
+
       return {
+          'views': views,
+          'header_html': header_html,
           'result_message': result_message(search_range, emp_sum,
                                            "Field Workers"),
           'called_from_index': from_index,
@@ -343,7 +356,6 @@ class SecondaryPage:
           'previous_surname_filter': previous_surname,
           'previous_user_missing_device': previous_user_missing_device,
           'user_missing_device': previous_user_missing_device,
-          'dst_download': has_download_permission(user_role),
       }
     else:
       logger.warn('Attempted to login with invalid user name and/or password',
