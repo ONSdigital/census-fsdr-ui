@@ -13,8 +13,8 @@ from app.pageutils import page_bounds, get_page, result_message
 from app.error_handlers import client_response_error, warn_invalid_login
 from app.microservice_views import get_views, get_html
 
-from app.searchfunctions import (get_employee_records, get_employee_count,
-                                 employee_record_table, employee_table_headers,
+from app.searchfunctions import (get_employee_records, employee_record_table,
+                                 employee_table_headers,
                                  get_distinct_job_role_short)
 
 from structlog import get_logger
