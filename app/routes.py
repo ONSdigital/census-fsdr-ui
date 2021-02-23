@@ -25,7 +25,7 @@ def setup(app, url_path_prefix):
   """Set up routes as resources so we can use the `Index:get` notation for URL lookup."""
 
   p = Path("/tmp/assets/")
-  p.mkdir(parents=True, exist_ok=False)
+  p.mkdir(parents=True, exist_ok=True)
 
   app.router.add_static("/assets/", p)
 
