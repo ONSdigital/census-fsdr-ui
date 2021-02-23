@@ -243,12 +243,11 @@ def get_table_records(field_classes, json_records, remove_html=False):
         record_field_data = each_record[field.database_name]
         if field.format_as_boolean:
           record_field_data = "True" if record_field_data == "t" else "False"
-        if ( field.accordion and not remove_html ):
+        if (field.accordion and not remove_html):
           record_field_data = acc_generation(str(record_field_data))
-        combined_field.append(
-            {
-                'value': record_field_data,
-            }, )
+        combined_field.append({
+            'value': record_field_data,
+        }, )
     record['tds'] = combined_field[:]
     formatted_records.append(record)
 

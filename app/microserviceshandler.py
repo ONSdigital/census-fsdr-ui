@@ -1,5 +1,6 @@
 import json
 import math
+import os
 
 import aiohttp_jinja2
 
@@ -10,7 +11,7 @@ from structlog import get_logger
 from app.pageutils import page_bounds, get_page, result_message
 from app.error_handlers import client_response_error, forbidden
 from app.role_matchers import microservices_permissions
-from app.microservice_views import get_views
+from app.microservice_views import get_views, get_html
 
 from app.microservice_tables import (
     get_table_headers,
@@ -74,6 +75,11 @@ class MicroservicesTable:
     microservice_title = microservice_name.replace("table", " Table").title()
     page_number = get_page(request)
 
+    # Delete previous download if present
+    if 'file_download_full_path' in session.keys():
+      os.remove(session.get('file_download_full_path', ''))
+      del session['file_download_full_path']
+
     try:
 
       field_classes = get_fields(microservice_name)
@@ -125,9 +131,11 @@ class MicroservicesTable:
                                           microservice_title)
 
       views, current_view_index = get_views(user_role, microservice_name)
+      header_html = get_html(user_role, views)
 
       return {
           'views': views,
+          'header_html': header_html,
           'current_view': views[current_view_index],
           'called_from_index': False,
           'Fields': field_classes,
@@ -160,6 +168,11 @@ class MicroservicesTable:
 
     microservice_title = microservice_name.replace("table", " Table").title()
     page_number = get_page(request)
+
+    # Delete previous download if present
+    if 'file_download_full_path' in session.keys():
+      os.remove(session.get('file_download_full_path', ''))
+      del session['file_download_full_path']
 
     try:
       field_classes = get_fields(microservice_name)
@@ -197,9 +210,11 @@ class MicroservicesTable:
                                           microservice_title)
 
       views, current_view_index = get_views(user_role, microservice_name)
+      header_html = get_html(user_role, views)
 
       return {
           'views': views,
+          'header_html': header_html,
           'current_view': views[current_view_index],
           'called_from_index': False,
           'Fields': field_classes,

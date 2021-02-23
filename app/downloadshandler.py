@@ -1,7 +1,6 @@
 import json
 import math
 import uuid
-import glob
 
 import aiohttp_jinja2
 
@@ -19,8 +18,10 @@ from app.microservice_tables import (
     get_table_records,
     get_fields,
 )
-from app.searchfunctions import (get_all_assignment_status,
-                                 get_microservice_records,)
+from app.searchfunctions import (
+    get_all_assignment_status,
+    get_microservice_records,
+)
 
 from . import (NEED_TO_SIGN_IN_MSG, NO_EMPLOYEE_DATA, SERVICE_DOWN_MSG)
 from . import saml
@@ -36,8 +37,6 @@ logger = get_logger('fsdr-ui')
 downloads_routes = RouteTableDef()
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-
-STATIC_DIR = os.path.abspath('../static')
 
 
 def setup_request(request):
@@ -68,25 +67,32 @@ class DownloadsPage:
     try:
       search_range, records_per_page = page_bounds(1)
 
-      get_microservice_info = get_microservice_records("iattable",
-                                                   user_filter=search_range)
+      get_microservice_info = get_microservice_records(
+          "iattable", user_filter=search_range)
       get_microservice_info_json = get_microservice_info.json()
 
       if len(get_microservice_info_json) > 0:
-        microservice_sum = get_microservice_info_json[0].get('total_records', 0)
+        microservice_sum = get_microservice_info_json[0].get(
+            'total_records', 0)
 
         # If there are more than 0 people in iat
         # then get_employee_info is set to everyone (max is total number of employees)
         search_range = {'rangeHigh': microservice_sum, 'rangeLow': 0}
-        get_microservice_info = get_microservice_records("iattable", search_range)
+        get_microservice_info = get_microservice_records(
+            "iattable", search_range)
         get_microservice_info_json = get_microservice_info.json()
 
         field_classes = get_fields(microservice_name)
 
-        html_microservice_records = get_table_records( field_classes,
-            get_microservice_info_json, remove_html=True,)
-        html_headers = get_table_headers(field_classes,
-            remove_html=True,)
+        html_microservice_records = get_table_records(
+            field_classes,
+            get_microservice_info_json,
+            remove_html=True,
+        )
+        html_headers = get_table_headers(
+            field_classes,
+            remove_html=True,
+        )
 
     except ClientResponseError as ex:
       client_response_error(ex, request)
@@ -106,24 +112,20 @@ class DownloadsPage:
         rows = rows[:-3]
 
       if microservice_name == "iattable":
-        path = "/opt/ui/app/assets/iat/"
-
-        # Delete all files in /opt/ui/app/assets/iat
-        files = glob.glob(path + '*')
-        for f in files:
-          os.remove(f)
+        path = "/tmp/assets/"
 
         # Create unique file name
         file_name = f'{uuid.uuid4()}.csv'
+        session['file_download_full_path'] = path + file_name
 
         with open(path + file_name, "w+") as of:
           of.write(str(headers))
           of.write(str(rows))
 
-        download_location = "/assets/iat/" + file_name
+        download_location = "/assets/" + file_name
       else:
         logger.warn(f"Unknown download type: {microservice_name}")
-      
+
       return {
           'download_location': download_location,
       }

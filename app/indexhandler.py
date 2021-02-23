@@ -11,7 +11,7 @@ from aiohttp_session import get_session
 from app.searchcriteria import retrieve_job_roles, clear_stored_search_criteria
 from app.pageutils import page_bounds, get_page, result_message
 from app.error_handlers import client_response_error, warn_invalid_login
-from app.role_matchers import has_download_permission
+from app.microservice_views import get_views, get_html
 
 from app.searchfunctions import (get_employee_records, get_employee_count,
                                  employee_record_table, employee_table_headers,
@@ -85,7 +85,13 @@ class MainPage:
 
       result_message_str = result_message(search_range, employee_sum,
                                           "Employee Table")
+
+      views, current_view_index = get_views(user_role, None)
+      header_html = get_html(user_role, views)
+
       return {
+          'views': views,
+          'header_html': header_html,
           'result_message': result_message_str,
           'page_title': f'Field Force view for: {user_role}',
           'table_headers': table_headers,
@@ -93,7 +99,6 @@ class MainPage:
           'page_number': page_number,
           'last_page_number': int(math.floor(max_page)),
           'distinct_job_roles': job_role_json,
-          'dst_download': has_download_permission(user_role),
       }
     else:
       logger.warn('Database is down', client_ip=request['client_ip'])

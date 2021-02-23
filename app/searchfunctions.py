@@ -53,8 +53,7 @@ def get_device_records(user_filter=""):
 def get_employee_records(user_filter=""):
   employee_record_url = URL(
       FSDR_URL +
-      f'/fieldforce/byType/byRangeAndUserFilter/'
-  ).with_query(user_filter)
+      f'/fieldforce/byType/byRangeAndUserFilter/').with_query(user_filter)
   return requests.get(employee_record_url,
                       verify=False,
                       auth=HTTPBasicAuth(FSDR_USER, FSDR_PASS))
@@ -113,7 +112,6 @@ def employee_record_table(employee_records_json):
   return add_employees
 
 
-
 def iat_employee_record_table(employee_records_json, remove_html=False):
   add_employees = []
   for employees in employee_records_json:
@@ -157,5 +155,3 @@ def iat_employee_record_table(employee_records_json, remove_html=False):
     })
 
   return add_employees
-
-
