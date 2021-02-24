@@ -4,7 +4,6 @@ from pathlib import Path
 from structlog import get_logger
 
 from .employeehandler import employee_routes
-from .indexhandler import index_route
 from .handler import static_routes
 from .saml import saml_routes
 from .searchhandler import search_routes
@@ -32,7 +31,6 @@ def setup(app, url_path_prefix):
   combined_routes = [
       *extra_routes,
       *employee_routes,
-      *index_route,
       *static_routes,
       *search_routes,
       *saml_routes,

@@ -76,6 +76,7 @@ def microservices_permissions(role_id, microservice_name):
   accessable_to_all = [
       "devicetable",
       "iattable",
+      "index",
   ]
 
   if download_permission_regex.match(role_id):
@@ -95,7 +96,6 @@ def invalid_role_id(role_id):
 
 def has_download_permission(role_id, microservice_name="index"):
   authorised_downloads = [
-      "index",
       "iattable",
   ]
 

@@ -41,16 +41,7 @@ class View:
 
 def get_html(user_role, views):
   # Non microservice headers added here
-  header_html = [
-      {
-          "title": "Home",
-          "url": "/index"
-      },
-      {
-          "title": "Search",
-          "url": "/search"
-      },
-  ]
+  header_html = []
 
   for view in views:
     if view.currently_visible:
@@ -59,12 +50,18 @@ def get_html(user_role, views):
           'url': view.url_clear,
       })
 
+  header_html.insert(1,{
+          "title": "Search",
+          "url": "/search"
+      },)
+
   return header_html
 
 
 def get_views(user_role, microservice_name):
   views = []
 
+  views.append(View("index", user_role,display_name="Home"), )
   views.append(View(
       "iattable",
       user_role,

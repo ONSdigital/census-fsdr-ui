@@ -101,6 +101,16 @@ def get_fields(service_name):
         Field("gsuite_hash"),
         Field("current_groups"),
     ])
+  elif service_name == "index":
+     return ([
+        Field("id_badge_no",column_name="Badge No.",search_box_visible=False),
+        Field("unique_role_id",column_name="Job Role ID",search_box_visible=False),
+        Field("job_role_short", column_name="Job Role"),
+        Field("assignment_status",column_name="Asgnmt. Status",search_box_visible=False),
+        Field("surname", column_name="Worker Surname",show_as_table_header=False),
+        Field("area_location",show_as_table_header=False,column_name="Area"),
+    ])
+
   elif service_name == "xmatable":
     return ([
         Field("unique_employee_id"),
