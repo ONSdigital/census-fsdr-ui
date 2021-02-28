@@ -17,6 +17,8 @@ class Field:
                dropdown_options=None,
                search_box_visible=True,
                format_as_boolean=False,
+               checkbox_value = False,
+               name=False,
                show_as_table_header=True):
 
     self.database_name = database_name
@@ -28,6 +30,8 @@ class Field:
     self.show_as_table_header = show_as_table_header
     self.search_box_visible = search_box_visible
     self.format_as_boolean = format_as_boolean
+    self.checkbox_value = checkbox_value
+    self.name = name
 
   def create_column_name(self, column_name):
     if column_name == None:
@@ -40,7 +44,7 @@ class Field:
     if dropdown_options != None:
       final_dropdowns = [{
           'value': 'blank',
-          'text': 'Select a status',
+          'text': 'Select an option',
           'disabled': True,
       }]
       for option in dropdown_options:
@@ -52,6 +56,9 @@ class Field:
           each_dict['selected'] = True
 
       return final_dropdowns
+
+  def refresh_dropdown_status(self, value_to_change_to):
+    self.checkbox_value = value_to_change_to
 
   def refresh_selected_dropdown(self, selected_value):
     dropdown_values = [i.get('value') for i in self.dropdown_options]
@@ -68,11 +75,41 @@ def load_cookie_into_fields(field_classes, previous_criteria):
       elif field.search_type == "dropdown":
         field.refresh_selected_dropdown(
             previous_criteria.get(field.database_name))
+      elif field.search_type  == "checkbox":
+        field.refresh_dropdown_status(  previous_criteria.get(field.database_name))
+
   return field_classes
 
 
 def get_fields(service_name):
   # Set default Dropdown Values
+  job_role_dropdow_options = [
+    "Census area manager",
+    "Community adviser working with the Arab community",
+    "Community adviser working with the Turkish and Kurdish communities",
+    "Community adviser working with the Chinese community",
+    "Communal establishments team leader",
+    "Communal establishments officer",
+    "Community adviser working with the Black Caribbean community",
+    "Census area manager (Welsh speaking)",
+    "Community adviser working with the Bangladeshi community",
+    "Census team leader",
+    "Community adviser working with the Pakistani community",
+    "Communal establishments officer (Welsh speaking)",
+    "Communal establishments area support",
+    "Census engagement manager",
+    "Communal establishments area manager",
+    "Community adviser working with the Somali community",
+    "Community adviser working with the Nepali community",
+    "Community adviser working with the Black African community",
+    "Community adviser working with the Indian community",
+    "Census mobile team leader",
+    "Census officer - 1st intake",
+    "Census area support",
+    "Census engagement manager (Welsh speaking)"
+  ]
+  job_role_dropdow_options = sorted(job_role_dropdow_options , key=str.lower)
+
   status_options = [
       "CREATE",
       "SETUP",
@@ -94,6 +131,7 @@ def get_fields(service_name):
             "unique_employee_id",
             accordion=True,
         ),
+        Field("ons_email_address", accordion=True, column_name="ONS ID"),
         Field("gsuite_status",
               search_type="dropdown",
               dropdown_options=status_options),
@@ -104,11 +142,13 @@ def get_fields(service_name):
   elif service_name == "index":
      return ([
         Field("id_badge_no",column_name="Badge No.",search_box_visible=False),
+        Field("name",column_name="Name",search_box_visible=False,name=True),
         Field("unique_role_id",column_name="Job Role ID",search_box_visible=False),
-        Field("job_role_short", column_name="Job Role"),
+        Field("job_role_short", column_name="Job Role",search_type="dropdown",dropdown_options=job_role_dropdow_options),
         Field("assignment_status",column_name="Asgnmt. Status",search_box_visible=False),
         Field("surname", column_name="Worker Surname",show_as_table_header=False),
         Field("area_location",show_as_table_header=False,column_name="Area"),
+        Field("noDevice", column_name="Only show users with no device", show_as_table_header=False, search_type="checkbox",),
     ])
 
   elif service_name == "xmatable":
@@ -173,6 +213,7 @@ def get_fields(service_name):
         Field(
             "device_sent",
             search_type="dropdown",
+            format_as_boolean=True,
             dropdown_options=boolean_dropdown_options,
         ),
         Field("ons_email_address", column_name="ONS ID"),
@@ -250,7 +291,13 @@ def get_table_records(field_classes, json_records, remove_html=False):
     combined_field = []
     for field in field_classes:
       if field.show_as_table_header:
-        record_field_data = each_record[field.database_name]
+        if field.name:
+          record_field_data = '<a href="/employeeinformation/' + \
+            each_record['unique_employee_id'] + '">' + each_record['first_name'] + \
+            " " + each_record['surname'] + '</a>'
+        else:
+          record_field_data = each_record[field.database_name]
+
         if field.format_as_boolean:
           record_field_data = "True" if record_field_data == "t" else "False"
         if (field.accordion and not remove_html):

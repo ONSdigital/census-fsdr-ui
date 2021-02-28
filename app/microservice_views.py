@@ -9,6 +9,7 @@ class View:
       self,
       database_name,
       user_role,
+      filter_button_label= None,
       display_name=None,
       who_can_view=None,
       url=None,
@@ -21,6 +22,12 @@ class View:
     self.currently_visible = self.visible(user_role, database_name,
                                           who_can_view)
     self.download_available = self.download_available(user_role, database_name)
+    self.filter_button_label = self.create_filter_label(filter_button_label)
+
+  def create_filter_label(self, filter_name):
+    if filter_name == None:
+      filter_name = f'Filter {self.display_name}'
+    return filter_name
 
   def create_url(self, url, database_name, clear):
     if url == None:
@@ -61,7 +68,7 @@ def get_html(user_role, views):
 def get_views(user_role, microservice_name):
   views = []
 
-  views.append(View("index", user_role,display_name="Home"), )
+  views.append(View("index", user_role,display_name="Home",filter_button_label="Filter"), )
   views.append(View(
       "iattable",
       user_role,

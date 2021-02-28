@@ -6,6 +6,8 @@
     {% from 'components/button/_macro.njk' import onsButton %}
     {% from 'components/panel/_macro.njk' import onsPanel %}
     {% from "components/label/_macro.njk" import onsLabel %}
+    {% from "components/checkboxes/_checkbox-macro.njk" import onsCheckbox %}
+
 
     {% set action = params.action %}
 
@@ -20,82 +22,7 @@
         {% set previousArea = params.previous_area %}
     {% endif %}
 
-    {% if params.index_search == True %}
-        <table>
-            <tr>
-                {{
-                    onsLabel({
-                        "id": 'label',
-                        "for": "some-input",
-                        "text": 'Filter field workers'
-                    })
-                }}
-                <td>
-                    {{
-                        onsSelect({
-                            "id": "select",
-                            'name': "job_role_select",
-                            "label": {
-                                "text": "Job Role"
-                            },
-                            "options": params.distinct_job_roles
-                        })
-                    }}
-                </td>
-                <td>
-                    {{
-                        onsInput({
-                            "id": "text",
-                            'name': "filter_surname",
-                            "label": {
-                                "text": "Worker Surname"
-                            },
-                            "value": params.previous_surname_filter
-                        })
-                    }}
-                </td>
-                <td>
-                    {{
-                        onsInput({
-                            "id": "text",
-                            'name': "filter_area",
-                            "label": {
-                                "text": "Area"
-                            },
-                            "value": params.previous_area
-                        })
-                    }}
-                </td>
-                {{
-                    onsInput({
-                        "type": "hidden",
-                        "classes": "u-d-no",
-                        "id": "adlocation",
-                        "name": "adlocation",
-                        "value": adlocation,
-                        "label": {
-                            "text": "Enter some text",
-                            "classes": "u-d-no"
-                        }
-                    })
-                }}
-            </tr>
-         <table>
-         {{
-            onsInput({
-                "type": "hidden",
-                "classes": "u-d-no",
-                "id": "indexsearch",
-                "name": "indexsearch",
-                "value": indexsearch,
-                "label": {
-                    "text": "Enter some text",
-                    "classes": "u-d-no"
-                }
-            })
-        }}
-
-    {% elif params.index_search == "microservice" %}
+    {% if params.index_search == "microservice" %}
         <table>
                 {{
                     onsLabel({
@@ -140,6 +67,15 @@
 					"name" : field.database_name,
 					"label": { "text": field.column_name },
 					"options": field.dropdown_options })}}
+			{% elif field.search_type == "checkbox" %}
+				{{onsCheckbox({
+					"id": field.database_name,
+					"name": field.database_name,
+					"label": {"text": field.column_name}, 
+					"value": True,
+					"checked": field.checkbox_value,
+				})}}
+
 			{% endif %}
 
 			{# End table row/element #} 
