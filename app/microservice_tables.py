@@ -271,6 +271,12 @@ def get_fields(service_name):
             dropdown_options=boolean_dropdown_options,
             format_as_boolean=True,
         ),
+        Field(
+            "adecco_status",
+            search_type="dropdown",
+            dropdown_options=status_options,
+        ),
+
     ])
 
   return ([])
