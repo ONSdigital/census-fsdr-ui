@@ -32,6 +32,8 @@ class View:
   def create_url(self, url, database_name, clear):
     if url == None:
       url = (f'/microservices/{database_name}{clear}')
+    else:
+      url = (f'/microservices/{url}{clear}')
     return url
 
   def create_display_name(self, display_name):
@@ -68,7 +70,7 @@ def get_html(user_role, views):
 def get_views(user_role, microservice_name):
   views = []
 
-  views.append(View("index", user_role,display_name="Home",filter_button_label="Filter"), )
+  views.append(View("index", user_role, display_name="Home",filter_button_label="Filter",), )
   views.append(View(
       "iattable",
       user_role,

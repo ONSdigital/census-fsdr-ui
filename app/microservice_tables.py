@@ -150,7 +150,6 @@ def get_fields(service_name):
         Field("area_location",show_as_table_header=False,column_name="Area"),
         Field("noDevice", column_name="Only show users with no device", show_as_table_header=False, search_type="checkbox",),
     ])
-
   elif service_name == "xmatable":
     return ([
         Field("unique_employee_id"),
