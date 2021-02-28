@@ -149,6 +149,9 @@ def get_fields(service_name):
         Field("surname", column_name="Worker Surname",show_as_table_header=False),
         Field("area_location",show_as_table_header=False,column_name="Area"),
         Field("noDevice", column_name="Only show users with no device", show_as_table_header=False, search_type="checkbox",),
+        Field("include_nisra", column_name="Include NISRA Records", show_as_table_header=False, search_type="checkbox",),
+        Field("include_hq", column_name="Include HQ Records", show_as_table_header=False, search_type="checkbox",),
+
     ])
   elif service_name == "xmatable":
     return ([
