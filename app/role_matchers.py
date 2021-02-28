@@ -59,18 +59,19 @@ logi_combined_regex = re.compile(
                                  cfots_regex)]))  # keep up to date with above
 
 download_permission_regex = re.compile('DT-SUP.-..-..')
+cfs_gsuite_regex = re.compile('LT-CFS.-..-..')
 
 
 def microservices_permissions(role_id, microservice_name):
   # Defines permissions for each table
   microservice_tables_dt_sup = [
-      "gsuite",
-      "xma",
-      "lws",
-      "servicenow",
-      "update",
-      "requestlog",
-      "chromebook",
+      "gsuitetable",
+      "xmatable",
+      "lwstable",
+      "servicenowtable",
+      "updatetable",
+      "requestlogtable",
+      "chromebooktable",
   ]
 
   accessable_to_all = [
@@ -79,10 +80,17 @@ def microservices_permissions(role_id, microservice_name):
       "index",
   ]
 
+  cfs_accessable = [
+      "gsuitetable",
+  ]
+
   if download_permission_regex.match(role_id):
     return True
 
   if microservice_name in accessable_to_all:
+    return True
+
+  if (cfs_gsuite_regex.match(role_id)) and (microservice_name in cfs_accessable):
     return True
 
   return False
