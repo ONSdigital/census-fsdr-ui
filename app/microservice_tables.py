@@ -125,6 +125,12 @@ def get_fields(service_name):
       'False',
   ]
 
+  # NISRA HQ Checkboxese
+  data_source_checkboxes =  [
+    Field("include_nisra", column_name="Include NISRA Records", show_as_table_header=False, search_type="checkbox",),
+    Field("include_hq", column_name="Include HQ Records", show_as_table_header=False, search_type="checkbox",),
+  ]
+
   if service_name == "gsuitetable":
     return ([
         Field(
@@ -149,10 +155,7 @@ def get_fields(service_name):
         Field("surname", column_name="Worker Surname",show_as_table_header=False),
         Field("area_location",show_as_table_header=False,column_name="Area"),
         Field("noDevice", column_name="Only show users with no device", show_as_table_header=False, search_type="checkbox",),
-        Field("include_nisra", column_name="Include NISRA Records", show_as_table_header=False, search_type="checkbox",),
-        Field("include_hq", column_name="Include HQ Records", show_as_table_header=False, search_type="checkbox",),
-
-    ])
+    ] + data_source_checkboxes)
   elif service_name == "xmatable":
     return ([
         Field("unique_employee_id"),
@@ -280,7 +283,7 @@ def get_fields(service_name):
             dropdown_options=status_options,
         ),
 
-    ])
+    ] + data_source_checkboxes)
 
   return ([])
 

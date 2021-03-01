@@ -81,7 +81,6 @@ def get_employee_information(role, employee_id):
                       verify=False,
                       auth=HTTPBasicAuth(FSDR_USER, FSDR_PASS))
 
-
 def get_employee_history_information(role, employee_id):
   extract_type = role.extract_type
   return requests.get(FSDR_URL +
