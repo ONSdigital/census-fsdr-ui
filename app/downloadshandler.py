@@ -54,14 +54,15 @@ def log_entry(request, endpoint):
 class DownloadsPage:
   @aiohttp_jinja2.template('downloads.html')
   async def get(self, request):
+
     microservice_name = request.match_info['microservice_name']
     session = await get_session(request)
     await saml.ensure_logged_in(request)
 
     user_role = await saml.get_role_id(request)
 
-    if not has_download_permission(user_role):
-      return aiohttp_jinja2.render_template('error404.html', request,
+    if not has_download_permission(user_role, microservice_name):
+      return aiohttp_jinja2.render_template('error403.html', request,
                                             {'include_nav': True})
 
     try:
