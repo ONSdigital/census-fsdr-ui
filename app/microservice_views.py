@@ -9,7 +9,7 @@ class View:
       self,
       database_name,
       user_role,
-      filter_button_label= None,
+      filter_button_label=None,
       display_name=None,
       who_can_view=None,
       url=None,
@@ -59,10 +59,13 @@ def get_html(user_role, views):
           'url': view.url_clear,
       })
 
-  header_html.insert(1,{
+  header_html.insert(
+      1,
+      {
           "title": "Search",
           "url": "/search"
-      },)
+      },
+  )
 
   return header_html
 
@@ -70,7 +73,13 @@ def get_html(user_role, views):
 def get_views(user_role, microservice_name):
   views = []
 
-  views.append(View("index", user_role, display_name="Home",filter_button_label="Filter",), )
+  views.append(
+      View(
+          "index",
+          user_role,
+          display_name="Home",
+          filter_button_label="Filter",
+      ), )
   views.append(View(
       "iattable",
       user_role,

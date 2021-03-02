@@ -17,7 +17,7 @@ class Field:
                dropdown_options=None,
                search_box_visible=True,
                format_as_boolean=False,
-               checkbox_value = False,
+               checkbox_value=False,
                name=False,
                show_as_table_header=True):
 
@@ -75,8 +75,9 @@ def load_cookie_into_fields(field_classes, previous_criteria):
       elif field.search_type == "dropdown":
         field.refresh_selected_dropdown(
             previous_criteria.get(field.database_name))
-      elif field.search_type  == "checkbox":
-        field.refresh_dropdown_status(  previous_criteria.get(field.database_name))
+      elif field.search_type == "checkbox":
+        field.refresh_dropdown_status(
+            previous_criteria.get(field.database_name))
 
   return field_classes
 
@@ -84,31 +85,27 @@ def load_cookie_into_fields(field_classes, previous_criteria):
 def get_fields(service_name):
   # Set default Dropdown Values
   job_role_dropdow_options = [
-    "Census area manager",
-    "Community adviser working with the Arab community",
-    "Community adviser working with the Turkish and Kurdish communities",
-    "Community adviser working with the Chinese community",
-    "Communal establishments team leader",
-    "Communal establishments officer",
-    "Community adviser working with the Black Caribbean community",
-    "Census area manager (Welsh speaking)",
-    "Community adviser working with the Bangladeshi community",
-    "Census team leader",
-    "Community adviser working with the Pakistani community",
-    "Communal establishments officer (Welsh speaking)",
-    "Communal establishments area support",
-    "Census engagement manager",
-    "Communal establishments area manager",
-    "Community adviser working with the Somali community",
-    "Community adviser working with the Nepali community",
-    "Community adviser working with the Black African community",
-    "Community adviser working with the Indian community",
-    "Census mobile team leader",
-    "Census officer - 1st intake",
-    "Census area support",
-    "Census engagement manager (Welsh speaking)"
+      "Census area manager",
+      "Community adviser working with the Arab community",
+      "Community adviser working with the Turkish and Kurdish communities",
+      "Community adviser working with the Chinese community",
+      "Communal establishments team leader", "Communal establishments officer",
+      "Community adviser working with the Black Caribbean community",
+      "Census area manager (Welsh speaking)",
+      "Community adviser working with the Bangladeshi community",
+      "Census team leader",
+      "Community adviser working with the Pakistani community",
+      "Communal establishments officer (Welsh speaking)",
+      "Communal establishments area support", "Census engagement manager",
+      "Communal establishments area manager",
+      "Community adviser working with the Somali community",
+      "Community adviser working with the Nepali community",
+      "Community adviser working with the Black African community",
+      "Community adviser working with the Indian community",
+      "Census mobile team leader", "Census officer - 1st intake",
+      "Census area support", "Census engagement manager (Welsh speaking)"
   ]
-  job_role_dropdow_options = sorted(job_role_dropdow_options , key=str.lower)
+  job_role_dropdow_options = sorted(job_role_dropdow_options, key=str.lower)
 
   status_options = [
       "CREATE",
@@ -126,9 +123,19 @@ def get_fields(service_name):
   ]
 
   # NISRA HQ Checkboxese
-  data_source_checkboxes =  [
-    Field("include_nisra", column_name="Include NISRA Records", show_as_table_header=False, search_type="checkbox",),
-    Field("include_hq", column_name="Include HQ Records", show_as_table_header=False, search_type="checkbox",),
+  data_source_checkboxes = [
+      Field(
+          "include_nisra",
+          column_name="Include NISRA Records",
+          show_as_table_header=False,
+          search_type="checkbox",
+      ),
+      Field(
+          "include_hq",
+          column_name="Include HQ Records",
+          show_as_table_header=False,
+          search_type="checkbox",
+      ),
   ]
 
   if service_name == "gsuitetable":
@@ -146,15 +153,30 @@ def get_fields(service_name):
         Field("current_groups"),
     ])
   elif service_name == "index":
-     return ([
-        Field("id_badge_no",column_name="Badge No.",search_box_visible=False),
-        Field("name",column_name="Name",search_box_visible=False,name=True),
-        Field("unique_role_id",column_name="Job Role ID",search_box_visible=False),
-        Field("job_role_short", column_name="Job Role",search_type="dropdown",dropdown_options=job_role_dropdow_options),
-        Field("assignment_status",column_name="Asgnmt. Status",search_box_visible=False),
-        Field("surname", column_name="Worker Surname",show_as_table_header=False),
-        Field("area_location",show_as_table_header=False,column_name="Area"),
-        Field("noDevice", column_name="Only show users with no device", show_as_table_header=False, search_type="checkbox",),
+    return ([
+        Field("id_badge_no", column_name="Badge No.",
+              search_box_visible=False),
+        Field("name", column_name="Name", search_box_visible=False, name=True),
+        Field("unique_role_id",
+              column_name="Job Role ID",
+              search_box_visible=False),
+        Field("job_role_short",
+              column_name="Job Role",
+              search_type="dropdown",
+              dropdown_options=job_role_dropdow_options),
+        Field("assignment_status",
+              column_name="Asgnmt. Status",
+              search_box_visible=False),
+        Field("surname",
+              column_name="Worker Surname",
+              show_as_table_header=False),
+        Field("area_location", show_as_table_header=False, column_name="Area"),
+        Field(
+            "noDevice",
+            column_name="Only show users with no device",
+            show_as_table_header=False,
+            search_type="checkbox",
+        ),
     ] + data_source_checkboxes)
   elif service_name == "xmatable":
     return ([
@@ -227,9 +249,8 @@ def get_fields(service_name):
     job_role_dropdown_options = get_distinct_job_role_short().json()
     job_role_dropdown_options.remove(None)
     return ([
-        Field("unique_role_id",
-              column_name="Role ID",
-              search_box_visible=False),
+        Field(
+            "unique_role_id", column_name="Role ID", search_box_visible=False),
         Field("job_role_short",
               column_name="Job Role",
               search_type="dropdown",
@@ -282,7 +303,6 @@ def get_fields(service_name):
             search_type="dropdown",
             dropdown_options=status_options,
         ),
-
     ] + data_source_checkboxes)
 
   return ([])

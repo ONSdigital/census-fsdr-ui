@@ -14,10 +14,10 @@ from app.searchcriteria import (store_search_criteria, retrieve_job_roles,
                                 retrieve_assignment_statuses,
                                 clear_stored_search_criteria)
 
-from app.searchfunctions import (get_all_assignment_status,get_microservice_records,
+from app.searchfunctions import (get_all_assignment_status,
+                                 get_microservice_records,
                                  get_employee_records_no_device,
-                                 employee_record_table,
-                                 employee_table_headers,
+                                 employee_record_table, employee_table_headers,
                                  get_distinct_job_role_short)
 
 from . import (NEED_TO_SIGN_IN_MSG, NO_EMPLOYEE_DATA, SERVICE_DOWN_MSG)
@@ -164,7 +164,8 @@ class SecondaryPage:
         retrieve_employee_info = get_employee_records_no_device(
             search_criteria)
       else:
-        retrieve_employee_info = get_microservice_records('index',search_criteria)
+        retrieve_employee_info = get_microservice_records(
+            'index', search_criteria)
 
       if len(retrieve_employee_info.json()) > 0:
         emp_sum = retrieve_employee_info.json()[0].get('total_records', 0)
@@ -300,7 +301,8 @@ class SecondaryPage:
         retrieve_employee_info = get_employee_records_no_device(
             search_criteria)
       else:
-        retrieve_employee_info = get_microservice_records('index',search_criteria)
+        retrieve_employee_info = get_microservice_records(
+            'index', search_criteria)
 
       if len(retrieve_employee_info.json()) > 0:
         emp_sum = retrieve_employee_info.json()[0].get('total_records', 0)

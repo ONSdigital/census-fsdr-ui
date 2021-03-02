@@ -105,7 +105,8 @@ async def sso(request):
   # raise HTTPFound(sso_built_url)
 
   # If we need to redirect to a specific URL:
-  return_to = '{}://{}/microservices/index'.format(request.scheme, request.host)
+  return_to = '{}://{}/microservices/index'.format(request.scheme,
+                                                   request.host)
   raise HTTPFound(auth.login(return_to))
 
 

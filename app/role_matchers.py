@@ -90,7 +90,8 @@ def microservices_permissions(role_id, microservice_name):
   if microservice_name in accessable_to_all:
     return True
 
-  if (cfs_gsuite_regex.match(role_id)) and (microservice_name in cfs_accessable):
+  if (cfs_gsuite_regex.match(role_id)) and (microservice_name
+                                            in cfs_accessable):
     return True
 
   return False
