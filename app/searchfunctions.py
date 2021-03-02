@@ -12,14 +12,6 @@ from structlog import get_logger
 logger = get_logger('fsdr-ui')
 
 
-def get_employee_count(user_filter=""):
-  employee_record_url = URL(
-      FSDR_URL + "/fieldforce/employeeCount/").with_query(user_filter)
-  return requests.get(f'{employee_record_url}',
-                      verify=False,
-                      auth=HTTPBasicAuth(FSDR_USER, FSDR_PASS))
-
-
 def get_distinct_job_role_short():
   return requests.get(FSDR_URL + f'/jobRoles/allJobRoleShorts/distinct',
                       verify=False,
@@ -45,15 +37,6 @@ def get_device_records(user_filter=""):
   employee_record_url = URL(FSDR_URL +
                             f'/fieldforce/byType/byRangeAndUserFilterDevice/'
                             ).with_query(user_filter)
-  return requests.get(employee_record_url,
-                      verify=False,
-                      auth=HTTPBasicAuth(FSDR_USER, FSDR_PASS))
-
-
-def get_employee_records(user_filter=""):
-  employee_record_url = URL(
-      FSDR_URL +
-      f'/fieldforce/byType/byRangeAndUserFilter/').with_query(user_filter)
   return requests.get(employee_record_url,
                       verify=False,
                       auth=HTTPBasicAuth(FSDR_USER, FSDR_PASS))
@@ -91,6 +74,7 @@ def employee_table_headers():
 
 
 def employee_record_table(employee_records_json):
+
   add_employees = []
   for employees in employee_records_json:
     add_employees.append({

@@ -35,7 +35,7 @@
                 
                         }) }}
                         {{ onsButton({
-                            'text': 'Filter ' + current_view.display_name,
+                            'text': current_view.filter_button_label,
                             'classes': 'btn--small',
                             'submitType': "loader",
                             'name': 'action[submit]'
@@ -87,7 +87,7 @@
                 "last_page_number": last_page_number,
                 "page_number": page_number,
 		"link_url": 'MicroservicesTable:get',
-		"microservice_name": current_view.display_name,
+		"microservice_name": current_view.database_name,
                 })
                 }}
 

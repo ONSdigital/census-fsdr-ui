@@ -1,6 +1,11 @@
+import json
 from app.employee_view_functions import process_device_details, format_line_manager, extract_device_phone, extract_device_chromebook
 from app.tabutils import tab_generation, table_generation, format_to_uk_dates
 from app.fieldmapping import map_employee_name, map_full_address_details
+from app.searchfunctions import get_microservice_records
+from structlog import get_logger
+
+logger = get_logger('fsdr-ui')
 
 JOB_ROLE_DATE_FIELDS = {
     'Contract Start Date': 'contractStartDate',
@@ -52,6 +57,23 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
   employee_name = map_employee_name(employee_info)
 
   preferred_name = get_emp_info('preferredName', on_false='None')
+
+  gsuite_filter = {
+      'rangeHigh': 10,
+      'rangeLow': 0,
+      'unique_employee_id': get_emp_info('uniqueEmployeeId'),
+  }
+
+  get_microservice_info = get_microservice_records('gsuitetable',
+                                                   user_filter=gsuite_filter)
+  if str(get_microservice_info.status_code) == '200':
+    gsuite_info = get_microservice_info.json()
+    if len(gsuite_info) > 0:
+      gsuite_info = gsuite_info[0]
+    else:
+      gsuite_info = {}
+  else:
+    gsuite_info = {}
 
   data_detail = {
       'Unique Employee ID': get_emp_info('uniqueEmployeeId'),
@@ -109,6 +131,7 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
   data_other = {
       'Job Role Type': current_job_role.get('jobRoleType'),
       'Badge Number': get_emp_info('idBadgeNo'),
+      'Gsuite Groups': gsuite_info.get('current_groups', '-'),
       # Unused fields:
       #'Status': get_emp_info('status'),
       #'Coordinator Group': current_job_role.get('coordGroup'),

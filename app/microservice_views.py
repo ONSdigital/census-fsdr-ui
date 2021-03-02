@@ -9,6 +9,7 @@ class View:
       self,
       database_name,
       user_role,
+      filter_button_label=None,
       display_name=None,
       who_can_view=None,
       url=None,
@@ -21,10 +22,16 @@ class View:
     self.currently_visible = self.visible(user_role, database_name,
                                           who_can_view)
     self.download_available = self.download_available(user_role, database_name)
+    self.filter_button_label = self.create_filter_label(filter_button_label)
+
+  def create_filter_label(self, filter_name):
+    return filter_name or f'Filter {self.display_name}'
 
   def create_url(self, url, database_name, clear):
     if url == None:
       url = (f'/microservices/{database_name}{clear}')
+    else:
+      url = (f'/microservices/{url}{clear}')
     return url
 
   def create_display_name(self, display_name):
@@ -41,16 +48,7 @@ class View:
 
 def get_html(user_role, views):
   # Non microservice headers added here
-  header_html = [
-      {
-          "title": "Home",
-          "url": "/index"
-      },
-      {
-          "title": "Search",
-          "url": "/search"
-      },
-  ]
+  header_html = []
 
   for view in views:
     if view.currently_visible:
@@ -59,12 +57,27 @@ def get_html(user_role, views):
           'url': view.url_clear,
       })
 
+  header_html.insert(
+      1,
+      {
+          "title": "Search",
+          "url": "/search"
+      },
+  )
+
   return header_html
 
 
 def get_views(user_role, microservice_name):
   views = []
 
+  views.append(
+      View(
+          "index",
+          user_role,
+          display_name="Home",
+          filter_button_label="Filter",
+      ), )
   views.append(View(
       "iattable",
       user_role,

@@ -15,9 +15,9 @@ from app.searchcriteria import (store_search_criteria, retrieve_job_roles,
                                 clear_stored_search_criteria)
 
 from app.searchfunctions import (get_all_assignment_status,
+                                 get_microservice_records,
                                  get_employee_records_no_device,
-                                 get_employee_records, employee_record_table,
-                                 employee_table_headers,
+                                 employee_record_table, employee_table_headers,
                                  get_distinct_job_role_short)
 
 from . import (NEED_TO_SIGN_IN_MSG, NO_EMPLOYEE_DATA, SERVICE_DOWN_MSG)
@@ -120,7 +120,7 @@ class SecondaryPage:
 
       if data.get('job_role_select'):
         previous_jobrole_selected = data.get('job_role_select')
-        search_criteria['jobRoleShort'] = data.get('job_role_select')
+        search_criteria['job_role_short'] = data.get('job_role_select')
 
       if data.get('filter_area'):
         previous_area = data.get('filter_area')
@@ -164,10 +164,11 @@ class SecondaryPage:
         retrieve_employee_info = get_employee_records_no_device(
             search_criteria)
       else:
-        retrieve_employee_info = get_employee_records(search_criteria)
+        retrieve_employee_info = get_microservice_records(
+            'index', search_criteria)
 
       if len(retrieve_employee_info.json()) > 0:
-        emp_sum = retrieve_employee_info.json()[0].get('total_employees', 0)
+        emp_sum = retrieve_employee_info.json()[0].get('total_records', 0)
         max_page = math.ceil(emp_sum / records_per_page)
       else:
         emp_sum = 0
@@ -203,7 +204,7 @@ class SecondaryPage:
           'header_html': header_html,
           'result_message': result_message(search_range, emp_sum,
                                            "Field Workers"),
-          'called_from_index': from_index,
+          'called_from_index': False,
           'page_title': f'Field Force view for: {user_role}',
           'table_headers': table_headers,
           'employee_records': employee_records,
@@ -264,9 +265,9 @@ class SecondaryPage:
         previous_assignment_selected = session['assignmentStatus']
         search_criteria['assignmentStatus'] = previous_assignment_selected
 
-      if session.get('jobRoleShort'):
-        previous_jobrole_selected = session['jobRoleShort']
-        search_criteria['jobRoleShort'] = previous_jobrole_selected
+      if session.get('job_role_short'):
+        previous_jobrole_selected = session['job_role_short']
+        search_criteria['job_role_short'] = previous_jobrole_selected
 
       if session.get('user_missing_device'):
         previous_user_missing_device = session.get('user_missing_device')
@@ -300,10 +301,11 @@ class SecondaryPage:
         retrieve_employee_info = get_employee_records_no_device(
             search_criteria)
       else:
-        retrieve_employee_info = get_employee_records(search_criteria)
+        retrieve_employee_info = get_microservice_records(
+            'index', search_criteria)
 
       if len(retrieve_employee_info.json()) > 0:
-        emp_sum = retrieve_employee_info.json()[0].get('total_employees', 0)
+        emp_sum = retrieve_employee_info.json()[0].get('total_records', 0)
         max_page = math.ceil(emp_sum / records_per_page)
       else:
         emp_sum = 0
@@ -339,7 +341,7 @@ class SecondaryPage:
           'header_html': header_html,
           'result_message': result_message(search_range, emp_sum,
                                            "Field Workers"),
-          'called_from_index': from_index,
+          'called_from_index': False,
           'page_title': f'Field Force view for: {user_role}',
           'table_headers': table_headers,
           'employee_records': employee_records,
