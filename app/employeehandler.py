@@ -95,22 +95,10 @@ class EmployeeInformation():
 
     job_role = employee_info.get('jobRole', "-")
 
-    job_role['contractStartDate'] = format_to_uk_dates(
-        job_role.get('contractStartDate'))
-    job_role['operationalEndDate'] = format_to_uk_dates(
-        job_role.get('operationalEndDate'))
-
-    #  if a job role is returned then format all the dates to uk
-    if job_role:
-      if job_role.get('contractStartDate'):
-        job_role['contractStartDate'] = format_to_uk_dates(
-            job_role.get('contractStartDate'))
-      if job_role.get('contractEndDate'):
-        job_role['contractEndDate'] = format_to_uk_dates(
-            job_role.get('contractEndDate'))
-      if job_role.get('operationalEndDate'):
-        job_role['operationalEndDate'] = format_to_uk_dates(
-            job_role.get('operationalEndDate'))
+    date_fields = ['contractStartDate', 'contractEndDate', 'operationalEndDate']
+    for field in date_fields:
+      if job_role.get(field):
+        job_role[field] = format_to_uk_dates(job_role.get(field))
 
       employee_tabs = get_employee_tabs(role_id, employee_info, job_role,
                                         device_info)

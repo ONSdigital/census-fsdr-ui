@@ -64,7 +64,7 @@ def get_employee_tabs(employee_info, current_job_role, device_information):
       'unique_employee_id': get_emp_info('uniqueEmployeeId'),
   }
 
-  get_microservice_info = get_microservice_records("gsuitetable",
+  get_microservice_info = get_microservice_records('gsuitetable',
                                                    user_filter=gsuite_filter)
   if str(get_microservice_info.status_code) == '200':
     gsuite_info = get_microservice_info.json()

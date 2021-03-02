@@ -25,9 +25,7 @@ class View:
     self.filter_button_label = self.create_filter_label(filter_button_label)
 
   def create_filter_label(self, filter_name):
-    if filter_name == None:
-      filter_name = f'Filter {self.display_name}'
-    return filter_name
+    return filter_name or f'Filter {self.display_name}'
 
   def create_url(self, url, database_name, clear):
     if url == None:
