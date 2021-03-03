@@ -102,59 +102,59 @@ class EmployeeInformation():
       if job_role.get(field):
         job_role[field] = format_to_uk_dates(job_role.get(field))
 
-      employee_tabs = get_employee_tabs(role_id, employee_info, job_role,
-                                        device_info)
+    employee_tabs = get_employee_tabs(role_id, employee_info, job_role,
+                                      device_info)
 
-      device_headers = []
-      device_data = []
+    device_headers = []
+    device_data = []
 
-      for tabs in employee_tabs:
-        if 'all_info' in tabs:
-          employee_info = tabs['all_info']
-        else:
-          for device_table in tabs:
-            if 'headers' in device_table:
-              device_headers = device_table['headers']
-            if 'tds' in device_table:
-              device_data = device_table['tds']
-
-      employee_history_tabs = history_tab(role_id, job_role, employee_history)
-
-      if (not role_matchers.hr_combined_regex.match(role_id)
-          ) and not (role_matchers.logi_combined_regex.match(role_id)):
-
-        job_role_history_header = []
-        job_role_history_data = []
-
-        history_header = ""
-        history_data = ""
-
-        for employee_history in employee_history_tabs[0]:
-          if 'headers' in employee_history:
-            history_header = employee_history['headers']
-          if 'tds' in employee_history:
-            history_data = employee_history['tds']
-
-        for employee_history in employee_history_tabs[1]:
-          if 'headers' in employee_history:
-            job_role_history_header = employee_history['headers']
-          if 'tds' in employee_history:
-            job_role_history_data = employee_history['tds']
-
+    for tabs in employee_tabs:
+      if 'all_info' in tabs:
+        employee_info = tabs['all_info']
       else:
-        for employee_history in employee_history_tabs[0]:
-          if 'headers' in employee_history:
-            history_header = employee_history['headers']
-          if 'tds' in employee_history:
-            history_data = employee_history['tds']
+        for device_table in tabs:
+          if 'headers' in device_table:
+            device_headers = device_table['headers']
+          if 'tds' in device_table:
+            device_data = device_table['tds']
 
-        job_role_history_header = []
-        job_role_history_data = []
+    employee_history_tabs = history_tab(role_id, job_role, employee_history)
 
-      if role_matchers.hr_combined_regex.match(role_id):
-        page_title = f'Employee: {employee_name}'
-      else:
-        page_title = f'Employee: {employee_name} {f"({employee_badge})" if employee_badge else ""}'
+    if (not role_matchers.hr_combined_regex.match(role_id)
+        ) and not (role_matchers.logi_combined_regex.match(role_id)):
+
+      job_role_history_header = []
+      job_role_history_data = []
+
+      history_header = ""
+      history_data = ""
+
+      for employee_history in employee_history_tabs[0]:
+        if 'headers' in employee_history:
+          history_header = employee_history['headers']
+        if 'tds' in employee_history:
+          history_data = employee_history['tds']
+
+      for employee_history in employee_history_tabs[1]:
+        if 'headers' in employee_history:
+          job_role_history_header = employee_history['headers']
+        if 'tds' in employee_history:
+          job_role_history_data = employee_history['tds']
+
+    else:
+      for employee_history in employee_history_tabs[0]:
+        if 'headers' in employee_history:
+          history_header = employee_history['headers']
+        if 'tds' in employee_history:
+          history_data = employee_history['tds']
+
+      job_role_history_header = []
+      job_role_history_data = []
+
+    if role_matchers.hr_combined_regex.match(role_id):
+      page_title = f'Employee: {employee_name}'
+    else:
+      page_title = f'Employee: {employee_name} {f"({employee_badge})" if employee_badge else ""}'
 
     extract_type = role_matchers.get_role(role_id).extract_type
 
