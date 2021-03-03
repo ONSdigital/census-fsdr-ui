@@ -247,7 +247,10 @@ def get_fields(service_name):
     ])
   elif service_name == "iattable":
     job_role_dropdown_options = get_distinct_job_role_short().json()
-    job_role_dropdown_options.remove(None)
+    if None in job_role_dropdown_options:
+      job_role_dropdown_options.remove(None)
+    if "null" in job_role_dropdown_options:
+      job_role_dropdown_options.remove("null")
     return ([
         Field(
             "unique_role_id", column_name="Role ID", search_box_visible=False),
@@ -293,15 +296,15 @@ def get_fields(service_name):
             dropdown_options=status_options,
         ),
         Field(
+            "adecco_status",
+            search_type="dropdown",
+            dropdown_options=status_options,
+        ),
+        Field(
             "setup",
             search_type="dropdown",
             dropdown_options=boolean_dropdown_options,
             format_as_boolean=True,
-        ),
-        Field(
-            "adecco_status",
-            search_type="dropdown",
-            dropdown_options=status_options,
         ),
     ] + data_source_checkboxes)
 
