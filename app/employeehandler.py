@@ -102,6 +102,10 @@ class EmployeeInformation():
       if job_role.get(field):
         job_role[field] = format_to_uk_dates(job_role.get(field))
 
+
+      #TODO remove
+      logger.error(f'Employee Info is {employee_info}')
+
       employee_tabs = get_employee_tabs(role_id, employee_info, job_role,
                                         device_info)
 
