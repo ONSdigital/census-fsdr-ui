@@ -2,7 +2,7 @@ import json
 
 from structlog import get_logger
 from app.tabutils import acc_generation
-from app.searchfunctions import get_distinct_job_role_short
+from app.searchfunctions import get_cached_job_role_shorts 
 
 logger = get_logger('fsdr-ui')
 
@@ -84,28 +84,13 @@ def load_cookie_into_fields(field_classes, previous_criteria):
 
 def get_fields(service_name):
   # Set default Dropdown Values
-  job_role_dropdow_options = [
-      "Census area manager",
-      "Community adviser working with the Arab community",
-      "Community adviser working with the Turkish and Kurdish communities",
-      "Community adviser working with the Chinese community",
-      "Communal establishments team leader", "Communal establishments officer",
-      "Community adviser working with the Black Caribbean community",
-      "Census area manager (Welsh speaking)",
-      "Community adviser working with the Bangladeshi community",
-      "Census team leader",
-      "Community adviser working with the Pakistani community",
-      "Communal establishments officer (Welsh speaking)",
-      "Communal establishments area support", "Census engagement manager",
-      "Communal establishments area manager",
-      "Community adviser working with the Somali community",
-      "Community adviser working with the Nepali community",
-      "Community adviser working with the Black African community",
-      "Community adviser working with the Indian community",
-      "Census mobile team leader", "Census officer - 1st intake",
-      "Census area support", "Census engagement manager (Welsh speaking)"
-  ]
-  job_role_dropdow_options = sorted(job_role_dropdow_options, key=str.lower)
+  job_role_dropdown_options = await get_cached_job_role_shorts()
+  job_role_dropdown_options = job_role_dropdown_options.json()
+  job_role_dropdown_options = sorted(job_role_dropdow_options, key=str.lower)
+  if None in job_role_dropdown_options:
+    job_role_dropdown_options.remove(None)
+  if "null" in job_role_dropdown_options:
+    job_role_dropdown_options.remove("null")
 
   status_options = [
       "CREATE",
@@ -163,7 +148,7 @@ def get_fields(service_name):
         Field("job_role_short",
               column_name="Job Role",
               search_type="dropdown",
-              dropdown_options=job_role_dropdow_options),
+              dropdown_options=job_role_dropdown_options),
         Field("assignment_status",
               column_name="Asgnmt. Status",
               search_box_visible=False),
@@ -246,11 +231,6 @@ def get_fields(service_name):
         Field("ons_email_address", column_name="ONS ID"),
     ])
   elif service_name == "iattable":
-    job_role_dropdown_options = get_distinct_job_role_short().json()
-    if None in job_role_dropdown_options:
-      job_role_dropdown_options.remove(None)
-    if "null" in job_role_dropdown_options:
-      job_role_dropdown_options.remove("null")
     return ([
         Field(
             "unique_role_id", column_name="Role ID", search_box_visible=False),

@@ -18,7 +18,7 @@ from app.searchfunctions import (get_all_assignment_status,
                                  get_microservice_records,
                                  get_employee_records_no_device,
                                  employee_record_table, employee_table_headers,
-                                 get_distinct_job_role_short)
+                                 get_cached_job_role_shorts)
 
 from . import (NEED_TO_SIGN_IN_MSG, NO_EMPLOYEE_DATA, SERVICE_DOWN_MSG)
 from . import saml
@@ -42,7 +42,7 @@ class Search:
     user_role = await saml.get_role_id(request)
 
     try:
-      get_job_roles = get_distinct_job_role_short()
+      get_job_roles = await get_cached_job_role_shorts()
       get_all_assignment_statuses = get_all_assignment_status()
     except ClientResponseError as ex:
       if ex.status == 503:
@@ -177,7 +177,7 @@ class SecondaryPage:
       if data.get('user_missing_device'):
         previous_user_missing_device = data.get('user_missing_device')
 
-      get_job_roles = get_distinct_job_role_short()
+      get_job_roles = await get_cached_job_role_shorts()
 
     except ClientResponseError as ex:
       raise ex
@@ -311,7 +311,7 @@ class SecondaryPage:
         emp_sum = 0
         max_page = 1
 
-      get_job_roles = get_distinct_job_role_short()
+      get_job_roles = await get_cached_job_role_shorts()
 
     except ClientResponseError as ex:
       if ex.status == 503:

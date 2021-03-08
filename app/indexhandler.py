@@ -15,7 +15,7 @@ from app.microservice_views import get_views, get_html
 
 from app.searchfunctions import (get_employee_records, get_employee_count,
                                  employee_record_table, employee_table_headers,
-                                 get_distinct_job_role_short)
+                                 get_cached_job_role_shorts)
 
 from structlog import get_logger
 
@@ -71,7 +71,7 @@ class MainPage:
         employee_sum = 0
         max_page = 1
 
-      get_job_roles = get_distinct_job_role_short()
+      get_job_roles = await get_cached_job_role_shorts()
 
     except ClientResponseError as ex:
       client_response_error(ex, request)

@@ -4,6 +4,8 @@ from yarl import URL
 
 from app.utils import FSDR_USER, FSDR_URL, FSDR_PASS
 import requests
+import datetime
+import asyncio
 
 from requests.auth import HTTPBasicAuth
 from app.tabutils import acc_generation
@@ -11,11 +13,23 @@ from structlog import get_logger
 
 logger = get_logger('fsdr-ui')
 
+#Job  Role Short Caching
+start_time = datetime.datetime.now()
+job_role_lock = asyncio.Lock()
+job_role_shorts = []
 
-def get_distinct_job_role_short():
+def get_job_role_shorts():
   return requests.get(FSDR_URL + f'/jobRoles/allJobRoleShorts/distinct',
-                      verify=False,
-                      auth=HTTPBasicAuth(FSDR_USER, FSDR_PASS))
+                          verify=False,
+                          auth=HTTPBasicAuth(FSDR_USER, FSDR_PASS))
+
+async def get_cached_job_role_shorts():
+  async with job_role_lock:
+    current_time = datetime.datetime.now()
+    time_diff = current_time - start_time
+    if time_diff.minutes > 5:
+      job_role_shorts = get_job_role_shorts()
+    return job_role_shorts
 
 
 def get_all_assignment_status():
