@@ -2,7 +2,7 @@ import json
 
 from structlog import get_logger
 from app.tabutils import acc_generation
-from app.searchfunctions import get_cached_job_role_shorts 
+from app.searchfunctions import get_cached_job_role_shorts
 
 logger = get_logger('fsdr-ui')
 

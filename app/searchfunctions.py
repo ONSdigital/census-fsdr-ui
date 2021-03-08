@@ -16,21 +16,24 @@ logger = get_logger('fsdr-ui')
 #Job  Role Short Caching
 start_time = datetime.datetime.now()
 job_role_lock = asyncio.Lock()
-job_role_shorts  = []
+job_role_shorts = []
+
 
 async def get_job_role_shorts():
   return requests.get(FSDR_URL + f'/jobRoles/allJobRoleShorts/distinct',
-                          verify=False,
-                          auth=HTTPBasicAuth(FSDR_USER, FSDR_PASS))
+                      verify=False,
+                      auth=HTTPBasicAuth(FSDR_USER, FSDR_PASS))
 
 
 async def get_cached_job_role_shorts():
   async with job_role_lock:
-    global job_role_shorts
+    global job_role_shorts, start_time
     current_time = datetime.datetime.now()
     time_diff = current_time - start_time
-    minutes_unitl_refresh  = 30
-    if (time_diff.seconds > (minutes_unitl_refresh * 60)) or (job_role_shorts  == []):
+    minutes_unitl_refresh = 30
+    if (time_diff.seconds >
+        (minutes_unitl_refresh * 60)) or (job_role_shorts == []):
+      start_time = datetime.datetime.now()
       job_role_shorts = await get_job_role_shorts()
 
     return job_role_shorts
