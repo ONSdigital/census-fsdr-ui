@@ -70,7 +70,7 @@ async def clear_stored_search_criteria(session, microservice_name=''):
   ]
 
   if microservice_name != '':
-    field_classes = get_fields(microservice_name)
+    field_classes = await get_fields(microservice_name)
     database_names = [field.database_name for field in field_classes]
     possible_stored_atributes = possible_stored_atributes + database_names
 

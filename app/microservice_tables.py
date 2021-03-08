@@ -82,7 +82,7 @@ def load_cookie_into_fields(field_classes, previous_criteria):
   return field_classes
 
 
-def get_fields(service_name):
+async def get_fields(service_name):
   # Set default Dropdown Values
   job_role_dropdown_options = await get_cached_job_role_shorts()
   job_role_dropdown_options = job_role_dropdown_options.json()
