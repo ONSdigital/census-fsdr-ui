@@ -32,6 +32,7 @@ async def store_search_criteria(request, search_criteria, fields_to_load=[]):
       'user_missing_device',
       'unique_employee_id',
       'setup',
+      'job_role_short',
   ]
 
   possible_stored_atributes = possible_stored_atributes + fields_to_load
@@ -47,6 +48,8 @@ async def clear_stored_search_criteria(session, microservice_name=''):
       'jobRoleShort',
       'area',
       'surname',
+      'job_role_short',
+      'job_role_select',
       'firstName',
       'badgeNumber',
       'jobRoleId',
