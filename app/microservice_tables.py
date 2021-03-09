@@ -107,6 +107,11 @@ async def get_fields(service_name):
       'False',
   ]
 
+  assignment_status_dropdown_options = [
+      'TRAINING_IN_PROGRESS',
+      'ASSIGNED',
+      'READY_TO_START',]
+
   # NISRA HQ Checkboxese
   data_source_checkboxes = [
       Field(
@@ -208,6 +213,20 @@ async def get_fields(service_name):
     return ([
         Field("device_serial_number"),
         Field("ons_id"),
+    ])
+  elif service_name == "missingdevicestable":
+    return ([
+        Field(
+            "unique_employee_id",
+            column_name="Employee ID",
+            accordion=True,
+        ),
+
+        Field("contract_start_date", column_name="Opperational Start Date", search_box_visible=False,),
+        Field("assignment_status",search_type="dropdown",dropdown_options=assignment_status_dropdown_options,),
+        Field("ons_email_address", column_name="ONS ID"),
+        Field("unique_role_id",
+              column_name="Job Role ID",),
     ])
   elif service_name == "devicetable":
     return ([
