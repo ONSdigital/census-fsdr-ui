@@ -5,6 +5,7 @@ from yarl import URL
 from app.utils import FSDR_USER, FSDR_URL, FSDR_PASS
 import requests
 import datetime
+import time
 import asyncio
 
 from requests.auth import HTTPBasicAuth
@@ -13,31 +14,19 @@ from structlog import get_logger
 
 logger = get_logger('fsdr-ui')
 
-#Job  Role Short Caching
-start_time = datetime.datetime.now()
-job_role_lock = asyncio.Lock()
-job_role_shorts = []
-
+# Job Role Short Caching
+jr_cache_timestamp = None
+jr_cache = None
+jr_lock = asyncio.Lock()
+jr_cache_lifetime = 30 * 60
 
 async def get_job_role_shorts():
-  return requests.get(FSDR_URL + f'/jobRoles/allJobRoleShorts/distinct',
-                      verify=False,
-                      auth=HTTPBasicAuth(FSDR_USER, FSDR_PASS))
-
-
-async def get_cached_job_role_shorts():
-  async with job_role_lock:
-    global job_role_shorts, start_time
-    current_time = datetime.datetime.now()
-    time_diff = current_time - start_time
-    minutes_unitl_refresh = 30
-    if (time_diff.seconds >
-        (minutes_unitl_refresh * 60)) or (job_role_shorts == []):
-      start_time = datetime.datetime.now()
-      job_role_shorts = await get_job_role_shorts()
-
-    return job_role_shorts
-
+  async with jr_lock:
+    global jr_cache, jr_cache_timestamp
+    if jr_cache is None or (time.time() - jr_cache_timestamp) > jr_cache_lifetime:
+      jr_cache = requests.get(FSDR_URL + f'/jobRoles/allJobRoleShorts/distinct', verify=False, auth=HTTPBasicAuth(FSDR_USER, FSDR_PASS))
+      jr_cache_timestamp = time.time()
+    return jr_cache
 
 def get_all_assignment_status():
   return requests.get(FSDR_URL + f'/jobRoles/assignmentStatus',

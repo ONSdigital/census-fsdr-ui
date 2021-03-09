@@ -2,7 +2,7 @@ import json
 
 from structlog import get_logger
 from app.tabutils import acc_generation
-from app.searchfunctions import get_cached_job_role_shorts
+from app.searchfunctions import get_job_role_shorts
 
 logger = get_logger('fsdr-ui')
 
@@ -84,7 +84,7 @@ def load_cookie_into_fields(field_classes, previous_criteria):
 
 async def get_fields(service_name):
   # Set default Dropdown Values
-  job_role_dropdown_options = await get_cached_job_role_shorts()
+  job_role_dropdown_options = await get_job_role_shorts()
   job_role_dropdown_options = job_role_dropdown_options.json()
   if None in job_role_dropdown_options:
     job_role_dropdown_options.remove(None)
