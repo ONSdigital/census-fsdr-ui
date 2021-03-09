@@ -8,6 +8,7 @@ from app.employee_view_functions import get_employee_information, get_employee_h
 from app.employee_view_router import get_employee_tabs
 from app.historytab import history_tab
 from app.tabutils import format_to_uk_dates
+from app.microservice_views import get_views, get_html
 from . import (NEED_TO_SIGN_IN_MSG, NO_EMPLOYEE_DATA)
 from . import saml
 from . import role_matchers
@@ -95,13 +96,6 @@ class EmployeeInformation():
 
     job_role = employee_info.get('jobRole', "-")
 
-    date_fields = [
-        'contractStartDate', 'contractEndDate', 'operationalEndDate'
-    ]
-    for field in date_fields:
-      if job_role.get(field):
-        job_role[field] = format_to_uk_dates(job_role.get(field))
-
     employee_tabs = get_employee_tabs(role_id, employee_info, job_role,
                                       device_info)
 
@@ -158,8 +152,12 @@ class EmployeeInformation():
 
     extract_type = role_matchers.get_role(role_id).extract_type
 
+    views, current_view_index = get_views(role_id, None)
+    header_html = get_html(role_id, views)
+
     try:
       return {
+          'header_html': header_html,
           'user_role': role_id,
           'extract_type': extract_type,
           'page_title': page_title,

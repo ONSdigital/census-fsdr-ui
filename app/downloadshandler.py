@@ -12,6 +12,7 @@ from app.microservice_tables import get_table_records, get_table_headers
 from app.role_matchers import has_download_permission
 from app.error_handlers import client_response_error, warn_invalid_login
 from app.pageutils import page_bounds
+from datetime import datetime
 
 from app.microservice_tables import (
     get_table_headers,
@@ -69,21 +70,21 @@ class DownloadsPage:
       search_range, records_per_page = page_bounds(1)
 
       get_microservice_info = get_microservice_records(
-          "iattable", user_filter=search_range)
+          microservice_name, user_filter=search_range)
       get_microservice_info_json = get_microservice_info.json()
 
       if len(get_microservice_info_json) > 0:
         microservice_sum = get_microservice_info_json[0].get(
             'total_records', 0)
 
-        # If there are more than 0 people in iat
+        # If there are more than 0 people in Microservice
         # then get_employee_info is set to everyone (max is total number of employees)
         search_range = {'rangeHigh': microservice_sum, 'rangeLow': 0}
         get_microservice_info = get_microservice_records(
-            "iattable", search_range)
+            microservice_name, search_range)
         get_microservice_info_json = get_microservice_info.json()
 
-        field_classes = get_fields(microservice_name)
+        field_classes = await get_fields(microservice_name)
 
         html_microservice_records = get_table_records(
             field_classes,
@@ -112,20 +113,18 @@ class DownloadsPage:
           rows = str(rows) + str(each_array.get('value')) + " , "
         rows = rows[:-3]
 
-      if microservice_name == "iattable":
-        path = "/tmp/fsdrui_assets/"
+      path = "/tmp/fsdrui_assets/"
 
-        # Create unique file name
-        file_name = f'{uuid.uuid4()}.csv'
-        session['file_download_full_path'] = path + file_name
+      # Create unique file name
+      today = datetime.today().strftime('%Y-%m-%d')
+      file_name = f'{microservice_name}{today}-{uuid.uuid4()}.csv'
+      session['file_download_full_path'] = path + file_name
 
-        with open(path + file_name, "w+") as of:
-          of.write(str(headers))
-          of.write(str(rows))
+      with open(path + file_name, "w+") as of:
+        of.write(str(headers))
+        of.write(str(rows))
 
-        download_location = "/fsdrui_assets/" + file_name
-      else:
-        logger.warn(f"Unknown download type: {microservice_name}")
+      download_location = "/fsdrui_assets/" + file_name
 
       return {
           'download_location': download_location,

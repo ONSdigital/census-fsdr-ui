@@ -82,7 +82,7 @@ class MicroservicesTable:
 
     try:
 
-      field_classes = get_fields(microservice_name)
+      field_classes = await get_fields(microservice_name)
       table_headers = get_table_headers(
           field_classes)  # formatted for table use
       fields_to_load = get_fields_to_load(field_classes)
@@ -175,7 +175,7 @@ class MicroservicesTable:
       del session['file_download_full_path']
 
     try:
-      field_classes = get_fields(microservice_name)
+      field_classes = await get_fields(microservice_name)
       table_headers = get_table_headers(
           field_classes)  # formatted for table use
       fields_to_load = get_fields_to_load(field_classes)
