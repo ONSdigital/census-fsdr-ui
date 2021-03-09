@@ -117,7 +117,7 @@ class SecondaryPage:
         previous_user_missing_device = data.get('user_missing_device')
         search_criteria['user_missing_device'] = data.get(
             'user_missing_device')
-      
+
       if data.get('job_role_select'):
         previous_jobrole_selected = data.get('job_role_select')
         search_criteria['job_role_short'] = data.get('job_role_select')

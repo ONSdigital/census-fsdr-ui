@@ -99,7 +99,12 @@ def get_views(user_role, microservice_name):
       display_name="Request",
   ), )
   views.append(View("chromebooktable", user_role), )
-  views.append(View("missingdevicestable", user_role,display_name="Missing Devices",), )
+  views.append(
+      View(
+          "missingdevicestable",
+          user_role,
+          display_name="Missing Devices",
+      ), )
 
   current_view_index = 0
   for counter, view in enumerate(views):

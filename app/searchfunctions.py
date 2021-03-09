@@ -20,13 +20,19 @@ jr_cache = None
 jr_lock = asyncio.Lock()
 jr_cache_lifetime = 30 * 60
 
+
 async def get_job_role_shorts():
   async with jr_lock:
     global jr_cache, jr_cache_timestamp
-    if jr_cache is None or (time.time() - jr_cache_timestamp) > jr_cache_lifetime:
-      jr_cache = requests.get(FSDR_URL + f'/jobRoles/allJobRoleShorts/distinct', verify=False, auth=HTTPBasicAuth(FSDR_USER, FSDR_PASS))
+    if jr_cache is None or (time.time() -
+                            jr_cache_timestamp) > jr_cache_lifetime:
+      jr_cache = requests.get(FSDR_URL +
+                              f'/jobRoles/allJobRoleShorts/distinct',
+                              verify=False,
+                              auth=HTTPBasicAuth(FSDR_USER, FSDR_PASS))
       jr_cache_timestamp = time.time()
     return jr_cache
+
 
 def get_all_assignment_status():
   return requests.get(FSDR_URL + f'/jobRoles/assignmentStatus',
