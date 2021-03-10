@@ -38,6 +38,7 @@ async def on_cleanup(app):
   await app.http_session_pool.close()
   await app['client'].close()
 
+
 async def check_services(app: Application) -> bool:
   for service_name in app.service_status_urls:
     url = app.service_status_urls[service_name]

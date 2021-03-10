@@ -84,7 +84,8 @@ def load_cookie_into_fields(field_classes, previous_criteria):
 
 async def get_fields(service_name, request):
   # Set default Dropdown Values
-  job_role_dropdown_options = await request.app['jr_names_service'].fetch(request)
+  job_role_dropdown_options = await request.app['jr_names_service'].fetch(
+      request)
 
   status_options = [
       "CREATE",

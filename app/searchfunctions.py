@@ -110,4 +110,3 @@ def employee_record_table(employee_records_json):
         }]
     })
   return add_employees
-

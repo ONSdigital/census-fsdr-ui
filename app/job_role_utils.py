@@ -4,9 +4,9 @@ from app.utils import FSDR_USER, FSDR_URL, FSDR_PASS
 from aiohttp import BasicAuth
 import time
 
+
 class JRNamesService:
   """Service to fetch and cache Job Role names for use in dropdown menus"""
-
   def __init__(self):
     self.cache = None
     self.lifetime = 30 * 60
