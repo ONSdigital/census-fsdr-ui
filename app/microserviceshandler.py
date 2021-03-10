@@ -66,7 +66,7 @@ class MicroservicesTable:
 
     if 'clear' in microservice_name:
       microservice_name = microservice_name.replace('clear', '')
-      await clear_stored_search_criteria(session, microservice_name)
+      await clear_stored_search_criteria(session,request, microservice_name)
 
     if microservices_permissions(user_role, microservice_name) == False:
       request['client_ip'] = request.get('client_ip', "No IP Provided")
@@ -82,7 +82,7 @@ class MicroservicesTable:
 
     try:
 
-      field_classes = await get_fields(microservice_name)
+      field_classes = await get_fields(microservice_name, request)
       table_headers = get_table_headers(
           field_classes)  # formatted for table use
       fields_to_load = get_fields_to_load(field_classes)
@@ -160,7 +160,7 @@ class MicroservicesTable:
 
     if 'clear' in microservice_name:
       microservice_name = microservice_name.replace('clear', '')
-      await clear_stored_search_criteria(session, microservice_name)
+      await clear_stored_search_criteria(session, request, microservice_name)
 
     if microservices_permissions(user_role, microservice_name) == False:
       request['client_ip'] = request.get('client_ip', "No IP Provided")
@@ -175,7 +175,7 @@ class MicroservicesTable:
       del session['file_download_full_path']
 
     try:
-      field_classes = await get_fields(microservice_name)
+      field_classes = await get_fields(microservice_name, request)
       table_headers = get_table_headers(
           field_classes)  # formatted for table use
       fields_to_load = get_fields_to_load(field_classes)

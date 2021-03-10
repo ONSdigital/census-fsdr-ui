@@ -38,7 +38,7 @@ class Search:
 
     await saml.ensure_logged_in(request)
 
-    await clear_stored_search_criteria(session)
+    await clear_stored_search_criteria(session, request)
     user_role = await saml.get_role_id(request)
 
     try:

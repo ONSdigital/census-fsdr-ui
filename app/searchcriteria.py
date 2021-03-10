@@ -42,7 +42,7 @@ async def store_search_criteria(request, search_criteria, fields_to_load=[]):
       session[atribute] = search_criteria.get(atribute)
 
 
-async def clear_stored_search_criteria(session, microservice_name=''):
+async def clear_stored_search_criteria(session, request, microservice_name=''):
   possible_stored_atributes = [
       'assignmentStatus',
       'jobRoleShort',
@@ -73,7 +73,7 @@ async def clear_stored_search_criteria(session, microservice_name=''):
   ]
 
   if microservice_name != '':
-    field_classes = await get_fields(microservice_name)
+    field_classes = await get_fields(microservice_name, request)
     database_names = [field.database_name for field in field_classes]
     possible_stored_atributes = possible_stored_atributes + database_names
 
