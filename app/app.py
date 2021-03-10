@@ -36,7 +36,7 @@ async def on_startup(app):
 
 async def on_cleanup(app):
   await app.http_session_pool.close()
-
+  await app['client'].close()
 
 async def check_services(app: Application) -> bool:
   for service_name in app.service_status_urls:
@@ -121,6 +121,7 @@ def create_app(config_name=None, google_auth=None) -> Application:
 
   # Add cache  job  role dropdowns
   app['jr_names_service'] = job_role_utils.JRNamesService()
+  app['client'] = ClientSession()
 
   logger.info('app setup complete', config=config_name)
 
