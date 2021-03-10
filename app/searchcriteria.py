@@ -154,62 +154,6 @@ def retrieve_job_roles(job_roles, previous_jobrole_selected):
   return add_job_roles
 
 
-def set_status(dropdown_value):
-
-  # Set the default options
-  dropdown_options = [
-      {
-          'value': 'blank',
-          'text': 'Select a status',
-          "disabled": True
-      },
-      {
-          'value': 'CREATE',
-          'text': 'CREATE'
-      },
-      {
-          'value': 'SETUP',
-          'text': 'SETUP'
-      },
-      {
-          'value': 'UPDATE',
-          'text': 'UPDATE'
-      },
-      {
-          'value': 'LEAVER',
-          'text': 'LEAVER'
-      },
-      {
-          'value': 'LEFT',
-          'text': 'LEFT'
-      },
-      {
-          'value': 'COMPLETE',
-          'text': 'COMPLETE'
-      },
-  ]
-
-  for each_dict in dropdown_options:
-    if each_dict['value'] == dropdown_value:
-      each_dict['selected'] = True
-
-  return dropdown_options
-
-
-def retreive_iat_statuses(data, select_options):
-  all_options = {}
-
-  for dropdown_name in select_options:
-    # if the dropdown should be a pre-selected value
-    if data.get(dropdown_name):
-      dropdown_value = data.get(dropdown_name)
-      all_options[dropdown_name] = set_status(dropdown_value)
-    else:
-      all_options[dropdown_name] = set_status('blank')
-
-  return all_options
-
-
 def retrieve_assignment_statuses(assignment_statuses):
   add_assignment = []
   for assignments in assignment_statuses.json():
