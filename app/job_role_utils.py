@@ -20,9 +20,9 @@ class JRNamesService:
         url = FSDR_URL + f'/jobRoles/allJobRoleShorts/distinct'
         auth = BasicAuth(FSDR_USER, FSDR_PASS)
         async with client.get(url, auth=auth) as resp:
-          self.cache = await resp.json()
-          self.cache = [x for x in self.cache if x not in ['null', None]]
-          self.cache = sorted(self.cache, key=str.lower)
+          cache = await resp.json()
+          cache = [x for x in cache if x not in ['null', None]]
+          self.cache = sorted(cache, key=str.lower)
 
         self.timestamp = time.time()
     return self.cache

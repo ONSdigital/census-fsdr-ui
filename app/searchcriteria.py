@@ -42,7 +42,8 @@ async def store_search_criteria(request, search_criteria, fields_to_load=[]):
       session[atribute] = search_criteria.get(atribute)
 
 
-async def clear_stored_search_criteria(session, request, microservice_name=''):
+async def clear_stored_search_criteria(request, microservice_name=''):
+  session = await get_session(request)
   possible_stored_atributes = [
       'assignmentStatus',
       'jobRoleShort',

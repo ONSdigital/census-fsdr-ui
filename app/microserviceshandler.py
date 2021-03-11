@@ -66,7 +66,7 @@ class MicroservicesTable:
 
     if 'clear' in microservice_name:
       microservice_name = microservice_name.replace('clear', '')
-      await clear_stored_search_criteria(session, request, microservice_name)
+      await clear_stored_search_criteria(request, microservice_name)
 
     if microservices_permissions(user_role, microservice_name) == False:
       request['client_ip'] = request.get('client_ip', "No IP Provided")
@@ -160,7 +160,7 @@ class MicroservicesTable:
 
     if 'clear' in microservice_name:
       microservice_name = microservice_name.replace('clear', '')
-      await clear_stored_search_criteria(session, request, microservice_name)
+      await clear_stored_search_criteria(request, microservice_name)
 
     if microservices_permissions(user_role, microservice_name) == False:
       request['client_ip'] = request.get('client_ip', "No IP Provided")
