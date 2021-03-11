@@ -84,7 +84,7 @@ class DownloadsPage:
             microservice_name, search_range)
         get_microservice_info_json = get_microservice_info.json()
 
-        field_classes = await get_fields(microservice_name)
+        field_classes = await get_fields(microservice_name, request)
 
         html_microservice_records = get_table_records(
             field_classes,

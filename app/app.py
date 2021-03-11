@@ -21,6 +21,8 @@ from . import session
 from . import settings
 from . import saml
 from . import pageutils
+from . import job_role_utils
+
 from .app_logging import logger_initial_config
 
 logger = get_logger('fsdr-ui')
@@ -34,6 +36,7 @@ async def on_startup(app):
 
 async def on_cleanup(app):
   await app.http_session_pool.close()
+  await app['client'].close()
 
 
 async def check_services(app: Application) -> bool:
@@ -116,6 +119,10 @@ def create_app(config_name=None, google_auth=None) -> Application:
   app.on_cleanup.append(on_cleanup)
   if not app.debug:
     app.on_response_prepare.append(security.on_prepare)
+
+  # Add cache  job  role dropdowns
+  app['jr_names_service'] = job_role_utils.JRNamesService()
+  app['client'] = ClientSession()
 
   logger.info('app setup complete', config=config_name)
 

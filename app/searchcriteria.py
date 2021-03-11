@@ -42,7 +42,8 @@ async def store_search_criteria(request, search_criteria, fields_to_load=[]):
       session[atribute] = search_criteria.get(atribute)
 
 
-async def clear_stored_search_criteria(session, microservice_name=''):
+async def clear_stored_search_criteria(request, microservice_name=''):
+  session = await get_session(request)
   possible_stored_atributes = [
       'assignmentStatus',
       'jobRoleShort',
@@ -73,39 +74,13 @@ async def clear_stored_search_criteria(session, microservice_name=''):
   ]
 
   if microservice_name != '':
-    field_classes = await get_fields(microservice_name)
+    field_classes = await get_fields(microservice_name, request)
     database_names = [field.database_name for field in field_classes]
     possible_stored_atributes = possible_stored_atributes + database_names
 
   for key_to_clear in possible_stored_atributes:
     if session.get(key_to_clear):
       del session[key_to_clear]
-
-
-def device_sent_dropdown(dropdown_value):
-  if dropdown_value == '':
-    dropdown_value = "blank"
-  dropdown_options = [
-      {
-          'value': 'blank',
-          'text': 'Select a value',
-          'disabled': True
-      },
-      {
-          'value': 'True',
-          'text': 'True'
-      },
-      {
-          'value': 'False',
-          'text': 'False'
-      },
-  ]
-
-  for each_dict in dropdown_options:
-    if each_dict['value'] == dropdown_value:
-      each_dict['selected'] = True
-
-  return dropdown_options
 
 
 def load_search_criteria(data, fields_to_load):
@@ -152,62 +127,6 @@ def retrieve_job_roles(job_roles, previous_jobrole_selected):
     })
 
   return add_job_roles
-
-
-def set_status(dropdown_value):
-
-  # Set the default options
-  dropdown_options = [
-      {
-          'value': 'blank',
-          'text': 'Select a status',
-          "disabled": True
-      },
-      {
-          'value': 'CREATE',
-          'text': 'CREATE'
-      },
-      {
-          'value': 'SETUP',
-          'text': 'SETUP'
-      },
-      {
-          'value': 'UPDATE',
-          'text': 'UPDATE'
-      },
-      {
-          'value': 'LEAVER',
-          'text': 'LEAVER'
-      },
-      {
-          'value': 'LEFT',
-          'text': 'LEFT'
-      },
-      {
-          'value': 'COMPLETE',
-          'text': 'COMPLETE'
-      },
-  ]
-
-  for each_dict in dropdown_options:
-    if each_dict['value'] == dropdown_value:
-      each_dict['selected'] = True
-
-  return dropdown_options
-
-
-def retreive_iat_statuses(data, select_options):
-  all_options = {}
-
-  for dropdown_name in select_options:
-    # if the dropdown should be a pre-selected value
-    if data.get(dropdown_name):
-      dropdown_value = data.get(dropdown_name)
-      all_options[dropdown_name] = set_status(dropdown_value)
-    else:
-      all_options[dropdown_name] = set_status('blank')
-
-  return all_options
 
 
 def retrieve_assignment_statuses(assignment_statuses):
