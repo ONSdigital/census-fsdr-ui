@@ -22,15 +22,24 @@
         {% set previousArea = params.previous_area %}
     {% endif %}
 
+	{% if params.search_section_accordioned %}
+		<div id="accordion" class="accordion">
+		<details id="accordion-1" class="details js-collapsible details--accordion details--initialised" data-btn-close="Hide" data-group="accordion" role="group">
+		<summary class="details__summary js-collapsible-summary" role="link" aria-controls="accordion-1" aria-expanded="false" data-ga-action="Close panel">
+		<div class="details__heading"><span class="details__title u-fs-r--b">Expand for Advanced Search Options</span></div></summary>
+		<div id="accordion-1-content" class="details__content js-collapsible-content" aria-hidden="true">
+		<dl class="metadata metadata__list grid grid--gutterless u-cf u-mb-l">
+		<dt class="grid__col col-40@m">
+	{% endif %}
+
+
     {% if params.index_search == "microservice" %}
         <table>
-                {{
-                    onsLabel({
+                {{onsLabel({
                         "id": 'label',
                         "for": "some-input",
-                        "text": "Filter " + params.microservice_title
-                    })
-                }}
+                        "text": "Filter " + params.microservice_title})}}
+
 		
 		{% set col = namespace(value=-1) %}
 		{% set row = namespace(value=0) %}
@@ -97,82 +106,15 @@
 		    {% endif %}
 		{% endfor %}
 		</table>
-		
+
+		{% if params.search_section_accordioned %}
+			</dt>
+			<dd class="metadata__value grid__col col-40@m"></dd></dl></div>
+			</details>
+			</div>
+		{% endif %}
+	
     {% else %}
-        {{
-            onsInput({
-                "id": "text",
-                'name': "filter_firstname",
-                "label": {
-                    "text": "First Name"
-                }
-            })
-        }}
-        {{
-            onsInput({
-                "id": "text",
-                'name': "filter_surname",
-                "label": {
-                    "text": "Surname"
-                }
-            })
-        }}
-        {{
-            onsInput({
-                'id': 'filter_email',
-                'name': 'filter_email',
-                'label': {
-                    'text': 'ONS ID'
-                }
-            })
-        }}
-        {{
-            onsInput({
-                "id": "text",
-                'name': "filter_badge",
-                "label": {
-                    "text": "ID Badge Number"
-                }
-            })
-        }}
-        {{
-            onsInput({
-                "id": "text",
-                'name': "filter_area",
-                "label": {
-                    "text": "Area"
-                }
-            })
-        }}
-        {{
-            onsSelect({
-                "id": "select",
-                'name': "job_role_select",
-                "label": {
-                    "text": "Job Role"
-                },
-                "options": params.distinct_job_roles
-            })
-        }}
-        {{
-            onsInput({
-                "id": "text",
-                'name': "filter_jobid",
-                "label": {
-                    "text": "Role ID"
-                }
-            })
-        }}
-        {{
-            onsSelect({
-                "id": "select",
-                'name': "assignment_select",
-                "label": {
-                    "text": "Assignment Status"
-                },
-                "options": params.all_assignment_statuses
-            })
-        }}
     {% endif %}
     <br>
 {% endmacro %}

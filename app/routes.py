@@ -6,7 +6,6 @@ from structlog import get_logger
 from .employeehandler import employee_routes
 from .handler import static_routes
 from .saml import saml_routes
-from .searchhandler import search_routes
 from .downloadshandler import downloads_routes
 from .microserviceshandler import microservices_handler_routes
 
@@ -32,7 +31,6 @@ def setup(app, url_path_prefix):
       *extra_routes,
       *employee_routes,
       *static_routes,
-      *search_routes,
       *saml_routes,
       *downloads_routes,
       *microservices_handler_routes,

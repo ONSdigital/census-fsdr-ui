@@ -79,6 +79,7 @@ def microservices_permissions(role_id, microservice_name):
       "devicetable",
       "iattable",
       "index",
+      "search",
   ]
 
   cfs_accessable = [

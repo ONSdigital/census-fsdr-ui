@@ -138,6 +138,27 @@ async def get_fields(service_name, request):
         Field("gsuite_hash"),
         Field("current_groups"),
     ])
+  elif service_name == "search":
+    return ([
+        Field("id_badge_no", column_name="Badge No.",
+              search_box_visible=False),
+        Field("ons_email_address", show_as_table_header=False, accordion=True, column_name="ONS ID"),
+        Field("first_name",show_as_table_header=False,),
+        Field("surname",show_as_table_header=False,),
+        Field("name", column_name="Name", search_box_visible=False, name=True),
+        Field("unique_role_id",
+              column_name="Job Role ID",
+              ),
+        Field("job_role_short",
+              column_name="Job Role",
+              search_type="dropdown",
+              dropdown_options=job_role_dropdown_options),
+        Field("assignment_status",
+              search_type="dropdown",
+              dropdown_options = assignment_status_dropdown_options ),
+        Field("area_location", show_as_table_header=False, column_name="Area"),
+    ] + data_source_checkboxes)
+
   elif service_name == "index":
     return ([
         Field("id_badge_no", column_name="Badge No.",

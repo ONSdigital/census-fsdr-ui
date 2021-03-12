@@ -49,16 +49,9 @@ def get_employee_records_no_device(user_filter=""):
                       auth=HTTPBasicAuth(FSDR_USER, FSDR_PASS))
 
 
-def get_device_records(user_filter=""):
-  employee_record_url = URL(FSDR_URL +
-                            f'/fieldforce/byType/byRangeAndUserFilterDevice/'
-                            ).with_query(user_filter)
-  return requests.get(employee_record_url,
-                      verify=False,
-                      auth=HTTPBasicAuth(FSDR_USER, FSDR_PASS))
-
-
 def get_microservice_records(endpoint_name, user_filter=""):
+  if endpoint_name == "search":
+    endpoint_name = "index"
   microservice_url = URL(
       FSDR_URL +
       f'/fieldforce/byMicroservice/{endpoint_name}/').with_query(user_filter)
