@@ -2,7 +2,6 @@ import json
 
 from structlog import get_logger
 from app.tabutils import acc_generation
-from app.searchfunctions import get_job_role_shorts
 
 logger = get_logger('fsdr-ui')
 
@@ -138,6 +137,35 @@ async def get_fields(service_name, request):
         Field("gsuite_hash"),
         Field("current_groups"),
     ])
+  elif service_name == "search":
+    return ([
+        Field("id_badge_no", column_name="Badge No.",
+              search_box_visible=False),
+        Field("ons_email_address",
+              show_as_table_header=False,
+              accordion=True,
+              column_name="ONS ID"),
+        Field(
+            "first_name",
+            show_as_table_header=False,
+        ),
+        Field(
+            "surname",
+            show_as_table_header=False,
+        ),
+        Field("name", column_name="Name", search_box_visible=False, name=True),
+        Field("unique_role_id",
+              column_name="Job Role ID",
+              show_as_table_header=False),
+        Field("job_role_short",
+              column_name="Job Role",
+              search_type="dropdown",
+              dropdown_options=job_role_dropdown_options),
+        Field("assignment_status",
+              search_type="dropdown",
+              dropdown_options=assignment_status_dropdown_options),
+    ] + data_source_checkboxes)
+
   elif service_name == "index":
     return ([
         Field("id_badge_no", column_name="Badge No.",
@@ -152,11 +180,12 @@ async def get_fields(service_name, request):
               dropdown_options=job_role_dropdown_options),
         Field("assignment_status",
               column_name="Asgnmt. Status",
-              search_box_visible=False),
-        Field("surname",
-              column_name="Worker Surname",
-              show_as_table_header=False),
-        Field("area_location", show_as_table_header=False, column_name="Area"),
+              search_type="dropdown",
+              dropdown_options=assignment_status_dropdown_options),
+        Field(
+            "surname",
+            column_name="Worker Surname",
+        ),
         Field(
             "noDevice",
             column_name="Only show users with no device",

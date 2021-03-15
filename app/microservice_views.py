@@ -9,6 +9,9 @@ class View:
       self,
       database_name,
       user_role,
+      search_section_accordioned=False,
+      hide_table=False,
+      hide_search_criteria=False,
       filter_button_label=None,
       display_name=None,
       who_can_view=None,
@@ -16,6 +19,7 @@ class View:
   ):
 
     self.database_name = database_name
+    self.search_section_accordioned = search_section_accordioned
     self.display_name = self.create_display_name(display_name)
     self.url_clear = self.create_url(url, database_name, clear='clear')
     self.url = self.create_url(url, database_name, clear='')
@@ -23,6 +27,8 @@ class View:
                                           who_can_view)
     self.download_available = self.download_available(user_role, database_name)
     self.filter_button_label = self.create_filter_label(filter_button_label)
+    self.hide_table = hide_table
+    self.hide_search_criteria = hide_search_criteria
 
   def create_filter_label(self, filter_name):
     return filter_name or f'Filter {self.display_name}'
@@ -57,14 +63,6 @@ def get_html(user_role, views):
           'url': view.url_clear,
       })
 
-  header_html.insert(
-      1,
-      {
-          "title": "Search",
-          "url": "/search"
-      },
-  )
-
   return header_html
 
 
@@ -78,6 +76,16 @@ def get_views(user_role, microservice_name):
           display_name="Home",
           filter_button_label="Filter",
       ), )
+  views.append(
+      View(
+          "search",
+          user_role,
+          display_name="Search",
+          filter_button_label="Submit",
+          hide_table=True,
+          hide_search_criteria=False,
+      ), )
+
   views.append(View(
       "iattable",
       user_role,

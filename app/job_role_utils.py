@@ -7,6 +7,7 @@ import time
 
 logger = get_logger('fsdr-ui')
 
+
 class JRNamesService:
   """Service to fetch and cache Job Role names for use in dropdown menus"""
   def __init__(self):
