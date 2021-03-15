@@ -18,4 +18,5 @@ The FSDR-Service needs to be running locally before running the UI. You also nee
 5. Change the directory back to the root project folder and run `python3 run.py`. The UI should now be running
 
 ## Copyright
+
 Copyright (C) 2019 Crown Copyright (Office for National Statistics)

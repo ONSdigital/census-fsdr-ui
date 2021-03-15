@@ -11,17 +11,8 @@ from aiohttp_utils import negotiation, routing
 import aiohttp_remotes
 from structlog import get_logger
 
-from . import config
-from . import error_handlers
-from . import flash
-from . import domains
-from . import routes
-from . import security
-from . import session
-from . import settings
-from . import saml
-from . import pageutils
-from . import job_role_utils
+from . import (config, error_handlers, flash, domains, routes, security,
+               session, settings, saml, pageutils, job_role_utils)
 
 from .app_logging import logger_initial_config
 
@@ -30,8 +21,15 @@ logger = get_logger('fsdr-ui')
 
 async def on_startup(app):
   await aiohttp_remotes.setup(app, aiohttp_remotes.XForwardedRelaxed())
+
   app.http_session_pool = ClientSession(timeout=ClientTimeout(total=30))
+
   saml.fetch_settings(app)
+
+  # Add cache job role dropdowns
+  app['jr_names_service'] = job_role_utils.JRNamesService()
+
+  app['client'] = ClientSession()
 
 
 async def on_cleanup(app):
@@ -57,9 +55,8 @@ async def check_services(app: Application) -> bool:
 
 
 def create_app(config_name=None, google_auth=None) -> Application:
-  """
-    App factory. Sets up routes and all plugins.
-    """
+  """App factory. Sets up routes and all plugins."""
+
   app_config = config.Config()
   app_config.from_object(settings)
 
@@ -68,10 +65,9 @@ def create_app(config_name=None, google_auth=None) -> Application:
   app_config.from_object(getattr(config, config_name))
 
   # Create basic auth for services
-  [
+  for key in app_config:
+    if key.endswith('_AUTH'):
       app_config.__setitem__(key, BasicAuth(*app_config[key]))
-      for key in app_config if key.endswith('_AUTH')
-  ]
 
   app = Application(
       debug=settings.DEBUG,
@@ -82,6 +78,8 @@ def create_app(config_name=None, google_auth=None) -> Application:
       ],
       router=routing.ResourceRouter(),
   )
+
+  config.configure(app)
 
   # Handle 500 errors
   error_handlers.setup(app)
@@ -119,10 +117,6 @@ def create_app(config_name=None, google_auth=None) -> Application:
   app.on_cleanup.append(on_cleanup)
   if not app.debug:
     app.on_response_prepare.append(security.on_prepare)
-
-  # Add cache  job  role dropdowns
-  app['jr_names_service'] = job_role_utils.JRNamesService()
-  app['client'] = ClientSession()
 
   logger.info('app setup complete', config=config_name)
 

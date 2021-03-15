@@ -50,7 +50,8 @@ def redirect_to_login(request):
   raise HTTPFound(request.app.router['sso'].url_for())
 
 
-# Ensure the user is logged in, and redirect them to the login screen if they are not
+# Ensure the user is logged in
+# Redirect them to the login screen if they are not
 async def ensure_logged_in(request):
   logged_in = await is_logged_in(request)
   if logged_in:

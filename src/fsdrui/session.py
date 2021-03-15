@@ -39,19 +39,6 @@ def aiohttp_session_pr_331_rollback(self,
     self._mapping.update(session_data)
 
 
-def setup(app_config):
-  # Monkey patch aiohttp_session.py Session.__init__ method to remove PR 331 as above
-  Session.__init__ = aiohttp_session_pr_331_rollback
-
-  loop = get_event_loop()
-  redis_pool = loop.run_until_complete(
-      make_redis_pool(app_config['REDIS_SERVER'], app_config['REDIS_PORT']))
-  return session_middleware(
-      RedisStorage(redis_pool,
-                   cookie_name='FSDRUI_SESSION',
-                   max_age=int(app_config['SESSION_AGE'])))
-
-
 async def make_redis_pool(host, port):
   redis_address = (host, port)
   try:
@@ -62,3 +49,16 @@ async def make_redis_pool(host, port):
     return redis_pool
   except (OSError, RedisError):
     logger.error('failed to create redis connection')
+
+
+def session_middleware(app_config):
+  # Monkey patch aiohttp_session.py Session.__init__ method to remove PR 331 as above
+  Session.__init__ = aiohttp_session_pr_331_rollback
+
+  loop = get_event_loop()
+  redis_pool = loop.run_until_complete(
+      make_redis_pool(app_config['REDIS_SERVER'], app_config['REDIS_PORT']))
+  return session_middleware(
+      RedisStorage(redis_pool,
+                   cookie_name='FSDRUI_SESSION',
+                   max_age=int(app_config['SESSION_AGE'])))

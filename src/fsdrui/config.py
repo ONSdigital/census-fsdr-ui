@@ -3,6 +3,10 @@ from pathlib import Path
 from envparse import Env, ConfigurationError
 
 
+def configure(app):
+  pass
+
+
 class Config(dict):
   def from_object(self, obj):
     for key in dir(obj):
