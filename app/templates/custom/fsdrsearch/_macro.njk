@@ -77,6 +77,8 @@
 					"label": { "text": field.column_name },
 					"options": field.dropdown_options })}}
 			{% elif field.search_type == "checkbox" %}
+				{{ "   " }}
+
 				{{onsCheckbox({
 					"id": field.database_name,
 					"name": field.database_name,

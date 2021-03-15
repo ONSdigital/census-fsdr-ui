@@ -132,11 +132,15 @@ class MicroservicesTable:
 
       views, current_view_index = get_views(user_role, microservice_name)
       header_html = get_html(user_role, views)
+      current_view = views[current_view_index]
+      if (current_view.database_name == "search"):
+        current_view.hide_table = False
+        current_view.hide_search_criteria = True
 
       return {
           'views': views,
           'header_html': header_html,
-          'current_view': views[current_view_index],
+          'current_view': current_view,
           'called_from_index': False,
           'Fields': field_classes,
           'result_message': result_message_str,
@@ -211,11 +215,17 @@ class MicroservicesTable:
 
       views, current_view_index = get_views(user_role, microservice_name)
       header_html = get_html(user_role, views)
+      current_view = views[current_view_index]
+      if (current_view.database_name == "search") and (page_number == 1):
+        current_view.hide_table = True
+      elif current_view.database_name == "search" and page_number > 1:
+        current_view.hide_table = False
+        current_view.hide_search_criteria = True
 
       return {
           'views': views,
           'header_html': header_html,
-          'current_view': views[current_view_index],
+          'current_view': current_view,
           'called_from_index': False,
           'Fields': field_classes,
           'result_message': result_message_str,

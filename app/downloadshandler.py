@@ -20,9 +20,7 @@ from app.microservice_tables import (
     get_fields,
 )
 from app.searchfunctions import (
-    get_all_assignment_status,
-    get_microservice_records,
-)
+    get_microservice_records, )
 
 from . import (NEED_TO_SIGN_IN_MSG, NO_EMPLOYEE_DATA, SERVICE_DOWN_MSG)
 from . import saml
