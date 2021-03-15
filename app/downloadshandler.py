@@ -4,7 +4,7 @@ import uuid
 
 import aiohttp_jinja2
 
-from aiohttp.client_exceptions import (ClientResponseError)
+from aiohttp.client_exceptions import ClientResponseError
 from aiohttp.web import HTTPFound, RouteTableDef
 from aiohttp_session import get_session
 from structlog import get_logger
@@ -13,16 +13,15 @@ from app.role_matchers import has_download_permission
 from app.error_handlers import client_response_error, warn_invalid_login
 from app.pageutils import page_bounds
 from datetime import datetime
+from app.searchfunctions import get_microservice_records
 
 from app.microservice_tables import (
     get_table_headers,
     get_table_records,
     get_fields,
 )
-from app.searchfunctions import (
-    get_microservice_records, )
 
-from . import (NEED_TO_SIGN_IN_MSG, NO_EMPLOYEE_DATA, SERVICE_DOWN_MSG)
+from . import NEED_TO_SIGN_IN_MSG, NO_EMPLOYEE_DATA, SERVICE_DOWN_MSG
 from . import saml
 from .flash import flash
 
