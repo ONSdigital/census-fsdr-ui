@@ -73,6 +73,7 @@ def microservices_permissions(role_id, microservice_name):
       "requestlogtable",
       "chromebooktable",
       "missingdevicestable",
+      "customsql",
   ]
 
   accessable_to_all = [

@@ -37,7 +37,7 @@ class View:
     if url == None:
       url = (f'/microservices/{database_name}{clear}')
     else:
-      url = (f'/microservices/{url}{clear}')
+      url = (f'{url}')
     return url
 
   def create_display_name(self, display_name):
@@ -113,6 +113,9 @@ def get_views(user_role, microservice_name):
           user_role,
           display_name="Missing Devices",
       ), )
+  views.append(
+      View("customsql", user_role, display_name="Custom SQL",
+           url="/customsql"), )
 
   current_view_index = 0
   for counter, view in enumerate(views):

@@ -8,6 +8,7 @@ from .handler import static_routes
 from .saml import saml_routes
 from .downloadshandler import downloads_routes
 from .microserviceshandler import microservices_handler_routes
+from .customsqlhandler import customsql_handler_routes
 
 extra_routes = RouteTableDef()
 
@@ -34,6 +35,7 @@ def setup(app, url_path_prefix):
       *saml_routes,
       *downloads_routes,
       *microservices_handler_routes,
+      *customsql_handler_routes,
   ]
 
   module = ('app.handler')
