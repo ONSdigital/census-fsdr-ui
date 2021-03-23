@@ -1,6 +1,7 @@
 import json
 import math
 import uuid
+from io import StringIO
 
 import aiohttp_jinja2
 
@@ -100,27 +101,23 @@ class DownloadsPage:
 
     if get_microservice_info.status_code == 200:
 
-      headers = ""
-      for html_header in html_headers:
-        headers = headers + str(html_header.get('value')) + " , "
-      headers = headers[:-3]
+      with StringIO(newline='') as csvfile:
+        spamwriter = csv.writer(csvfile, quoting=csv.QUOTE_MINIMAL)
 
-      rows = ""
-      for record in html_microservice_records:
-        rows = str(rows) + "\n"
-        for each_array in record.get('tds'):
-          rows = str(rows) + str(each_array.get('value')) + " , "
-        rows = rows[:-3]
+        spamwriter.writerow(html_headers)
+        spamwriter.writerows(html_microservice_records)  
 
-      # Create unique file name
-      today = datetime.today().strftime('%Y-%m-%d')
-      file_name = f'{microservice_name}{today}-{uuid.uuid4()}.csv'
+        logger.error(f'HTML HEADERS:  "{html_headers}", HTML ROWS: "{html_microservice_records}"')
 
-      all_data = f'{headers}{rows}'
-      return web.Response(
-        headers=MultiDict({'Content-Disposition': f'attachment; filename="{file_name}"'}),
-        body=all_data
-      )
+        # Create unique file name
+        today = datetime.today().strftime('%Y-%m-%d')
+        file_name = f'{microservice_name}{today}-{uuid.uuid4()}.csv'
+
+
+        return web.Response(
+          headers=MultiDict({'Content-Disposition': f'attachment; filename="{file_name}"'}),
+          body=csvfile.getvalue()
+        )
     else:
       logger.warn('Database is down', client_ip=request['client_ip'])
       flash(request, NO_EMPLOYEE_DATA)
