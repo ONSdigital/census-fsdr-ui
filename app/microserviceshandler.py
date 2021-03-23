@@ -75,11 +75,6 @@ class MicroservicesTable:
     microservice_title = microservice_name.replace("table", " Table").title()
     page_number = get_page(request)
 
-    # Delete previous download if present
-    if 'file_download_full_path' in session.keys():
-      os.remove(session.get('file_download_full_path', ''))
-      del session['file_download_full_path']
-
     try:
 
       field_classes = await get_fields(microservice_name, request)
@@ -172,11 +167,6 @@ class MicroservicesTable:
 
     microservice_title = microservice_name.replace("table", " Table").title()
     page_number = get_page(request)
-
-    # Delete previous download if present
-    if 'file_download_full_path' in session.keys():
-      os.remove(session.get('file_download_full_path', ''))
-      del session['file_download_full_path']
 
     try:
       field_classes = await get_fields(microservice_name, request)
