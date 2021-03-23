@@ -22,11 +22,6 @@ async def root(request):
 def setup(app, url_path_prefix):
   """Set up routes as resources so we can use the `Index:get` notation for URL lookup."""
 
-  p = Path("/tmp/fsdrui_assets/")
-  p.mkdir(parents=True, exist_ok=True)
-
-  app.router.add_static("/fsdrui_assets/", p)
-
   combined_routes = [
       *extra_routes,
       *employee_routes,
