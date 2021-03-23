@@ -1,6 +1,5 @@
 import json
 import math
-import uuid
 from io import StringIO
 
 import aiohttp_jinja2
@@ -110,7 +109,7 @@ class DownloadsPage:
 
         # Create unique file name
         today = datetime.today().strftime('%Y-%m-%d')
-        file_name = f'{microservice_name}{today}-{uuid.uuid4()}.csv'
+        file_name = f'{microservice_name}{today}.csv'
 
         return web.Response(headers=MultiDict(
             {'Content-Disposition': f'attachment; filename="{file_name}"'}),
