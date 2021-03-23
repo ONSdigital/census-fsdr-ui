@@ -102,11 +102,11 @@ class DownloadsPage:
     if get_microservice_info.status_code == 200:
 
       with StringIO(newline='') as csvfile:
-        spamwriter = csv.writer(csvfile, quoting=csv.QUOTE_MINIMAL)
-        spamwriter.writerow(x.get('value') for x in html_headers)
+        writer = csv.writer(csvfile, quoting=csv.QUOTE_MINIMAL)
+        writer.writerow(x.get('value') for x in html_headers)
 
         for row in html_microservice_records:
-          spamwriter.writerow(x.get('value') for x in row.get('tds'))
+          writer.writerow(x.get('value') for x in row.get('tds'))
 
         # Create unique file name
         today = datetime.today().strftime('%Y-%m-%d')
