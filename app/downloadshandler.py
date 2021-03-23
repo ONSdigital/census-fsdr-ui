@@ -103,21 +103,18 @@ class DownloadsPage:
 
       with StringIO(newline='') as csvfile:
         spamwriter = csv.writer(csvfile, quoting=csv.QUOTE_MINIMAL)
+        spamwriter.writerow(x.get('value') for x in html_headers)
 
-        spamwriter.writerow(html_headers)
-        spamwriter.writerows(html_microservice_records)  
-
-        logger.error(f'HTML HEADERS:  "{html_headers}", HTML ROWS: "{html_microservice_records}"')
+        for row in html_microservice_records:
+          spamwriter.writerow(x.get('value') for x in row.get('tds'))
 
         # Create unique file name
         today = datetime.today().strftime('%Y-%m-%d')
         file_name = f'{microservice_name}{today}-{uuid.uuid4()}.csv'
 
-
-        return web.Response(
-          headers=MultiDict({'Content-Disposition': f'attachment; filename="{file_name}"'}),
-          body=csvfile.getvalue()
-        )
+        return web.Response(headers=MultiDict(
+            {'Content-Disposition': f'attachment; filename="{file_name}"'}),
+                            body=csvfile.getvalue())
     else:
       logger.warn('Database is down', client_ip=request['client_ip'])
       flash(request, NO_EMPLOYEE_DATA)
