@@ -1,9 +1,11 @@
 import json
 import math
-import uuid
+from io import StringIO
 
 import aiohttp_jinja2
 
+from multidict import MultiDict
+from aiohttp import web
 from aiohttp.client_exceptions import ClientResponseError
 from aiohttp.web import HTTPFound, RouteTableDef
 from aiohttp_session import get_session
@@ -98,34 +100,20 @@ class DownloadsPage:
 
     if get_microservice_info.status_code == 200:
 
-      headers = ""
-      for html_header in html_headers:
-        headers = headers + str(html_header.get('value')) + " , "
-      headers = headers[:-3]
+      with StringIO(newline='') as csvfile:
+        writer = csv.writer(csvfile, quoting=csv.QUOTE_MINIMAL)
+        writer.writerow(x.get('value') for x in html_headers)
 
-      rows = ""
-      for record in html_microservice_records:
-        rows = str(rows) + "\n"
-        for each_array in record.get('tds'):
-          rows = str(rows) + str(each_array.get('value')) + " , "
-        rows = rows[:-3]
+        for row in html_microservice_records:
+          writer.writerow(x.get('value') for x in row.get('tds'))
 
-      path = "/tmp/fsdrui_assets/"
+        # Create unique file name
+        today = datetime.today().strftime('%Y-%m-%d')
+        file_name = f'{microservice_name}{today}.csv'
 
-      # Create unique file name
-      today = datetime.today().strftime('%Y-%m-%d')
-      file_name = f'{microservice_name}{today}-{uuid.uuid4()}.csv'
-      session['file_download_full_path'] = path + file_name
-
-      with open(path + file_name, "w+") as of:
-        of.write(str(headers))
-        of.write(str(rows))
-
-      download_location = "/fsdrui_assets/" + file_name
-
-      return {
-          'download_location': download_location,
-      }
+        return web.Response(headers=MultiDict(
+            {'Content-Disposition': f'attachment; filename="{file_name}"'}),
+                            body=csvfile.getvalue())
     else:
       logger.warn('Database is down', client_ip=request['client_ip'])
       flash(request, NO_EMPLOYEE_DATA)
