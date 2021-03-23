@@ -4,6 +4,8 @@ import uuid
 
 import aiohttp_jinja2
 
+from multidict import MultiDict
+from aiohttp import web
 from aiohttp.client_exceptions import ClientResponseError
 from aiohttp.web import HTTPFound, RouteTableDef
 from aiohttp_session import get_session
@@ -110,22 +112,15 @@ class DownloadsPage:
           rows = str(rows) + str(each_array.get('value')) + " , "
         rows = rows[:-3]
 
-      path = "/tmp/fsdrui_assets/"
-
       # Create unique file name
       today = datetime.today().strftime('%Y-%m-%d')
       file_name = f'{microservice_name}{today}-{uuid.uuid4()}.csv'
-      session['file_download_full_path'] = path + file_name
 
-      with open(path + file_name, "w+") as of:
-        of.write(str(headers))
-        of.write(str(rows))
-
-      download_location = "/fsdrui_assets/" + file_name
-
-      return {
-          'download_location': download_location,
-      }
+      all_data = f'{headers}{rows}'
+      return web.Response(
+        headers=MultiDict({'Content-Disposition': f'attachment; filename="{file_name}"'}),
+        body=all_data
+      )
     else:
       logger.warn('Database is down', client_ip=request['client_ip'])
       flash(request, NO_EMPLOYEE_DATA)
