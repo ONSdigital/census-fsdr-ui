@@ -55,10 +55,11 @@ def log_entry(request, endpoint):
 
 @customsql_handler_routes.view('/customsql')
 class CustomSQLStart:
-  @aiohttp_jinja2.template('customsqlstart.html')
+  @aiohttp_jinja2.template('microservices.html')
   async def post(self, request):
     session = await get_session(request)
     data = await request.post()
+    logger.error(f'DATA is:   {data}')
 
     user_role = await saml.get_role_id(request)
 
@@ -70,9 +71,27 @@ class CustomSQLStart:
 
     database_names, fields = await get_database_fields(request)
 
+    client_input  = {}
+    all_input = []
+    for db_name in fields.keys():
+      current_fieldset = fields.get(db_name) # [Field, Field, Field...]
+      client_input[db_name] = []
+      for each_field in current_fieldset:
+        checkbox_present, filter_data = each_field.find_and_extract(data)
+        if checkbox_present:
+          client_input[db_name].append({each_field.unique_name.replace('.','') + '_text_box':filter_data})
+          all_input.append({each_field.unique_name.replace('.','') + '_text_box':filter_data})
+
+    logger.error(f'All_input VALUE: "{all_input}"')
+
+    # NEXT STEPS: Right here  we need to make all this data handed over  to the service
+  
+    
+
     views, current_view_index = get_views(user_role, 'customsql')
     header_html = get_html(user_role, views)
     current_view = views[current_view_index]
+
 
     return {
         'views': views,
@@ -80,6 +99,15 @@ class CustomSQLStart:
         'current_view': current_view,
         'fields': fields,
         'database_names': database_names,
+
+        'called_from_index': False,
+        'Fields': field_classes,
+        'result_message': result_message_str,
+        'page_title': f'Custom SQL view for: {user_role}',
+        'page_number': page_number,
+        'last_page_number': max_page,
+        'table_headers': table_headers,
+        'table_records': table_records,
     }
 
   @aiohttp_jinja2.template('customsqlstart.html')

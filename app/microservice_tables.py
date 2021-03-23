@@ -18,6 +18,7 @@ class Field:
                format_as_boolean=False,
                checkbox_value=False,
                name=False,
+               database_association_name="",
                show_as_table_header=True):
 
     self.database_name = database_name
@@ -31,6 +32,15 @@ class Field:
     self.format_as_boolean = format_as_boolean
     self.checkbox_value = checkbox_value
     self.name = name
+    self.database_association_name= database_association_name
+    self.unique_name = database_association_name + database_name 
+    
+
+
+  def find_and_extract(self, data):
+      checkbox_present = data.get(self.unique_name) == 'other'
+      filter_value = data.get(self.unique_name+'_text_box', None)
+      return(checkbox_present, filter_value)
 
   def create_column_name(self, column_name):
     if column_name == None:
