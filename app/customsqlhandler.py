@@ -29,6 +29,7 @@ from app.searchcriteria import (
 )
 
 from app.searchfunctions import (
+    get_customsql_records,
     get_microservice_records, )
 
 from . import (NEED_TO_SIGN_IN_MSG, NO_EMPLOYEE_DATA, SERVICE_DOWN_MSG)
@@ -59,7 +60,6 @@ class CustomSQLStart:
   async def post(self, request):
     session = await get_session(request)
     data = await request.post()
-    logger.error(f'DATA is:   {data}')
 
     user_role = await saml.get_role_id(request)
 
@@ -72,27 +72,33 @@ class CustomSQLStart:
     database_names, fields = await get_database_fields(request)
 
     client_input  = {}
-    all_input = []
+    all_input = {}
+    field_classes = []
     for db_name in fields.keys():
       current_fieldset = fields.get(db_name) # [Field, Field, Field...]
+      for field in current_fieldset:
+        field_classes.append(field)
+
       client_input[db_name] = []
       for each_field in current_fieldset:
         checkbox_present, filter_data = each_field.find_and_extract(data)
+        all_input[each_field.unique_name.replace('.','') + '_text_box'] = filter_data
         if checkbox_present:
           client_input[db_name].append({each_field.unique_name.replace('.','') + '_text_box':filter_data})
-          all_input.append({each_field.unique_name.replace('.','') + '_text_box':filter_data})
+        
+    logger.error(f'all_input IS :  {all_input}')
 
-    logger.error(f'All_input VALUE: "{all_input}"')
+    all_records = get_customsql_records(all_input)    
+    logger.error(f'GOT THIS RESPONSE FROM SERVER:  {all_records}')
 
-    # NEXT STEPS: Right here  we need to make all this data handed over  to the service
-  
-    
+
+    result_message_str =  'blank'
+    page_number= 0
+    max_page=300 
 
     views, current_view_index = get_views(user_role, 'customsql')
     header_html = get_html(user_role, views)
     current_view = views[current_view_index]
-
-
     return {
         'views': views,
         'header_html': header_html,
