@@ -82,7 +82,7 @@ class CustomSQLStart:
       client_input[db_name] = []
       for each_field in current_fieldset:
         checkbox_present, filter_data = each_field.find_and_extract(data)
-        all_input[each_field.unique_name.replace('.','') + '_text_box'] = filter_data
+        all_input[each_field.unique_name.replace('.','') ] = filter_data
         if checkbox_present:
           client_input[db_name].append({each_field.unique_name.replace('.','') + '_text_box':filter_data})
         
