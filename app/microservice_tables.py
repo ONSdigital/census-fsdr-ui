@@ -139,8 +139,7 @@ async def get_fields(service_name, request):
     ])
   elif service_name == "search":
     return ([
-        Field("id_badge_no", column_name="Badge No.",
-              search_box_visible=False),
+        Field("id_badge_no", column_name="Badge No.",),
         Field("ons_email_address",
               show_as_table_header=False,
               accordion=True,
@@ -164,6 +163,7 @@ async def get_fields(service_name, request):
         Field("assignment_status",
               search_type="dropdown",
               dropdown_options=assignment_status_dropdown_options),
+
     ] + data_source_checkboxes)
 
   elif service_name == "index":
