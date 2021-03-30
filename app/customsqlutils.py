@@ -293,9 +293,9 @@ async def get_custom_fields(database_name, request):
   elif database_name == 'gsuite.gsuite':
     return ([
         Field("unique_employee_id",  database_association_name=database_name,),
-        Field("gsuitestatus",  database_association_name=database_name,),
-        Field("gsuiteid",  database_association_name=database_name,),
-        Field("gsuitehash",  database_association_name=database_name,),
+        Field("gsuite_status",  database_association_name=database_name,),
+        Field("gsuite_id",  database_association_name=database_name,),
+        Field("gsuite_hash",  database_association_name=database_name,),
         Field("unique_employee_id",  database_association_name=database_name,),
     ])
   elif database_name == 'gsuite.chromebook':
