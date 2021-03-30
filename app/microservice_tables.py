@@ -105,6 +105,8 @@ async def get_fields(service_name, request):
       'TRAINING_IN_PROGRESS',
       'ASSIGNED',
       'READY_TO_START',
+      'ASSIGNMENT_CANCELLED',
+      'ASSIGNMENT_ENDED',
   ]
 
   # NISRA HQ Checkboxese
