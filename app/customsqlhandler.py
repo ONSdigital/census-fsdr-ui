@@ -70,6 +70,7 @@ class CustomSQLStart:
       return await forbidden(request)
 
     database_names, fields = await get_database_fields(request)
+    page_number = get_page(request)
 
     client_input  = {}
     all_input = {}
@@ -86,15 +87,41 @@ class CustomSQLStart:
         if checkbox_present:
           client_input[db_name].append({each_field.unique_name.replace('.','') + '_text_box':filter_data})
         
-    logger.error(f'all_input IS :  {all_input}')
+
 
     all_records = get_customsql_records(all_input)    
-    logger.error(f'GOT THIS RESPONSE FROM SERVER:  {all_records}')
 
+    all_records_json = all_records.json()
 
-    result_message_str =  'blank'
+    for each in all_records_json:
+      #logger.error(f'EACH JSON RECORD:  {each}')
+      pass
+
+    search_criteria = {}
+    search_range, records_per_page = page_bounds(page_number)
+    search_criteria.update(search_range)
+    get_microservice_info_json =all_records_json  
+
+    if len(get_microservice_info_json) > 0:
+      microservice_sum = get_microservice_info_json[0].get(
+          'total_records', 0)
+      max_page = math.ceil(microservice_sum / records_per_page)
+    else:
+      microservice_sum = 0
+      max_page = 1
+      #
+
+    table_records = get_table_records(
+        field_classes, get_microservice_info_json, custom_sql=True,
+    )  
+
+    result_message_str = result_message(search_range, microservice_sum,
+                  "Custom SQL")
+
+    table_headers = get_table_headers(
+        field_classes)  
+
     page_number= 0
-    max_page=300 
 
     views, current_view_index = get_views(user_role, 'customsql')
     header_html = get_html(user_role, views)
