@@ -75,6 +75,7 @@ class CustomSQLStart:
     client_input  = {}
     all_input = {}
     field_classes = []
+    error = ""
     for db_name in fields.keys():
       current_fieldset = fields.get(db_name) # [Field, Field, Field...]
       for field in current_fieldset:
@@ -86,16 +87,15 @@ class CustomSQLStart:
         all_input[each_field.unique_name.replace('.','') ] = filter_data
         if checkbox_present:
           client_input[db_name].append({each_field.unique_name.replace('.','') + '_text_box':filter_data})
-        
-
+          each_field.show_as_table_header  = True
+          each_field.search_box_visible= True
+        else:
+          each_field.show_as_table_header  =  False 
+          each_field.search_box_visible=  False
 
     all_records = get_customsql_records(all_input)    
 
     all_records_json = all_records.json()
-
-    for each in all_records_json:
-      #logger.error(f'EACH JSON RECORD:  {each}')
-      pass
 
     search_criteria = {}
     search_range, records_per_page = page_bounds(page_number)
@@ -109,7 +109,6 @@ class CustomSQLStart:
     else:
       microservice_sum = 0
       max_page = 1
-      #
 
     table_records = get_table_records(
         field_classes, get_microservice_info_json, custom_sql=True,
@@ -126,6 +125,9 @@ class CustomSQLStart:
     views, current_view_index = get_views(user_role, 'customsql')
     header_html = get_html(user_role, views)
     current_view = views[current_view_index]
+
+    session['custom_sql'] =  True
+
     return {
         'views': views,
         'header_html': header_html,
@@ -133,7 +135,7 @@ class CustomSQLStart:
         'fields': fields,
         'database_names': database_names,
 
-        'called_from_index': False,
+        'called_from_index': 'customsql',
         'Fields': field_classes,
         'result_message': result_message_str,
         'page_title': f'Custom SQL view for: {user_role}',
@@ -146,10 +148,10 @@ class CustomSQLStart:
   @aiohttp_jinja2.template('customsqlstart.html')
   async def get(self, request):
     session = await get_session(request)
-
     user_role = await saml.get_role_id(request)
 
     await saml.ensure_logged_in(request)
+
 
     if microservices_permissions(user_role, 'customsql') == False:
       request['client_ip'] = request.get('client_ip', "No IP Provided")
@@ -157,14 +159,98 @@ class CustomSQLStart:
 
     database_names, fields = await get_database_fields(request)
 
-    views, current_view_index = get_views(user_role, 'customsql')
-    header_html = get_html(user_role, views)
-    current_view = views[current_view_index]
+    if not session.get('custom_sql'):
+      views, current_view_index = get_views(user_role, 'customsql')
+      header_html = get_html(user_role, views)
+      current_view = views[current_view_index]
 
-    return {
-        'views': views,
-        'header_html': header_html,
-        'current_view': current_view,
-        'fields': fields,
-        'database_names': database_names,
-    }
+      return {
+          'views': views,
+          'header_html': header_html,
+          'current_view': current_view,
+          'fields': fields,
+          'database_names': database_names,
+      }
+    else:
+      # Get everything saved, then do the same as  post
+      page_number = get_page(request)
+
+      client_input  = {}
+      all_input = {}
+      field_classes = []
+      error = ""
+      for db_name in fields.keys():
+        current_fieldset = fields.get(db_name) # [Field, Field, Field...]
+        for field in current_fieldset:
+          field_classes.append(field)
+
+        client_input[db_name] = []
+        for each_field in current_fieldset:
+          checkbox_present, filter_data = each_field.find_and_extract(data)
+          all_input[each_field.unique_name.replace('.','') ] = filter_data
+          if checkbox_present:
+            client_input[db_name].append({each_field.unique_name.replace('.','') + '_text_box':filter_data})
+            each_field.show_as_table_header  = True
+            each_field.search_box_visible= True
+          else:
+            each_field.show_as_table_header  =  False 
+            each_field.search_box_visible=  False
+
+      all_records = get_customsql_records(all_input)    
+
+      all_records_json = all_records.json()
+
+      search_criteria = {}
+      search_range, records_per_page = page_bounds(page_number)
+      search_criteria.update(search_range)
+      get_microservice_info_json =all_records_json  
+
+      if len(get_microservice_info_json) > 0:
+        microservice_sum = get_microservice_info_json[0].get(
+            'total_records', 0)
+        max_page = math.ceil(microservice_sum / records_per_page)
+      else:
+        microservice_sum = 0
+        max_page = 1
+
+      table_records = get_table_records(
+          field_classes, get_microservice_info_json, custom_sql=True,
+      )  
+
+      result_message_str = result_message(search_range, microservice_sum,
+                    "Custom SQL")
+
+      table_headers = get_table_headers(
+          field_classes)  
+
+      page_number= 0
+
+      views, current_view_index = get_views(user_role, 'customsql')
+      header_html = get_html(user_role, views)
+      current_view = views[current_view_index]
+
+      session['custom_sql'] =  True
+
+      return {
+          'views': views,
+          'header_html': header_html,
+          'current_view': current_view,
+          'fields': fields,
+          'database_names': database_names,
+
+          'called_from_index': 'customsql',
+          'Fields': field_classes,
+          'result_message': result_message_str,
+          'page_title': f'Custom SQL view for: {user_role}',
+          'page_number': page_number,
+          'last_page_number': max_page,
+          'table_headers': table_headers,
+          'table_records': table_records,
+      }
+
+
+
+
+
+
+

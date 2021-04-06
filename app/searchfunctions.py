@@ -23,6 +23,7 @@ def get_employee_records_no_device(user_filter=""):
 
 def get_customsql_records(all_input):
   user_filter = {'rangeHigh': 50, 'rangeLow': 0}
+
   url = URL(FSDR_URL +
             f'/fieldforce/byMicroservice/customsql/').with_query(user_filter)
 

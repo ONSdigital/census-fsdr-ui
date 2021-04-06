@@ -88,6 +88,8 @@
                             "trs": table_records, 
                         })}}
 
+			<h1> calledfromindex IS :  {{ called_from_index }} </h1>
+
                         <div class="page_numbering" align="center">
 			{{onsPagination({
 				"called_from_index": True,
@@ -97,6 +99,8 @@
 				"page_number": page_number,
 				"link_url": 'MicroservicesTable:get',
 				"microservice_name": current_view.database_name,
+				"called_from_index": called_from_index,
+				"custom_url" :  'CustomSQLStart:post',
 			})}}
 
                         </div>

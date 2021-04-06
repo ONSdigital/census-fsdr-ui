@@ -36,7 +36,7 @@ class Field:
     self.unique_name = database_association_name + database_name
 
   def find_and_extract(self, data):
-    checkbox_present = data.get(self.unique_name) == 'other'
+    checkbox_present = data.get(self.unique_name) == 'other' 
     filter_value = data.get(self.unique_name + '_text_box', None)
     return (checkbox_present, filter_value)
 
