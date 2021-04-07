@@ -115,7 +115,7 @@ def get_views(user_role, microservice_name):
       ), )
   views.append(
       View("customsql", user_role, display_name="Custom SQL",
-           url="/customsql"), )
+           url="/customsqlchoice"), )
 
   current_view_index = 0
   for counter, view in enumerate(views):

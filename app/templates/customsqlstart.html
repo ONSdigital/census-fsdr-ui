@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% from "components/phase-banner/_macro.njk" import onsPhaseBanner %}
 {% from 'components/lists/_macro.njk' import onsList %}
 {% from 'components/input/_macro.njk' import onsInput %}
 {% from "custom/dynamic_pagination/_macro.njk" import onsPagination %}
@@ -21,11 +21,14 @@
     'method': 'POST',
     'id': 'searchform',
     'attributes': {
-        'action': current_view.url
+        'action': '/customsql' 
     }
 } %}
 
 {% block pageContent %}
+{{ onsPhaseBanner({
+        "badge": "BETA",
+        "html": 'This is a new service – Your feedback will help us improve it.'})}}
     {% block main %}
         <div class="grid">
             <div class="grid__col col-2@m"></div>
@@ -72,12 +75,6 @@
                             'submitType': "loader",
                             'name': 'action[submit]'
                 }) }}
-		{{ onsButton({
-				'text': 'Clear',
-				'classes': 'btn--small',
-				'submitType': "loader",
-				'url': current_view.url_clear
-		}) }}
 
     {% endblock %}
 {% endblock %}

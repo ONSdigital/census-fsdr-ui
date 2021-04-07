@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 
+{% from "components/phase-banner/_macro.njk" import onsPhaseBanner %}
 {% from 'components/lists/_macro.njk' import onsList %}
 {% from 'components/input/_macro.njk' import onsInput %}
 {% from "custom/dynamic_pagination/_macro.njk" import onsPagination %}
@@ -20,6 +21,12 @@
 } %}
 
 {% block pageContent %}
+
+{% if called_from_index == 'customsql'  %}
+{{ onsPhaseBanner({
+        "badge": "BETA",
+        "html": 'This is a new service – Your feedback will help us improve it.'})}}
+{% endif %}
     {% block main %}
         <div class="grid">
             <div class="grid__col col-2@m"></div>
@@ -87,8 +94,6 @@
                             "ths": table_headers,
                             "trs": table_records, 
                         })}}
-
-			<h1> calledfromindex IS :  {{ called_from_index }} </h1>
 
                         <div class="page_numbering" align="center">
 			{{onsPagination({

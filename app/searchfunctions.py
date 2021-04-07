@@ -11,7 +11,7 @@ from structlog import get_logger
 logger = get_logger('fsdr-ui')
 
 
-#TODO this can probably be removed. Probably.
+#TODO this can probably be removed. Probably. Maybe.
 def get_employee_records_no_device(user_filter=""):
   employee_record_url = URL(FSDR_URL +
                             f'/fieldforce/byType/byRangeAndUserFilterNoDevice/'
@@ -23,6 +23,10 @@ def get_employee_records_no_device(user_filter=""):
 
 def get_customsql_records(all_input):
   user_filter = {'rangeHigh': 50, 'rangeLow': 0}
+  
+  #TODO remove
+  logger.error(f'Searching CUSTOMSQL with the following: "{all_input}"')
+  
 
   url = URL(FSDR_URL +
             f'/fieldforce/byMicroservice/customsql/').with_query(user_filter)
