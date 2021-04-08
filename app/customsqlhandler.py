@@ -70,6 +70,21 @@ class CustomSQLStart:
       request['client_ip'] = request.get('client_ip', "No IP Provided")
       return await forbidden(request)
 
+    clear = request.match_info['clear']
+    if clear == 'clear':
+      temp =  session.get('custom_sql_previous_filters', {})
+      final  = {}
+      for key in temp: 
+        final[key] = ''
+
+      session['custom_sql_previous_filters'] = final
+      logger.error(f'FINAL is {final}')
+
+        
+
+
+
+
     database_names, fields = await get_database_fields(request)
     page_number = get_page(request)
 
@@ -172,11 +187,24 @@ class CustomSQLStart:
     session = await get_session(request)
     data = await request.post()
 
-    logger.error(f'GET got data:  {data}')
-
     user_role = await saml.get_role_id(request)
 
     await saml.ensure_logged_in(request)
+
+    clear = request.match_info['clear']
+    if clear == 'clear':
+      temp =  session.get('custom_sql_previous_filters', {})
+      final  = {}
+      for key in temp: 
+        final[key] = ''
+
+      session['custom_sql_previous_filters'] = final
+      logger.error(f'FINAL is {final}')
+
+
+
+
+
 
     if microservices_permissions(user_role, 'customsql') == False:
       request['client_ip'] = request.get('client_ip', "No IP Provided")

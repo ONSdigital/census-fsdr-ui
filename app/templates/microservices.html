@@ -17,7 +17,7 @@
 	    'method': 'POST',
 	    'id': 'searchform',
 	    'attributes': {
-		'action': '/customsql' 
+		'action': '/customsql/dontclear' 
 	    }
 	    } %}
 {% else %}
@@ -64,7 +64,7 @@
 				    'text': "Clear filters",
 				    'classes': 'btn--small',
 				    'submitType': "loader",
-				    'url':  '/customsql',
+				    'url':  '/customsql/clear',
 				}) }}
 
 				{{ onsButton({
