@@ -72,18 +72,12 @@ class CustomSQLStart:
 
     clear = request.match_info['clear']
     if clear == 'clear':
-      temp =  session.get('custom_sql_previous_filters', {})
-      final  = {}
-      for key in temp: 
+      temp = session.get('custom_sql_previous_filters', {})
+      final = {}
+      for key in temp:
         final[key] = ''
 
       session['custom_sql_previous_filters'] = final
-      logger.error(f'FINAL is {final}')
-
-        
-
-
-
 
     database_names, fields = await get_database_fields(request)
     page_number = get_page(request)
@@ -193,18 +187,11 @@ class CustomSQLStart:
 
     clear = request.match_info['clear']
     if clear == 'clear':
-      temp =  session.get('custom_sql_previous_filters', {})
-      final  = {}
-      for key in temp: 
+      temp = session.get('custom_sql_previous_filters', {})
+      final = {}
+      for key in temp:
         final[key] = ''
-
       session['custom_sql_previous_filters'] = final
-      logger.error(f'FINAL is {final}')
-
-
-
-
-
 
     if microservices_permissions(user_role, 'customsql') == False:
       request['client_ip'] = request.get('client_ip', "No IP Provided")
