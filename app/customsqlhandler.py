@@ -72,9 +72,9 @@ class CustomSQLStart:
 
     clear = request.match_info['clear']
     if clear == 'clear':
-      temp = session.get('custom_sql_previous_filters', {})
-      final = {}
-      for key in temp:
+      temp =  session.get('custom_sql_previous_filters', {})
+      final  = {}
+      for key in temp: 
         final[key] = ''
 
       session['custom_sql_previous_filters'] = final
@@ -95,20 +95,21 @@ class CustomSQLStart:
 
       client_input[db_name] = []
       for each_field in current_fieldset:
-        if each_field.unique_name.replace('.', '') in all_input:
+        unique_name_no_period = each_field.unique_name.replace('.', '')
+        if unique_name_no_period  in all_input:
           each_field.previous_value = all_input.get(
-              each_field.unique_name.replace('.', ''))
+              unique_name_no_period)
 
         checkbox_present, filter_data = each_field.find_and_extract(data)
-        all_input[each_field.unique_name.replace('.', '')] = filter_data
-        if (each_field.unique_name.replace('.', '')
+        all_input[unique_name_no_period] = filter_data
+        if (unique_name_no_period
             in checked_boxes) or checkbox_present:
 
           client_input[db_name].append({
-              each_field.unique_name.replace('.', '') + '_text_box':
+              unique_name_no_period + '_text_box':
               filter_data
           })
-          checked_boxes.append(each_field.unique_name.replace('.', ''))
+          checked_boxes.append(unique_name_no_period)
           each_field.show_as_table_header = True
           each_field.search_box_visible = True
         else:
@@ -117,13 +118,14 @@ class CustomSQLStart:
 
     # Load into classes
     for field in field_classes:
-      if field.unique_name.replace('.', '') in all_input:
-        if all_input.get(field.unique_name.replace(".", "")) != '':
+      unique_name_no_period = field.unique_name.replace('.', '')
+      if unique_name_no_period in all_input:
+        if all_input.get(unique_name_no_period) != '':
           field.previous_value = all_input.get(
-              field.unique_name.replace(".", ""))
+              unique_name_no_period)
 
-      if field.unique_name.replace('.', '') in data:
-        field.previous_value = data.get(field.unique_name.replace(".", ""))
+      if unique_name_no_period in data:
+        field.previous_value = data.get(unique_name_no_period)
 
     all_input.update(data)
     session['custom_sql_previous_filters'] = all_input
@@ -187,11 +189,12 @@ class CustomSQLStart:
 
     clear = request.match_info['clear']
     if clear == 'clear':
-      temp = session.get('custom_sql_previous_filters', {})
-      final = {}
-      for key in temp:
+      temp =  session.get('custom_sql_previous_filters', {})
+      final  = {}
+      for key in temp: 
         final[key] = ''
       session['custom_sql_previous_filters'] = final
+
 
     if microservices_permissions(user_role, 'customsql') == False:
       request['client_ip'] = request.get('client_ip', "No IP Provided")
@@ -214,16 +217,16 @@ class CustomSQLStart:
       client_input[db_name] = []
       for each_field in current_fieldset:
         checkbox_present, filter_data = each_field.find_and_extract(data)
-        if each_field.unique_name.replace('.', '') in all_input:
+        unique_name_no_period = each_field.unique_name.replace('.', '')
+        if unique_name_no_period in all_input:
           each_field.previous_value = all_input.get(
-              each_field.unique_name.replace('.', ''))
+              unique_name_no_period)
 
-        all_input[each_field.unique_name.replace(
-            '.', '')] = filter_data if filter_data != None else ''
-        if each_field.unique_name.replace('.', '') in checked_boxes:
+        all_input[unique_name_no_period] = filter_data if filter_data != None else ''
+        if unique_name_no_period in checked_boxes:
 
           client_input[db_name].append({
-              each_field.unique_name.replace('.', '') + '_text_box':
+              unique_name_no_period  + '_text_box':
               filter_data
           })
           each_field.show_as_table_header = True
@@ -243,13 +246,14 @@ class CustomSQLStart:
 
     # Load into classes
     for field in field_classes:
-      if field.unique_name.replace('.', '') in all_input.keys():
-        if all_input.get(field.unique_name.replace('.', '')) != '':
+      unique_name_no_period = field.unique_name.replace('.', '')
+      if unique_name_no_period in all_input.keys():
+        if all_input.get(unique_name_no_period) != '':
           field.previous_value = all_input.get(
-              field.unique_name.replace('.', ''))
+              unique_name_no_period)
 
-      if field.unique_name.replace('.', '') in data:
-        field.previous_value = data.get(field.unique_name.replace(".", ""))
+      if unique_name_no_period in data:
+        field.previous_value = data.get(unique_name_no_period)
 
     session['custom_sql_previous_filters'] = all_input
     session['custom_sql_previous_checked_fields'] = checked_boxes
