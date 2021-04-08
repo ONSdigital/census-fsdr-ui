@@ -25,7 +25,7 @@ def get_customsql_records(all_input):
   user_filter = {'rangeHigh': 50, 'rangeLow': 0}
 
   #TODO remove
-# logger.error(f'Searching WITH: {all_input}')
+  # logger.error(f'Searching WITH: {all_input}')
 
   url = URL(FSDR_URL +
             f'/fieldforce/byMicroservice/customsql/').with_query(user_filter)

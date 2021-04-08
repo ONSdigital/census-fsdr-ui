@@ -79,8 +79,8 @@ class CustomSQLChoice:
     session = await get_session(request)
     user_role = await saml.get_role_id(request)
 
-    session.pop('custom_sql_previous_filters',  None)
-    session.pop('custom_sql_previous_checked_fields',  None)
+    session.pop('custom_sql_previous_filters', None)
+    session.pop('custom_sql_previous_checked_fields', None)
 
     await saml.ensure_logged_in(request)
 

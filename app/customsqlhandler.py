@@ -62,8 +62,6 @@ class CustomSQLStart:
     session = await get_session(request)
     data = await request.post()
 
-    logger.error(f'POST got data:  {data}')
-
     user_role = await saml.get_role_id(request)
 
     await saml.ensure_logged_in(request)
@@ -111,16 +109,16 @@ class CustomSQLStart:
     # Load into classes
     for field in field_classes:
       if field.unique_name.replace('.', '') in all_input:
-        if all_input.get(field.unique_name.replace(".", ""))  != '':
-          field.previous_value = all_input.get(field.unique_name.replace(".", ""))
+        if all_input.get(field.unique_name.replace(".", "")) != '':
+          field.previous_value = all_input.get(
+              field.unique_name.replace(".", ""))
 
       if field.unique_name.replace('.', '') in data:
         field.previous_value = data.get(field.unique_name.replace(".", ""))
-        
+
     all_input.update(data)
     session['custom_sql_previous_filters'] = all_input
     session['custom_sql_previous_checked_fields'] = checked_boxes
-
 
     all_records = get_customsql_records(all_input)
 
@@ -187,9 +185,7 @@ class CustomSQLStart:
     database_names, fields = await get_database_fields(request)
     page_number = get_page(request)
 
-
     checked_boxes = session.get('custom_sql_previous_checked_fields', [])
-
 
     client_input = {}
     all_input = {}
@@ -221,29 +217,27 @@ class CustomSQLStart:
           each_field.show_as_table_header = False
           each_field.search_box_visible = False
 
-
     previous_input = session.get('custom_sql_previous_filters', {})
 
     for key in previous_input.keys():
       if key in all_input.keys():
         if all_input.get(key) == '':
-          all_input[key] = all_input.get(key) 
-          logger.error(f'VALUE  putinto the values is  {all_input.get(key)}  for {key}')
+          all_input[key] = all_input.get(key)
+
+    all_input.update(previous_input)
 
     # Load into classes
     for field in field_classes:
       if field.unique_name.replace('.', '') in all_input.keys():
         if all_input.get(field.unique_name.replace('.', '')) != '':
-          field.previous_value = all_input.get(field.unique_name.replace('.', ''))
+          field.previous_value = all_input.get(
+              field.unique_name.replace('.', ''))
 
       if field.unique_name.replace('.', '') in data:
         field.previous_value = data.get(field.unique_name.replace(".", ""))
 
     session['custom_sql_previous_filters'] = all_input
     session['custom_sql_previous_checked_fields'] = checked_boxes
-
-    logger.error(f'GET  allinput is  {all_input}  \n\n DATA is  {data}\n\nPreviousStuff: {previous_input}')
-
 
     all_records = get_customsql_records(previous_input)
     all_records_json = all_records.json()
