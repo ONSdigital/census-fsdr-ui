@@ -30,7 +30,8 @@ from app.searchcriteria import (
 
 from app.searchfunctions import (
     get_customsql_records,
-    get_microservice_records, )
+    get_microservice_records,
+)
 
 from . import (NEED_TO_SIGN_IN_MSG, NO_EMPLOYEE_DATA, SERVICE_DOWN_MSG)
 from . import saml
@@ -61,6 +62,8 @@ class CustomSQLStart:
     session = await get_session(request)
     data = await request.post()
 
+    logger.error(f'POST got data:  {data}')
+
     user_role = await saml.get_role_id(request)
 
     await saml.ensure_logged_in(request)
@@ -72,68 +75,79 @@ class CustomSQLStart:
     database_names, fields = await get_database_fields(request)
     page_number = get_page(request)
 
-    #  all_input is for get/post sequence
-    client_input  = {}
+    checked_boxes = session.get('custom_sql_previous_checked_fields', [])
+
+    client_input = {}
     all_input = {}
     field_classes = []
-    checked_boxes =  []
     error = ""
     for db_name in fields.keys():
-      current_fieldset = fields.get(db_name) # [Field, Field, Field...]
+      current_fieldset = fields.get(db_name)  # [Field, Field, Field...]
       for field in current_fieldset:
         field_classes.append(field)
 
       client_input[db_name] = []
       for each_field in current_fieldset:
+        if each_field.unique_name.replace('.', '') in all_input:
+          each_field.previous_value = all_input.get(
+              each_field.unique_name.replace('.', ''))
 
         checkbox_present, filter_data = each_field.find_and_extract(data)
-        all_input[each_field.unique_name.replace('.','') ] = filter_data
-        if checkbox_present:
-          client_input[db_name].append({each_field.unique_name.replace('.','') + '_text_box':filter_data})
-          checked_boxes.append(each_field.unique_name.replace('.','') )
-          each_field.show_as_table_header  = True
-          each_field.search_box_visible= True
+        all_input[each_field.unique_name.replace('.', '')] = filter_data
+        if (each_field.unique_name.replace('.', '')
+            in checked_boxes) or checkbox_present:
+
+          client_input[db_name].append({
+              each_field.unique_name.replace('.', '') + '_text_box':
+              filter_data
+          })
+          checked_boxes.append(each_field.unique_name.replace('.', ''))
+          each_field.show_as_table_header = True
+          each_field.search_box_visible = True
         else:
-          each_field.show_as_table_header  =  False 
-          each_field.search_box_visible=  False
+          each_field.show_as_table_header = False
+          each_field.search_box_visible = False
 
     # Load into classes
     for field in field_classes:
-      if field.unique_name.replace('.','') in all_input:
-        field.previous_value = all_input.get(field.unique_name.replace(".",""))
+      if field.unique_name.replace('.', '') in all_input:
+        if all_input.get(field.unique_name.replace(".", ""))  != '':
+          field.previous_value = all_input.get(field.unique_name.replace(".", ""))
 
-
-
+      if field.unique_name.replace('.', '') in data:
+        field.previous_value = data.get(field.unique_name.replace(".", ""))
+        
+    all_input.update(data)
     session['custom_sql_previous_filters'] = all_input
     session['custom_sql_previous_checked_fields'] = checked_boxes
 
 
-    all_records = get_customsql_records(all_input)    
+    all_records = get_customsql_records(all_input)
 
     all_records_json = all_records.json()
 
     search_criteria = {}
     search_range, records_per_page = page_bounds(page_number)
     search_criteria.update(search_range)
-    get_microservice_info_json =all_records_json  
+    get_microservice_info_json = all_records_json
 
     if len(get_microservice_info_json) > 0:
-      microservice_sum = get_microservice_info_json[0].get(
-          'total_records', 0)
+      microservice_sum = get_microservice_info_json[0].get('total_records', 0)
       max_page = math.ceil(microservice_sum / records_per_page)
     else:
       microservice_sum = 0
       max_page = 1
 
     table_records = get_table_records(
-        field_classes, get_microservice_info_json, custom_sql=True,
-    )  
+        field_classes,
+        get_microservice_info_json,
+        custom_sql=True,
+    )
 
     result_message_str = result_message(search_range, microservice_sum,
-                  "Custom SQL")
+                                        "Custom SQL")
 
-    table_headers = get_table_headers(
-        field_classes)  
+    table_headers = get_table_headers(field_classes)
 
     views, current_view_index = get_views(user_role, 'customsql')
     header_html = get_html(user_role, views)
@@ -145,7 +159,6 @@ class CustomSQLStart:
         'current_view': current_view,
         'fields': fields,
         'database_names': database_names,
-
         'called_from_index': 'customsql',
         'Fields': field_classes,
         'result_message': result_message_str,
@@ -161,6 +174,8 @@ class CustomSQLStart:
     session = await get_session(request)
     data = await request.post()
 
+    logger.error(f'GET got data:  {data}')
+
     user_role = await saml.get_role_id(request)
 
     await saml.ensure_logged_in(request)
@@ -173,67 +188,85 @@ class CustomSQLStart:
     page_number = get_page(request)
 
 
-    checked_boxes = session.get('custom_sql_previous_checked_fields')
+    checked_boxes = session.get('custom_sql_previous_checked_fields', [])
 
-    client_input  = {}
+
+    client_input = {}
     all_input = {}
     field_classes = []
     error = ""
     for db_name in fields.keys():
-      current_fieldset = fields.get(db_name) # [Field, Field, Field...]
+      current_fieldset = fields.get(db_name)  # [Field, Field, Field...]
       for field in current_fieldset:
         field_classes.append(field)
 
       client_input[db_name] = []
       for each_field in current_fieldset:
         checkbox_present, filter_data = each_field.find_and_extract(data)
-        if each_field.unique_name.replace('.','') in all_input:
-          each_field.previous_value = all_input.get(each_field.unique_name.replace('.',''))
+        if each_field.unique_name.replace('.', '') in all_input:
+          each_field.previous_value = all_input.get(
+              each_field.unique_name.replace('.', ''))
 
-        all_input[each_field.unique_name.replace('.','') ] = filter_data if filter_data != None else ''
-        if each_field.unique_name.replace('.','') in checked_boxes :
+        all_input[each_field.unique_name.replace(
+            '.', '')] = filter_data if filter_data != None else ''
+        if each_field.unique_name.replace('.', '') in checked_boxes:
 
-          client_input[db_name].append({each_field.unique_name.replace('.','') + '_text_box':filter_data})
-          each_field.show_as_table_header  = True
-          each_field.search_box_visible= True
+          client_input[db_name].append({
+              each_field.unique_name.replace('.', '') + '_text_box':
+              filter_data
+          })
+          each_field.show_as_table_header = True
+          each_field.search_box_visible = True
         else:
-          each_field.show_as_table_header  =  False 
-          each_field.search_box_visible=  False
+          each_field.show_as_table_header = False
+          each_field.search_box_visible = False
 
-    all_input = session.get('custom_sql_previous_filters')
 
-    session['custom_sql_previous_filters'] = all_input
+    previous_input = session.get('custom_sql_previous_filters', {})
+
+    for key in previous_input.keys():
+      if key in all_input.keys():
+        if all_input.get(key) == '':
+          all_input[key] = all_input.get(key) 
+          logger.error(f'VALUE  putinto the values is  {all_input.get(key)}  for {key}')
 
     # Load into classes
     for field in field_classes:
-      if field.unique_name.replace('.','') in all_input.keys():
-        field.previous_value = all_input.get(field.unique_name.replace('.',''))
+      if field.unique_name.replace('.', '') in all_input.keys():
+        if all_input.get(field.unique_name.replace('.', '')) != '':
+          field.previous_value = all_input.get(field.unique_name.replace('.', ''))
 
-    all_records = get_customsql_records(all_input)    
+    session['custom_sql_previous_filters'] = all_input
+    session['custom_sql_previous_checked_fields'] = checked_boxes
+
+    logger.error(f'GET  allinput is  {all_input}  \n\n DATA is  {data}\n\nPreviousStuff: {previous_input}')
+
+
+    all_records = get_customsql_records(previous_input)
     all_records_json = all_records.json()
 
     search_criteria = {}
     search_range, records_per_page = page_bounds(page_number)
     search_criteria.update(search_range)
-    get_microservice_info_json =all_records_json  
+    get_microservice_info_json = all_records_json
 
     if len(get_microservice_info_json) > 0:
-      microservice_sum = get_microservice_info_json[0].get(
-          'total_records', 0)
+      microservice_sum = get_microservice_info_json[0].get('total_records', 0)
       max_page = math.ceil(microservice_sum / records_per_page)
     else:
       microservice_sum = 0
       max_page = 1
 
     table_records = get_table_records(
-        field_classes, get_microservice_info_json, custom_sql=True,
-    )  
+        field_classes,
+        get_microservice_info_json,
+        custom_sql=True,
+    )
 
     result_message_str = result_message(search_range, microservice_sum,
-                  "Custom SQL")
+                                        "Custom SQL")
 
-    table_headers = get_table_headers(
-        field_classes)  
+    table_headers = get_table_headers(field_classes)
 
     views, current_view_index = get_views(user_role, 'customsql')
     header_html = get_html(user_role, views)
@@ -245,7 +278,6 @@ class CustomSQLStart:
         'current_view': current_view,
         'fields': fields,
         'database_names': database_names,
-
         'called_from_index': 'customsql',
         'Fields': field_classes,
         'result_message': result_message_str,
@@ -255,5 +287,3 @@ class CustomSQLStart:
         'table_headers': table_headers,
         'table_records': table_records,
     }
-
-

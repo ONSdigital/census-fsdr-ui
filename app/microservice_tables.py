@@ -36,8 +36,8 @@ class Field:
     self.unique_name = database_association_name + database_name
 
   def find_and_extract(self, data):
-    checkbox_present = data.get(self.unique_name) == 'other' 
-    filter_value = data.get(self.unique_name + '_text_box', None)
+    checkbox_present = data.get(self.unique_name) == 'other'
+    filter_value = data.get(self.unique_name + '_text_box', '')
     return (checkbox_present, filter_value)
 
   def create_column_name(self, column_name):
@@ -359,7 +359,10 @@ def get_fields_to_load(field_classes):
   return (fields_to_load)
 
 
-def get_table_records(field_classes, json_records, remove_html=False, custom_sql=False):
+def get_table_records(field_classes,
+                      json_records,
+                      remove_html=False,
+                      custom_sql=False):
   #NEXT  STEPS  -- Add here if the classes are from  CUSTOMSQL make format fsdr_employee_first_name
   # as it currently  expects first_name
 
@@ -375,10 +378,11 @@ def get_table_records(field_classes, json_records, remove_html=False, custom_sql
             " " + each_record['surname'] + '</a>'
         else:
           if custom_sql:
-            record_field_data = each_record.get(field.database_association_name.replace('.','_')+'_'+field.database_name)
+            record_field_data = each_record.get(
+                field.database_association_name.replace('.', '_') + '_' +
+                field.database_name)
           else:
             record_field_data = each_record[field.database_name]
-
 
         if field.format_as_boolean:
           record_field_data = str(record_field_data)

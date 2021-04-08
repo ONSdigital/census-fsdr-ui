@@ -63,28 +63,56 @@
 				<td>
 			{% endif %}
 			
-			{# Code to generate actual searchui here #} 
-			{% if field.search_type == "input_box" %}
-				{{onsInput({
-                            		"id"   : field.database_name,
-					"name" : field.database_name,
-					"label": { "text": field.column_name },
-					"value": field.previous_value,   })}}
-			{% elif field.search_type == "dropdown" %}
-				{{onsSelect({
-					"id"   : field.database_name,
-					"name" : field.database_name,
-					"label": { "text": field.column_name },
-					"options": field.dropdown_options })}}
-			{% elif field.search_type == "checkbox" %}
-				{{onsCheckbox({
-					"id": field.database_name,
-					"name": field.database_name,
-					"label": {"text": field.column_name}, 
-					"value": True,
-					"checked": field.checkbox_value,
-				})}}
+			{% if params.called_from_index == 'customsql' %}
+				{# CUSTOM  sql must have different ID as tables have same fields #} 
+				{% if field.search_type == "input_box" %}
+					{{onsInput({
+						"id"   : field.unique_name.replace('.','') ,
+						"name" : field.unique_name.replace('.','') ,
+						"label": { "text": field.column_name },
+						"value": field.previous_value,   })}}
+				{% elif field.search_type == "dropdown" %}
+					{{onsSelect({
+						"id"   : field.unique_name.replace('.','') ,
+						"name" : field.unique_name.replace('.','') ,
+						"label": { "text": field.column_name },
+						"options": field.dropdown_options })}}
+				{% elif field.search_type == "checkbox" %}
+					{{onsCheckbox({
+						"id":   field.unique_name.replace('.','') ,
+						"name": field.unique_name.replace('.','') ,
+						"label": {"text": field.column_name}, 
+						"value": True,
+						"checked": field.checkbox_value,
+					})}}
 
+				{% endif %}
+
+
+			{% else %}
+				{# Code to generate actual searchui here #} 
+				{% if field.search_type == "input_box" %}
+					{{onsInput({
+						"id"   : field.database_name,
+						"name" : field.database_name,
+						"label": { "text": field.column_name },
+						"value": field.previous_value,   })}}
+				{% elif field.search_type == "dropdown" %}
+					{{onsSelect({
+						"id"   : field.database_name,
+						"name" : field.database_name,
+						"label": { "text": field.column_name },
+						"options": field.dropdown_options })}}
+				{% elif field.search_type == "checkbox" %}
+					{{onsCheckbox({
+						"id": field.database_name,
+						"name": field.database_name,
+						"label": {"text": field.column_name}, 
+						"value": True,
+						"checked": field.checkbox_value,
+					})}}
+
+				{% endif %}
 			{% endif %}
 
 			{# End table row/element #} 

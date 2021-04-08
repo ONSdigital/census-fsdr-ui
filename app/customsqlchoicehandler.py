@@ -30,7 +30,8 @@ from app.searchcriteria import (
 
 from app.searchfunctions import (
     get_customsql_records,
-    get_microservice_records, )
+    get_microservice_records,
+)
 
 from . import (NEED_TO_SIGN_IN_MSG, NO_EMPLOYEE_DATA, SERVICE_DOWN_MSG)
 from . import saml
@@ -77,6 +78,9 @@ class CustomSQLChoice:
   async def get(self, request):
     session = await get_session(request)
     user_role = await saml.get_role_id(request)
+
+    session.pop('custom_sql_previous_filters',  None)
+    session.pop('custom_sql_previous_checked_fields',  None)
 
     await saml.ensure_logged_in(request)
 

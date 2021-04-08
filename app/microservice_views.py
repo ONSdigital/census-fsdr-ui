@@ -114,7 +114,9 @@ def get_views(user_role, microservice_name):
           display_name="Missing Devices",
       ), )
   views.append(
-      View("customsql", user_role, display_name="Custom SQL",
+      View("customsql",
+           user_role,
+           display_name="Custom SQL",
            url="/customsqlchoice"), )
 
   current_view_index = 0
