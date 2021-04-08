@@ -236,6 +236,9 @@ class CustomSQLStart:
         if all_input.get(field.unique_name.replace('.', '')) != '':
           field.previous_value = all_input.get(field.unique_name.replace('.', ''))
 
+      if field.unique_name.replace('.', '') in data:
+        field.previous_value = data.get(field.unique_name.replace(".", ""))
+
     session['custom_sql_previous_filters'] = all_input
     session['custom_sql_previous_checked_fields'] = checked_boxes
 
