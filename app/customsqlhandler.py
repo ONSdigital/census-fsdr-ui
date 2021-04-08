@@ -55,7 +55,7 @@ def log_entry(request, endpoint):
               path=request.path)
 
 
-@customsql_handler_routes.view('/customsql')
+@customsql_handler_routes.view('/customsql/{clear}')
 class CustomSQLStart:
   @aiohttp_jinja2.template('microservices.html')
   async def post(self, request):
