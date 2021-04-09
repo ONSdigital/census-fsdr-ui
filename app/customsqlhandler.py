@@ -162,6 +162,8 @@ class CustomSQLStart:
     header_html = get_html(user_role, views)
     current_view = views[current_view_index]
 
+    logger.error(get_microservice_info_json)
+
     return {
         'views': views,
         'header_html': header_html,
@@ -287,6 +289,8 @@ class CustomSQLStart:
     views, current_view_index = get_views(user_role, 'customsql')
     header_html = get_html(user_role, views)
     current_view = views[current_view_index]
+
+    logger.error(get_microservice_info_json)
 
     return {
         'views': views,

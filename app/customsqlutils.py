@@ -368,22 +368,16 @@ async def get_custom_fields(database_name, request):
             database_association_name=database_name,
         ),
         Field("device_type",
-              search_type="dropdown",
               database_association_name=database_name,
-              dropdown_options=[
-                  "PHONE",
-                  "CHROMEBOOK",
-              ]),
+              ),
         Field(
             "unique_employee_id",
             database_association_name=database_name,
         ),
         Field(
             "device_sent",
-            search_type="dropdown",
             database_association_name=database_name,
             format_as_boolean=True,
-            dropdown_options=boolean_dropdown_options,
         ),
     ])
   elif database_name == 'fsdr.job_role':
@@ -517,66 +511,37 @@ async def get_custom_fields(database_name, request):
         ),
     ])
   elif database_name == 'fsdr.action_indicator':
+    db_ass = 'fsdr.action_indicator'
     return ([
-        Field("unique_role_id",
-              column_name="Role ID",
-              database_association_name=database_name,
-              search_box_visible=False),
-        Field(
-            "job_role_short",
-            database_association_name=database_name,
-            column_name="Job Role",
-            search_type="dropdown",
-            dropdown_options=job_role_dropdown_options,
-        ),
         Field(
             "unique_employee_id",
-            database_association_name=database_name,
+            database_association_name=db_ass,
             column_name="Employee ID",
         ),
         Field(
             "gsuite_status",
-            database_association_name=database_name,
-            search_type="dropdown",
-            dropdown_options=status_options,
+            database_association_name=db_ass,
         ),
         Field(
             "xma_status",
-            database_association_name=database_name,
-            search_type="dropdown",
-            dropdown_options=status_options,
+            database_association_name=db_ass,
         ),
         Field(
             "granby_status",
-            database_association_name=database_name,
-            search_type="dropdown",
-            dropdown_options=status_options,
+            database_association_name=db_ass,
         ),
         Field(
             "lone_worker_solution_status",
-            database_association_name=database_name,
-            search_type="dropdown",
-            dropdown_options=status_options,
+            database_association_name=db_ass,
             column_name="Lone Worker Status",
         ),
         Field(
             "service_now_status",
-            database_association_name=database_name,
-            search_type="dropdown",
-            dropdown_options=status_options,
+            database_association_name=db_ass,
         ),
         Field(
             "adecco_status",
-            database_association_name=database_name,
-            search_type="dropdown",
-            dropdown_options=status_options,
-        ),
-        Field(
-            "setup",
-            database_association_name=database_name,
-            search_type="dropdown",
-            dropdown_options=boolean_dropdown_options,
-            format_as_boolean=True,
+            database_association_name=db_ass,
         ),
     ])
   elif database_name == 'fsdr.update_state':
