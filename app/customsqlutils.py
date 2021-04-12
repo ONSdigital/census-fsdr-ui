@@ -365,9 +365,10 @@ async def get_custom_fields(database_name, request):
             "field_device_phone_number",
             database_association_name=database_name,
         ),
-        Field("device_type",
-              database_association_name=database_name,
-              ),
+        Field(
+            "device_type",
+            database_association_name=database_name,
+        ),
         Field(
             "unique_employee_id",
             database_association_name=database_name,

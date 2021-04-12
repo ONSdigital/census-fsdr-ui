@@ -72,9 +72,9 @@ class CustomSQLStart:
 
     clear = request.match_info['clear']
     if clear == 'clear':
-      temp =  session.get('custom_sql_previous_filters', {})
-      final  = {}
-      for key in temp: 
+      temp = session.get('custom_sql_previous_filters', {})
+      final = {}
+      for key in temp:
         final[key] = ''
 
       session['custom_sql_previous_filters'] = final
@@ -96,19 +96,15 @@ class CustomSQLStart:
       client_input[db_name] = []
       for each_field in current_fieldset:
         unique_name_no_period = each_field.unique_name.replace('.', '')
-        if unique_name_no_period  in all_input:
-          each_field.previous_value = all_input.get(
-              unique_name_no_period)
+        if unique_name_no_period in all_input:
+          each_field.previous_value = all_input.get(unique_name_no_period)
 
         checkbox_present, filter_data = each_field.find_and_extract(data)
         all_input[unique_name_no_period] = filter_data
-        if (unique_name_no_period
-            in checked_boxes) or checkbox_present:
+        if (unique_name_no_period in checked_boxes) or checkbox_present:
 
-          client_input[db_name].append({
-              unique_name_no_period + '_text_box':
-              filter_data
-          })
+          client_input[db_name].append(
+              {unique_name_no_period + '_text_box': filter_data})
           checked_boxes.append(unique_name_no_period)
           each_field.show_as_table_header = True
           each_field.search_box_visible = True
@@ -121,8 +117,7 @@ class CustomSQLStart:
       unique_name_no_period = field.unique_name.replace('.', '')
       if unique_name_no_period in all_input:
         if all_input.get(unique_name_no_period) != '':
-          field.previous_value = all_input.get(
-              unique_name_no_period)
+          field.previous_value = all_input.get(unique_name_no_period)
 
       if unique_name_no_period in data:
         field.previous_value = data.get(unique_name_no_period)
@@ -162,8 +157,6 @@ class CustomSQLStart:
     header_html = get_html(user_role, views)
     current_view = views[current_view_index]
 
-    logger.error(get_microservice_info_json)
-
     return {
         'views': views,
         'header_html': header_html,
@@ -191,12 +184,11 @@ class CustomSQLStart:
 
     clear = request.match_info['clear']
     if clear == 'clear':
-      temp =  session.get('custom_sql_previous_filters', {})
-      final  = {}
-      for key in temp: 
+      temp = session.get('custom_sql_previous_filters', {})
+      final = {}
+      for key in temp:
         final[key] = ''
       session['custom_sql_previous_filters'] = final
-
 
     if microservices_permissions(user_role, 'customsql') == False:
       request['client_ip'] = request.get('client_ip', "No IP Provided")
@@ -221,16 +213,14 @@ class CustomSQLStart:
         checkbox_present, filter_data = each_field.find_and_extract(data)
         unique_name_no_period = each_field.unique_name.replace('.', '')
         if unique_name_no_period in all_input:
-          each_field.previous_value = all_input.get(
-              unique_name_no_period)
+          each_field.previous_value = all_input.get(unique_name_no_period)
 
-        all_input[unique_name_no_period] = filter_data if filter_data != None else ''
+        all_input[
+            unique_name_no_period] = filter_data if filter_data != None else ''
         if unique_name_no_period in checked_boxes:
 
-          client_input[db_name].append({
-              unique_name_no_period  + '_text_box':
-              filter_data
-          })
+          client_input[db_name].append(
+              {unique_name_no_period + '_text_box': filter_data})
           each_field.show_as_table_header = True
           each_field.search_box_visible = True
         else:
@@ -251,8 +241,7 @@ class CustomSQLStart:
       unique_name_no_period = field.unique_name.replace('.', '')
       if unique_name_no_period in all_input.keys():
         if all_input.get(unique_name_no_period) != '':
-          field.previous_value = all_input.get(
-              unique_name_no_period)
+          field.previous_value = all_input.get(unique_name_no_period)
 
       if unique_name_no_period in data:
         field.previous_value = data.get(unique_name_no_period)
@@ -289,8 +278,6 @@ class CustomSQLStart:
     views, current_view_index = get_views(user_role, 'customsql')
     header_html = get_html(user_role, views)
     current_view = views[current_view_index]
-
-    logger.error(get_microservice_info_json)
 
     return {
         'views': views,
