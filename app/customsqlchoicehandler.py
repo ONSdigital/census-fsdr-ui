@@ -67,7 +67,7 @@ class CustomSQLChoice:
     await saml.ensure_logged_in(request)
 
     if microservices_permissions(user_role, 'customsql') == False:
-      request['client_ip'] = request.get('client_ip', "No IP Provided")
+      request['client_ip'] = request.get('client_ip', 'No IP Provided')
       return await forbidden(request)
 
     return {
@@ -85,7 +85,7 @@ class CustomSQLChoice:
     await saml.ensure_logged_in(request)
 
     if microservices_permissions(user_role, 'customsql') == False:
-      request['client_ip'] = request.get('client_ip', "No IP Provided")
+      request['client_ip'] = request.get('client_ip', 'No IP Provided')
       return await forbidden(request)
 
     database_names, fields = await get_database_fields(request)

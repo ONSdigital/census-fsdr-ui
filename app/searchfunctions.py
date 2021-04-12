@@ -12,7 +12,7 @@ logger = get_logger('fsdr-ui')
 
 
 #TODO this can probably be removed. Probably. Maybe.
-def get_employee_records_no_device(user_filter=""):
+def get_employee_records_no_device(user_filter=''):
   employee_record_url = URL(FSDR_URL +
                             f'/fieldforce/byType/byRangeAndUserFilterNoDevice/'
                             ).with_query(user_filter)
@@ -24,9 +24,6 @@ def get_employee_records_no_device(user_filter=""):
 def get_customsql_records(all_input):
   user_filter = {'rangeHigh': 50, 'rangeLow': 0}
 
-  #TODO remove
-  #logger.error(f'Searching WITH: {all_input}')
-
   url = URL(FSDR_URL +
             f'/fieldforce/byMicroservice/customsql/').with_query(user_filter)
 
@@ -36,7 +33,7 @@ def get_customsql_records(all_input):
                        auth=HTTPBasicAuth(FSDR_USER, FSDR_PASS))
 
 
-def get_microservice_records(endpoint_name, user_filter=""):
+def get_microservice_records(endpoint_name, user_filter=''):
   endpoint_name = 'index' if endpoint_name == 'search' else endpoint_name
   microservice_url = URL(
       FSDR_URL +

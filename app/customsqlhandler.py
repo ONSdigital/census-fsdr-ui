@@ -67,7 +67,7 @@ class CustomSQLStart:
     await saml.ensure_logged_in(request)
 
     if microservices_permissions(user_role, 'customsql') == False:
-      request['client_ip'] = request.get('client_ip', "No IP Provided")
+      request['client_ip'] = request.get('client_ip', 'No IP Provided')
       return await forbidden(request)
 
     clear = request.match_info['clear']
@@ -87,7 +87,6 @@ class CustomSQLStart:
     client_input = {}
     all_input = {}
     field_classes = []
-    error = ""
     for db_name in fields.keys():
       current_fieldset = fields.get(db_name)  # [Field, Field, Field...]
       for field in current_fieldset:
@@ -149,7 +148,7 @@ class CustomSQLStart:
     )
 
     result_message_str = result_message(search_range, microservice_sum,
-                                        "Custom SQL")
+                                        'Custom SQL')
 
     table_headers = get_table_headers(field_classes)
 
@@ -191,7 +190,7 @@ class CustomSQLStart:
       session['custom_sql_previous_filters'] = final
 
     if microservices_permissions(user_role, 'customsql') == False:
-      request['client_ip'] = request.get('client_ip', "No IP Provided")
+      request['client_ip'] = request.get('client_ip', 'No IP Provided')
       return await forbidden(request)
 
     database_names, fields = await get_database_fields(request)
@@ -202,7 +201,6 @@ class CustomSQLStart:
     client_input = {}
     all_input = {}
     field_classes = []
-    error = ""
     for db_name in fields.keys():
       current_fieldset = fields.get(db_name)  # [Field, Field, Field...]
       for field in current_fieldset:
@@ -271,7 +269,7 @@ class CustomSQLStart:
     )
 
     result_message_str = result_message(search_range, microservice_sum,
-                                        "Custom SQL")
+                                        'Custom SQL')
 
     table_headers = get_table_headers(field_classes)
 

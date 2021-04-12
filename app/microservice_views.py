@@ -35,14 +35,14 @@ class View:
 
   def create_url(self, url, database_name, clear):
     if url == None:
-      url = (f'/microservices/{database_name}{clear}')
+      url = f'/microservices/{database_name}{clear}'
     else:
-      url = (f'{url}')
+      url = f'{url}'
     return url
 
   def create_display_name(self, display_name):
     if display_name == None:
-      display_name = self.database_name.replace("table", "").title()
+      display_name = self.database_name.replace('table', '').title()
     return (display_name)
 
   def download_available(self, user_role, database_name):
@@ -71,53 +71,53 @@ def get_views(user_role, microservice_name):
 
   views.append(
       View(
-          "index",
+          'index',
           user_role,
-          display_name="Home",
-          filter_button_label="Filter",
+          display_name='Home',
+          filter_button_label='Filter',
       ), )
   views.append(
       View(
-          "search",
+          'search',
           user_role,
-          display_name="Search",
-          filter_button_label="Submit",
+          display_name='Search',
+          filter_button_label='Submit',
           hide_table=True,
           hide_search_criteria=False,
       ), )
 
   views.append(View(
-      "iattable",
+      'iattable',
       user_role,
-      display_name="Interface Action",
+      display_name='Interface Action',
   ), )
-  views.append(View("devicetable", user_role), )
-  views.append(View("gsuitetable", user_role), )
-  views.append(View("xmatable", user_role), )
-  views.append(View("lwstable", user_role), )
-  views.append(View("servicenowtable", user_role), )
+  views.append(View('devicetable', user_role), )
+  views.append(View('gsuitetable', user_role), )
+  views.append(View('xmatable', user_role), )
+  views.append(View('lwstable', user_role), )
+  views.append(View('servicenowtable', user_role), )
   views.append(View(
-      "updatestatetable",
+      'updatestatetable',
       user_role,
-      display_name="Update",
+      display_name='Update',
   ), )
   views.append(View(
-      "requestlogtable",
+      'requestlogtable',
       user_role,
-      display_name="Request",
+      display_name='Request',
   ), )
-  views.append(View("chromebooktable", user_role), )
+  views.append(View('chromebooktable', user_role), )
   views.append(
       View(
-          "missingdevicestable",
+          'missingdevicestable',
           user_role,
-          display_name="Missing Devices",
+          display_name='Missing Devices',
       ), )
   views.append(
-      View("customsql",
+      View('customsql',
            user_role,
-           display_name="Custom SQL",
-           url="/customsqlchoice"), )
+           display_name='Custom SQL',
+           url='/customsqlchoice'), )
 
   current_view_index = 0
   for counter, view in enumerate(views):

@@ -9,7 +9,7 @@ logger = get_logger('fsdr-ui')
 class Field:
   def __init__(self,
                database_name,
-               search_type="input_box",
+               search_type='input_box',
                search_options=None,
                column_name=None,
                accordion=False,
@@ -18,7 +18,7 @@ class Field:
                format_as_boolean=False,
                checkbox_value=False,
                name=False,
-               database_association_name="",
+               database_association_name='',
                show_as_table_header=True):
 
     self.database_name = database_name
@@ -26,7 +26,7 @@ class Field:
     self.search_type = search_type
     self.dropdown_options = self.format_dropdown_options(dropdown_options)
     self.accordion = accordion
-    self.previous_value = ""
+    self.previous_value = ''
     self.show_as_table_header = show_as_table_header
     self.search_box_visible = search_box_visible
     self.format_as_boolean = format_as_boolean
@@ -363,8 +363,6 @@ def get_table_records(field_classes,
                       json_records,
                       remove_html=False,
                       custom_sql=False):
-  #NEXT  STEPS  -- Add here if the classes are from  CUSTOMSQL make format fsdr_employee_first_name
-  # as it currently  expects first_name
 
   formatted_records = []
   for each_record in json_records:
