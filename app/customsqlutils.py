@@ -10,19 +10,15 @@ async def get_database_fields(request):
       'fsdr.job_role_history',
       'fsdr.device',
       'fsdr.job_role',
-      'fsdr.databasechangelog',
       'fsdr.action_indicator',
       'fsdr.update_state',
       'fsdr.user_authentication',
       'fsdr.request_log',
       'fsdr.adecco',
       'gsuite.chromebook',
-      'gsuite.databasechangelog',
       'gsuite.group_lookup',
       'gsuite.gsuite',
-      'xma.databasechangelog'
       'xma.xma',
-      'lws.databasechangelog',
       'lws.lws',
   ]
 
@@ -69,6 +65,7 @@ async def get_custom_fields(database_name, request):
         Field(
             "unique_employee_id",
             database_association_name=database_name,
+            checkbox_value=True,
         ),
         Field(
             "surname",
@@ -105,6 +102,7 @@ async def get_custom_fields(database_name, request):
         Field(
             "ons_email_address",
             database_association_name=database_name,
+            checkbox_value=True,
         ),
         Field(
             "telephone_number_contact_1",
@@ -393,6 +391,7 @@ async def get_custom_fields(database_name, request):
         Field(
             "unique_role_id",
             database_association_name=database_name,
+            checkbox_value=True,
         ),
         Field(
             "line_manager_first_name",
@@ -433,6 +432,7 @@ async def get_custom_fields(database_name, request):
         Field(
             "assignment_status",
             database_association_name=database_name,
+            checkbox_value=True,
         ),
         Field(
             "is_active",

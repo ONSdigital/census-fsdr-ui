@@ -21,7 +21,7 @@
     'method': 'POST',
     'id': 'searchform',
     'attributes': {
-        'action': '/customsql/donclear' 
+        'action': '/customsql/46656c69780a' 
     }
 } %}
 
@@ -55,6 +55,7 @@
 				"name": field.unique_name,
 				"label": {"text": 'Select to include "' + field.column_name + '" in results table'}, 
 				"value": 'other',
+				"checked": field.checkbox_value,
 				"other": {
 					"id": field.unique_name + '_text_box',
 					"name": field.unique_name + '_text_box',
