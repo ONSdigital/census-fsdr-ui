@@ -34,11 +34,7 @@ class View:
     return filter_name or f'Filter {self.display_name}'
 
   def create_url(self, url, database_name, clear):
-    if url == None:
-      url = f'/microservices/{database_name}{clear}'
-    else:
-      url = f'{url}'
-    return url
+    return url or f'/microservices/{database_name}{clear}'
 
   def create_display_name(self, display_name):
     if display_name == None:
