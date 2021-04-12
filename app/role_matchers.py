@@ -65,25 +65,26 @@ cfs_gsuite_regex = re.compile('LT-CFS.-..-..')
 def microservices_permissions(role_id, microservice_name):
   # Defines permissions for each table
   microservice_tables_dt_sup = [
-      "gsuitetable",
-      "xmatable",
-      "lwstable",
-      "servicenowtable",
-      "updatetable",
-      "requestlogtable",
-      "chromebooktable",
-      "missingdevicestable",
+      'gsuitetable',
+      'xmatable',
+      'lwstable',
+      'servicenowtable',
+      'updatetable',
+      'requestlogtable',
+      'chromebooktable',
+      'missingdevicestable',
+      'customsql',
   ]
 
   accessable_to_all = [
-      "devicetable",
-      "iattable",
-      "index",
-      "search",
+      'devicetable',
+      'iattable',
+      'index',
+      'search',
   ]
 
   cfs_accessable = [
-      "gsuitetable",
+      'gsuitetable',
   ]
 
   if download_permission_regex.match(role_id):
@@ -105,10 +106,10 @@ def invalid_role_id(role_id):
   raise HTTPInternalServerError(reason=msg)
 
 
-def has_download_permission(role_id, microservice_name="index"):
+def has_download_permission(role_id, microservice_name='index'):
   authorised_downloads = [
-      "iattable",
-      "missingdevicestable",
+      'iattable',
+      'missingdevicestable',
   ]
 
   if download_permission_regex.match(role_id):

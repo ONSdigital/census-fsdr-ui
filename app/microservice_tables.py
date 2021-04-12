@@ -9,7 +9,7 @@ logger = get_logger('fsdr-ui')
 class Field:
   def __init__(self,
                database_name,
-               search_type="input_box",
+               search_type='input_box',
                search_options=None,
                column_name=None,
                accordion=False,
@@ -18,6 +18,7 @@ class Field:
                format_as_boolean=False,
                checkbox_value=False,
                name=False,
+               database_association_name='',
                show_as_table_header=True):
 
     self.database_name = database_name
@@ -25,12 +26,19 @@ class Field:
     self.search_type = search_type
     self.dropdown_options = self.format_dropdown_options(dropdown_options)
     self.accordion = accordion
-    self.previous_value = ""
+    self.previous_value = ''
     self.show_as_table_header = show_as_table_header
     self.search_box_visible = search_box_visible
     self.format_as_boolean = format_as_boolean
     self.checkbox_value = checkbox_value
     self.name = name
+    self.database_association_name = database_association_name
+    self.unique_name = database_association_name + database_name
+
+  def find_and_extract(self, data):
+    checkbox_present = data.get(self.unique_name) == 'other'
+    filter_value = data.get(self.unique_name + '_text_box', '')
+    return (checkbox_present, filter_value)
 
   def create_column_name(self, column_name):
     if column_name == None:
@@ -352,7 +360,11 @@ def get_fields_to_load(field_classes):
   return (fields_to_load)
 
 
-def get_table_records(field_classes, json_records, remove_html=False):
+def get_table_records(field_classes,
+                      json_records,
+                      remove_html=False,
+                      custom_sql=False):
+
   formatted_records = []
   for each_record in json_records:
     record = {'tds': None}
@@ -364,7 +376,12 @@ def get_table_records(field_classes, json_records, remove_html=False):
             each_record['unique_employee_id'] + '">' + each_record['first_name'] + \
             " " + each_record['surname'] + '</a>'
         else:
-          record_field_data = each_record[field.database_name]
+          if custom_sql:
+            record_field_data = each_record.get(
+                field.database_association_name.replace('.', '_') + '_' +
+                field.database_name)
+          else:
+            record_field_data = each_record[field.database_name]
 
         if field.format_as_boolean:
           record_field_data = str(record_field_data)

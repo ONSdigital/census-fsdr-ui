@@ -81,13 +81,25 @@
       <ul class="pagination__items">
           {% if current_page > 1 and totalPages >= 5 %}
               <li class="pagination__item pagination__item--previous">
+
+	      {% if params.called_from_index == 'customsql' %}
+                  <a href="{{ url(params.custom_url, clear='dontclear').with_query({'page':current_page - 1}) }}" class="pagination__link" rel="prev" aria-label="Go to the previous page (Page {{ current_page|int - 1 }})">{{ params.previous }}</a>
+	      {% else %}
                   <a href="{{ url(params.link_url, microservice_name=params.microservice_name).with_query({'page':current_page - 1}) }}" class="pagination__link" rel="prev" aria-label="Go to the previous page (Page {{ current_page|int - 1 }})">{{ params.previous }}</a>
+	      {% endif %}
+
               </li>
           {% endif %}
           {% if current_page|int >= 5 %}
               {% set first = pagination_array | first %}
               <li class="pagination__item">
+
+	      {% if params.called_from_index == 'customsql' %}
+                  <a href="{{ url(params.custom_url, clear='dontclear').with_query({'page':1}) }}" class="pagination__link" aria-label="Go to the first page (Page 1)">1</a>
+	      {% else %}
                   <a href="{{ url(params.link_url, microservice_name=params.microservice_name).with_query({'page':1}) }}" class="pagination__link" aria-label="Go to the first page (Page 1)">1</a>
+	      {% endif %}
+
               </li>
           {% endif %}
           {% if current_page|int > 4 %}
@@ -96,7 +108,15 @@
           {% for page in pagination_array %}
               {% if loop.index >= middlePagesStart and loop.index <= middlePagesEnd %}
                   <li class="pagination__item{% if page.current %} pagination__item--current{% endif %}">
-                      <a href='{{ url(params.link_url, microservice_name=params.microservice_name).with_query({'page':page.page}) }}' class="pagination__link"
+
+
+	      {% if params.called_from_index == 'customsql' %}
+                  <a href='{{ url(params.custom_url, clear='dontclear').with_query({'page':page.page}) }}' class="pagination__link"
+	      {% else %}
+                  <a href='{{ url(params.link_url, microservice_name=params.microservice_name).with_query({'page':page.page}) }}' class="pagination__link"
+	      {% endif %}
+
+
                           {%- if page.current -%}
                               aria-current="true" aria-label="Current page ({{ position }})"
                           {%- else -%}
@@ -118,12 +138,24 @@
           {% if current_page|int < totalPages|int - 2 and totalPages >= 5 %}
               {% set lastPage = pagination_array | last %}
               <li class="pagination__item">
+
+	      {% if params.called_from_index == 'customsql' %}
+                  <a href="{{ url(params.custom_url, clear='dontclear').with_query({'page':last_page - 1}) }}" class="pagination__link" aria-label="Go to the last page (Page {{ totalPages }})">{{ totalPages }}</a>
+	      {% else %}
                   <a href="{{ url(params.link_url, microservice_name=params.microservice_name).with_query({'page':last_page - 1}) }}" class="pagination__link" aria-label="Go to the last page (Page {{ totalPages }})">{{ totalPages }}</a>
+	      {% endif %}
+
               </li>
           {% endif %}
           {% if totalPages|int > 1 and totalPages|int > current_page|int and totalPages >= 5 %}
               <li class="pagination__item pagination__item--next">
+
+	      {% if params.called_from_index == 'customsql' %}
+                  <a href="{{ url(params.custom_url, clear='dontclear').with_query({'page':current_page + 1}) }}" class="pagination__link" rel="next" aria-label="Go to the next page (Page {{ current_page|int }})">{{ params.next }}</a>
+	      {% else %}
                   <a href="{{ url(params.link_url, microservice_name=params.microservice_name).with_query({'page':current_page + 1}) }}" class="pagination__link" rel="next" aria-label="Go to the next page (Page {{ current_page|int }})">{{ params.next }}</a>
+	      {% endif %}
+
               </li>
           {% endif %}
       </ul>

@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 
+{% from "components/phase-banner/_macro.njk" import onsPhaseBanner %}
 {% from 'components/lists/_macro.njk' import onsList %}
 {% from 'components/input/_macro.njk' import onsInput %}
 {% from "custom/dynamic_pagination/_macro.njk" import onsPagination %}
@@ -11,15 +12,31 @@
 
 {% set page_title_value = page_title %}
 
-{% set form =  {
-    'method': 'POST',
-    'id': 'searchform',
-    'attributes': {
-        'action': current_view.url
-    }
-} %}
+{% if called_from_index ==  'customsql' %}
+	{% set form =  {
+	    'method': 'POST',
+	    'id': 'searchform',
+	    'attributes': {
+		'action': '/customsql/dontclear' 
+	    }
+	    } %}
+{% else %}
+	{% set form =  {
+	    'method': 'POST',
+	    'id': 'searchform',
+	    'attributes': {
+		'action': current_view.url
+	    }
+	    } %}
+{% endif %}
 
 {% block pageContent %}
+
+{% if called_from_index == 'customsql'  %}
+{{ onsPhaseBanner({
+        "badge": "BETA",
+        "html": 'This is a new service – Your feedback will help us improve it.'})}}
+{% endif %}
     {% block main %}
         <div class="grid">
             <div class="grid__col col-2@m"></div>
@@ -30,23 +47,48 @@
 		    {% if not current_view.hide_search_criteria %}
                         {{ fsdrSearch({
                             'index_search': "microservice",
+			    'called_from_index': called_from_index,
 			    'microservice_name': current_view.database_name,
 			    'microservice_title':current_view.display_name,
 			    'search_section_accordioned': current_view.search_section_accordioned,
 			    'Fields': Fields,
                 	}) }}
-                        {{ onsButton({
-                            'text': current_view.filter_button_label,
-                            'classes': 'btn--small',
-                            'submitType': "loader",
-                            'name': 'action[submit]'
-                        }) }}
-		    	{{ onsButton({
-				'text': 'Clear',
-				'classes': 'btn--small',
-				'submitType': "loader",
-				'url': current_view.url_clear
-			}) }}
+			{% if  called_from_index == 'customsql' %}
+				{{ onsButton({
+				    'text': "Apply filters",
+				    'classes': 'btn--small',
+				    'submitType': "loader",
+				    'name': 'action[submit]'
+				}) }}
+				{{ onsButton({
+				    'text': "Clear filters",
+				    'classes': 'btn--small',
+				    'submitType': "loader",
+				    'url':  '/customsql/clear',
+				}) }}
+
+				{{ onsButton({
+					'text': 'Back To SQL Builder',
+					'classes': 'btn--small',
+					'submitType': "loader",
+					'url': current_view.url_clear
+				}) }}
+
+			{% else %}
+				{{ onsButton({
+				    'text': current_view.filter_button_label,
+				    'classes': 'btn--small',
+				    'submitType': "loader",
+				    'name': 'action[submit]'
+				}) }}
+				{{ onsButton({
+					'text': 'Clear',
+					'classes': 'btn--small',
+					'submitType': "loader",
+					'url': current_view.url_clear
+				}) }}
+			{%  endif %}
+
 			{% if current_view.download_available %}
 				{{ onsButton({
 					'text': 'Download CSV',
@@ -97,6 +139,8 @@
 				"page_number": page_number,
 				"link_url": 'MicroservicesTable:get',
 				"microservice_name": current_view.database_name,
+				"called_from_index": called_from_index,
+				"custom_url" :  'CustomSQLStart:post',
 			})}}
 
                         </div>
