@@ -26,12 +26,9 @@ class View:
     self.currently_visible = self.visible(user_role, database_name,
                                           who_can_view)
     self.download_available = self.download_available(user_role, database_name)
-    self.filter_button_label = self.create_filter_label(filter_button_label)
+    self.filter_button_label = 'Apply filters'
     self.hide_table = hide_table
     self.hide_search_criteria = hide_search_criteria
-
-  def create_filter_label(self, filter_name):
-    return filter_name or f'Filter {self.display_name}'
 
   def create_url(self, url, database_name, clear):
     return url or f'/microservices/{database_name}{clear}'

@@ -142,6 +142,7 @@ class MicroservicesTable:
           'page_title': f'{microservice_title} view for: {user_role}',
           'page_number': page_number,
           'last_page_number': max_page,
+          'no_records': microservice_sum == 0,
           'table_headers': table_headers,
           'table_records': table_records,
       }
@@ -220,6 +221,7 @@ class MicroservicesTable:
           'page_title': f'{microservice_title} view for: {user_role}',
           'page_number': page_number,
           'last_page_number': max_page,
+          'no_records': microservice_sum == 0,
           'table_headers': table_headers,
           'table_records': table_records,
       }
