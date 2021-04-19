@@ -142,6 +142,7 @@ class MicroservicesTable:
           'page_title': f'{microservice_title} view for: {user_role}',
           'page_number': page_number,
           'last_page_number': max_page,
+          'no_records': microservice_sum == 0,
           'table_headers': table_headers,
           'table_records': table_records,
       }
@@ -210,6 +211,8 @@ class MicroservicesTable:
         current_view.hide_table = page_number == 1
         current_view.hide_search_criteria = page_number > 1
 
+      no_records = microservice_sum == 0
+
       return {
           'views': views,
           'header_html': header_html,
@@ -220,6 +223,7 @@ class MicroservicesTable:
           'page_title': f'{microservice_title} view for: {user_role}',
           'page_number': page_number,
           'last_page_number': max_page,
+          'no_records': microservice_sum == 0,
           'table_headers': table_headers,
           'table_records': table_records,
       }

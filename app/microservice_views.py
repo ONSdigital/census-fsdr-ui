@@ -26,7 +26,7 @@ class View:
     self.currently_visible = self.visible(user_role, database_name,
                                           who_can_view)
     self.download_available = self.download_available(user_role, database_name)
-    self.filter_button_label = 'Apply filters' 
+    self.filter_button_label = 'Apply filters'
     self.hide_table = hide_table
     self.hide_search_criteria = hide_search_criteria
 
