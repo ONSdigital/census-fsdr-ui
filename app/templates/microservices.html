@@ -61,15 +61,15 @@
 				    'name': 'action[submit]'
 				}) }}
 				{{ onsButton({
-				    'text': "Clear filters",
-				    'classes': 'btn--small',
-				    'submitType': "loader",
+				    'text': 'Clear filters',
+				    'classes': 'btn--small btn--secondary',
+				    'submitType': 'loader',
 				    'url':  '/customsql/clear',
 				}) }}
 
 				{{ onsButton({
 					'text': 'Back To SQL Builder',
-					'classes': 'btn--small',
+					'classes': 'btn--small btn--secondary',
 					'submitType': "loader",
 					'url': current_view.url_clear
 				}) }}
@@ -82,8 +82,8 @@
 				    'name': 'action[submit]'
 				}) }}
 				{{ onsButton({
-					'text': 'Clear',
-					'classes': 'btn--small',
+					'text': 'Clear  filters',
+					'classes': 'btn--small btn--secondary',
 					'submitType': "loader",
 					'url': current_view.url_clear
 				}) }}
@@ -92,7 +92,7 @@
 			{% if current_view.download_available %}
 				{{ onsButton({
 					'text': 'Download CSV',
-					'classes': 'btn--small',
+					'classes': 'btn--small btn--secondary',
 					'submitType': "loader",
 					'url': '/downloads/' + current_view.database_name
 				}) }}
