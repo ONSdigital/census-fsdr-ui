@@ -155,6 +155,7 @@ async def get_custom_fields(database_name, request):
         Field(
             "new_device",
             database_association_name=database_name,
+            format_as_boolean=True,
         ),
         Field(
             "last_role_id",
@@ -163,6 +164,7 @@ async def get_custom_fields(database_name, request):
         Field(
             "setup",
             database_association_name=database_name,
+            format_as_boolean=True,
         ),
         Field(
             "external_id",

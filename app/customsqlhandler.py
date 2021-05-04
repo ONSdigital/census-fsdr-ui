@@ -126,13 +126,15 @@ class CustomSQLStart:
     session['custom_sql_previous_checked_fields'] = checked_boxes
 
     all_records = get_customsql_records(all_input)
-
     all_records_json = all_records.json()
 
     search_criteria = {}
     search_range, records_per_page = page_bounds(page_number)
     search_criteria.update(search_range)
     get_microservice_info_json = all_records_json
+
+    #TODO remove
+    logger.error(f'FULL INFO: {get_microservice_info_json}')
 
     if len(get_microservice_info_json) > 0:
       microservice_sum = get_microservice_info_json[0].get('total_records', 0)
@@ -254,6 +256,9 @@ class CustomSQLStart:
     search_range, records_per_page = page_bounds(page_number)
     search_criteria.update(search_range)
     get_microservice_info_json = all_records_json
+
+    #TODO remove
+    logger.error(f'FULL INFO: {get_microservice_info_json}')
 
     if len(get_microservice_info_json) > 0:
       microservice_sum = get_microservice_info_json[0].get('total_records', 0)
