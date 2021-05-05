@@ -126,7 +126,6 @@ class CustomSQLStart:
     session['custom_sql_previous_checked_fields'] = checked_boxes
 
     all_records = get_customsql_records(all_input)
-
     all_records_json = all_records.json()
 
     search_criteria = {}
